@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Transport_Depot_WCF.Settlements" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Transport_Depot_WCF.Settlements" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://netgateway/Settlements/Settlements.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Transport_Depot_WCF" />
+  <xs:complexType name="Address">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="City" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Phone" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="State" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="StreetAddress" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ZipCode" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Address" nillable="true" type="tns:Address" />
+  <xs:complexType name="InvalidLessorId">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Problem" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="InvalidLessorId" nillable="true" type="tns:InvalidLessorId" />
+  <xs:complexType name="LessorSettlement">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Advances" nillable="true" type="tns:ArrayOfAdvance" />
+      <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Transport_Depot_WCF" minOccurs="0" name="Lessor" nillable="true" type="q1:Lessor" />
+      <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="State" type="tns:State" />
+      <xs:element minOccurs="0" name="Tractor" nillable="true" type="tns:SettlementTractor" />
+      <xs:element minOccurs="0" name="Trips" nillable="true" type="tns:ArrayOfSettlementTrip" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="LessorSettlement" nillable="true" type="tns:LessorSettlement" />
+  <xs:complexType name="ArrayOfAdvance">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Advance" nillable="true" type="tns:Advance" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfAdvance" nillable="true" type="tns:ArrayOfAdvance" />
+  <xs:complexType name="Advance">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:SettlementTransaction">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="AdvanceDate" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Amount" type="xs:decimal" />
+          <xs:element minOccurs="0" name="IsSelectedForPayment" type="xs:boolean" />
+          <xs:element minOccurs="0" name="Reference" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="TripNumber" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="Advance" nillable="true" type="tns:Advance" />
+  <xs:complexType name="SettlementTransaction">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ActivityDate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="SettlementTransaction" nillable="true" type="tns:SettlementTransaction" />
+  <xs:simpleType name="State">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="NotAccepted" />
+      <xs:enumeration value="PendingPost" />
+      <xs:enumeration value="Paid" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="State" nillable="true" type="tns:State" />
+  <xs:complexType name="SettlementTractor">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="TractorID" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="SettlementTractor" nillable="true" type="tns:SettlementTractor" />
+  <xs:complexType name="ArrayOfSettlementTrip">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="SettlementTrip" nillable="true" type="tns:SettlementTrip" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfSettlementTrip" nillable="true" type="tns:ArrayOfSettlementTrip" />
+  <xs:complexType name="SettlementTrip">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ActivityDate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Deductions" nillable="true" type="tns:ArrayOfDeduction" />
+      <xs:element minOccurs="0" name="InvoiceDate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="IsSelectedForPayment" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Number" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="RevenueItems" nillable="true" type="tns:ArrayOfTripRevenueItem" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="SettlementTrip" nillable="true" type="tns:SettlementTrip" />
+  <xs:complexType name="ArrayOfDeduction">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Deduction" nillable="true" type="tns:Deduction" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfDeduction" nillable="true" type="tns:ArrayOfDeduction" />
+  <xs:complexType name="Deduction">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Amount" type="xs:decimal" />
+      <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Rate" type="xs:decimal" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Deduction" nillable="true" type="tns:Deduction" />
+  <xs:complexType name="ArrayOfTripRevenueItem">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="TripRevenueItem" nillable="true" type="tns:TripRevenueItem" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfTripRevenueItem" nillable="true" type="tns:ArrayOfTripRevenueItem" />
+  <xs:complexType name="TripRevenueItem">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:SettlementTransaction">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="RevenueTotals" type="xs:decimal" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="TripRevenueItem" nillable="true" type="tns:TripRevenueItem" />
+  <xs:complexType name="NoSettlementsAvailable">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Problem" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="NoSettlementsAvailable" nillable="true" type="tns:NoSettlementsAvailable" />
+  <xs:complexType name="UnpostedSettlementsPending">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Problem" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="UnpostedSettlementsPending" nillable="true" type="tns:UnpostedSettlementsPending" />
+  <xs:complexType name="PaidLessorSettlement">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:LessorSettlement">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="ScheduledPaymentID" type="xs:int" />
+          <xs:element minOccurs="0" name="ShceduledDate" type="xs:dateTime" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="PaidLessorSettlement" nillable="true" type="tns:PaidLessorSettlement" />
+  <xs:complexType name="ArrayOfPaidLessorSettlementListItem">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="PaidLessorSettlementListItem" nillable="true" type="tns:PaidLessorSettlementListItem" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfPaidLessorSettlementListItem" nillable="true" type="tns:ArrayOfPaidLessorSettlementListItem" />
+  <xs:complexType name="PaidLessorSettlementListItem">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="AcceptedDate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="InvoiceDate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="ScheduledPaymentId" type="xs:int" />
+      <xs:element minOccurs="0" name="State" type="tns:State" />
+      <xs:element minOccurs="0" name="Total" type="xs:decimal" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="PaidLessorSettlementListItem" nillable="true" type="tns:PaidLessorSettlementListItem" />
+</xs:schema>

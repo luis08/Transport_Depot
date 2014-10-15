@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="c67a2f17-cc82-42f4-b3a5-d0bb7d0afff1" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://netgateway/Settlements/AutomaticDeductionsService.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="AutomaticDeductionsService.xsd" MetadataType="Schema" ID="191eb0d7-7949-4669-b8e3-0e735ca3ebc7" SourceId="1" SourceUrl="http://netgateway/Settlements/AutomaticDeductionsService.svc?xsd=xsd3" />
+    <MetadataFile FileName="AutomaticDeductionsService1.xsd" MetadataType="Schema" ID="9bd16998-6314-4c03-ac97-22f83be7451f" SourceId="1" SourceUrl="http://netgateway/Settlements/AutomaticDeductionsService.svc?xsd=xsd2" />
+    <MetadataFile FileName="AutomaticDeductionsService2.xsd" MetadataType="Schema" ID="c222b0db-70cd-4059-b921-7e4ce014e6df" SourceId="1" SourceUrl="http://netgateway/Settlements/AutomaticDeductionsService.svc?xsd=xsd1" />
+    <MetadataFile FileName="AutomaticDeductionsService3.xsd" MetadataType="Schema" ID="d30c43f5-1162-46ce-963d-816c803d9d96" SourceId="1" SourceUrl="http://netgateway/Settlements/AutomaticDeductionsService.svc?xsd=xsd0" />
+    <MetadataFile FileName="AutomaticDeductions.wsdl" MetadataType="Wsdl" ID="fc1e8049-fd6e-4cb9-93be-eccba5706d0e" SourceId="1" SourceUrl="http://netgateway/Settlements/AutomaticDeductionsService.svc?wsdl" />
+    <MetadataFile FileName="AutomaticDeductionsService.disco" MetadataType="Disco" ID="c9146e9b-63da-41db-89ca-29c4b53b01ae" SourceId="1" SourceUrl="http://netgateway/Settlements/AutomaticDeductionsService.svc?disco" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

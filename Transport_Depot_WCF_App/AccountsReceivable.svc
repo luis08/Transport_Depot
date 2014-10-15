@@ -1,0 +1,3 @@
+﻿<%@ ServiceHost Language="C#" 
+  Debug="true" 
+  Service="TransportDepot.AccountsReceivable.AccountsReceivableService" %>

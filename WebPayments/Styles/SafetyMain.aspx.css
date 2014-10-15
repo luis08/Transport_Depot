@@ -1,0 +1,277 @@
+﻿#safety-menu-container
+{
+  width:18em;
+  float:left;
+}
+#safety-main-container
+{
+  padding:0 1em;
+  overflow:hidden;
+}
+#driver-menu-container
+{
+  width:13em;
+  float:left;
+  overflow:auto;
+  padding:0.5em;
+}
+#driver-menu-container h4
+{
+  margin-top:0;
+}
+#safety-title-container
+{
+  width:22em;
+  float:left;
+}
+
+#safety-report-menu
+{
+  margin-top:0.6em;
+  width:12em;
+  float:left;
+}
+#driver-report-menu a
+{
+  padding:1em;
+}
+#scrollable-drivers-container
+{
+  height:28em;
+  overflow:auto;
+  width:55em;
+  float:left;
+}
+#driver-menu-container ul
+{
+  list-style-type:none;
+  padding:0;
+  margin:0;
+  height:25em;
+  overflow:auto;
+}
+  
+.safety-table
+{
+  border:1px solid green;
+  width:57em;
+}
+.safety-table thead tr th
+{
+  vertical-align:bottom;
+  height:7em;
+  border:1px solid green;
+}
+.bottom-to-top-text {
+  -webkit-transform: rotate(270deg);
+  -moz-transform: rotate(270deg);
+  -ms-transform: rotate(270deg);
+  -o-transform: rotate(270deg);
+  transform: rotate(270deg);
+  filter: none; /*Mandatory for IE9 to show the vertical text correctly*/      
+  display:block;
+  border:1px solid red;
+  padding:0;
+  margin:0;
+}
+
+.driver-row input[type=text]
+{
+  width:6em;
+  text-align:center;
+}
+.driver-id-container
+{
+  width:7em;
+}
+.driver-fieldset
+{
+  height:12em;
+}
+.yesno-container
+{
+  width:11em;
+}
+.dates-container
+{
+  width:15em;
+}
+.dates-container label
+{
+  width:5em;
+  display:inline-block;
+}
+.comments-container
+{
+  width:12em;
+}
+.safety-entity-menu
+{
+  width:5em;
+  padding:0.5em;
+  display:block;
+  margin:0.25em;
+}
+a.safety-entity-menu:hover
+{
+  background-color:#ececec;
+}
+#tractor-safety-container
+{
+  width:100%;
+  overflow:hidden;
+  height:27em;
+}
+.tractor-row input[type=text]
+{
+  width:6em;
+}
+.tractor-row td fieldset
+{
+  height:6.85em;
+  width:13em;
+}
+.tractor-row td fieldset label
+{
+  width:6em;
+  display:inline-block;
+}
+.tractor-list-container tr td fieldset
+{
+  width:13.5em;
+}
+
+.tractor-identification
+{
+  width:9em;
+  text-align:center;
+}
+.tractor-identification a
+{
+  padding:0.5em;
+}
+#tractor-menu-container
+{
+  width:8em;
+  float:left;
+  overflow:hidden;
+  padding:0.5em;
+}
+#tractor-menu-container ul
+{
+  list-style-type:none;
+  padding:0;
+  margin:0;
+  height:25em;
+  overflow:auto;
+}
+#scrollable-tractors-container
+{
+  height:28em;
+  overflow:auto;
+  width:59.5em;
+  float:left;
+}
+#tractor-menu-container h4
+{
+  margin-top:0;
+}
+.lessor-owner-label
+{
+  margin-top:0.5em;
+}
+.lessor-owner
+{
+  width:100%;
+}
+.lessor-owner option
+{
+  width:auto;
+}
+
+.tracking-select
+{
+  width:10em;
+  margin-top:0.6em;
+}
+.tracking-select option
+{
+  width:auto;
+}
+.vin-number
+{
+  font-size:80%;
+}
+
+#trailer-safety-container
+{
+  width:100%;
+  overflow:hidden;
+  height:27em;
+}
+.trailer-row input[type=text]
+{
+  width:6em;
+}
+.trailer-row td fieldset
+{
+  height:7.25em;
+  width:13em;
+}
+.trailer-row td fieldset label
+{
+  width:6em;
+  display:inline-block;
+}
+.trailer-list-container tr td fieldset
+{
+  width:13.5em;
+}
+
+.trailer-identification
+{
+  width:9em;
+  text-align:center;
+}
+.trailer-identification a
+{
+  padding:0.5em;
+}
+#trailer-menu-container
+{
+  width:17em;
+  float:left;
+  overflow:hidden;
+  padding:0.5em;
+}
+#trailer-menu-container ul
+{
+  list-style-type:none;
+  padding:0;
+  margin:0;
+  height:25em;
+  overflow:auto;
+}
+#scrollable-trailers-container
+{
+  height:24em;
+  overflow:auto;
+  width:50em;
+  float:left;
+}
+#trailer-menu-container h4
+{
+  margin-top:0;
+}
+.lessor-owner-label
+{
+  margin-top:0.5em;
+}
+.lessor-owner
+{
+  width:100%;
+}
+.lessor-owner option
+{
+  width:auto;
+}

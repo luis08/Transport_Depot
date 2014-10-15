@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://netgateway/Settlements/AutomaticDeductionsService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Transport_Depot_AutomaticDeductions" />
+  <xs:element name="GetCommissionsToChange">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCommissionsToChangeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Transport_Depot_AutomaticDeductions" minOccurs="0" name="GetCommissionsToChangeResult" nillable="true" type="q1:ChangeCommissionLogicModel" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SaveCommissionsToChange">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Transport_Depot_AutomaticDeductions" minOccurs="0" name="aDeductions" nillable="true" type="q2:ArrayOfChangeCommission" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SaveCommissionsToChangeResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLessorDefaults">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="lessor_id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLessorDefaultsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Transport_Depot_AutomaticDeductions" minOccurs="0" name="GetLessorDefaultsResult" nillable="true" type="q3:LessorDefaults" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SaveLessorsDefaults">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Transport_Depot_AutomaticDeductions" minOccurs="0" name="lDefaults" nillable="true" type="q4:LessorDefaults" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SaveLessorsDefaultsResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetDefaultTypes">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetDefaultTypesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/Transport_Depot_AutomaticDeductions" minOccurs="0" name="GetDefaultTypesResult" nillable="true" type="q5:ArrayOfDefaultTypeAndValue" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AddDefaultValue">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/Transport_Depot_AutomaticDeductions" minOccurs="0" name="aDefaults" nillable="true" type="q6:DefaultTypeAndValue" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AddDefaultValueResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

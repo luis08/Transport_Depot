@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{874C2C17-269D-4240-8225-4A91EEF1D0E9}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Transport_Depot_WCF_App</RootNamespace>
+    <AssemblyName>Transport_Depot_WCF_App</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <UseIISExpress>false</UseIISExpress>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AutomaticDeductionsService.svc" />
+    <Content Include="AccountsReceivable.svc" />
+    <Content Include="Business.svc" />
+    <Content Include="ARReports.svc" />
+    <Content Include="Factoring.svc" />
+    <Content Include="FactoringPdf.svc" />
+    <Content Include="Posting.svc" />
+    <Content Include="Safety.svc" />
+    <Content Include="SafetyReports.svc" />
+    <Content Include="Settlements.svc" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TransportDepot.AccountsReceivable\TransportDepot.AccountsReceivable.csproj">
+      <Project>{41CB8496-00D4-4E2F-9E81-0CCD1AF2CDF5}</Project>
+      <Name>TransportDepot.AccountsReceivable</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TransportDepot.Business\TransportDepot.Business.csproj">
+      <Project>{7320A06F-8C6F-4C7C-A5E1-1D70100F781C}</Project>
+      <Name>TransportDepot.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TransportDepot.Factoring\TransportDepot.Factoring.csproj">
+      <Project>{96B80933-33F8-4106-A6ED-4C613D9FC7B5}</Project>
+      <Name>TransportDepot.Factoring</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TransportDepot.Reports\TransportDepot.Reports.csproj">
+      <Project>{99DCAE7F-FC2B-47B1-B7E2-3ED681BEA49E}</Project>
+      <Name>TransportDepot.Reports</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TransportDepot.Safety\TransportDepot.Safety.csproj">
+      <Project>{08D02CA0-FB44-4251-9840-B265ECF3A71F}</Project>
+      <Name>TransportDepot.Safety</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transport_Depot_AutomaticDeductions\Transport_Depot_AutomaticDeductions.csproj">
+      <Project>{17D2797B-D629-4B41-87D5-81AF9ACE1878}</Project>
+      <Name>Transport_Depot_AutomaticDeductions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transport_Depot_WCF\Transport_Depot_WCF.csproj">
+      <Project>{5E169357-A38B-48C6-A582-FD8DED0C370A}</Project>
+      <Name>Transport_Depot_WCF</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Templates\Apex_Assignment_Sheet.1.4.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>22768</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+          <EnableWcfTestClientForSVCDefaultValue>True</EnableWcfTestClientForSVCDefaultValue>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

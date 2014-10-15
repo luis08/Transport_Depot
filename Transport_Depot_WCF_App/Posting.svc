@@ -1,0 +1,3 @@
+﻿<%@ ServiceHost Language="C#" 
+  Debug="true" 
+  Service="Transport_Depot_WCF.AccessPaymentPostingService"   %>

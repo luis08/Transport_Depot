@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="81e71b00-afdc-4884-9ffb-8a362036a781" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://netgateway/Settlements/Factoring.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="Factoring.xsd" MetadataType="Schema" ID="a2bcba2c-073d-4a9b-8845-02c8acb7464a" SourceId="1" SourceUrl="http://netgateway/Settlements/Factoring.svc?xsd=xsd1" />
+    <MetadataFile FileName="Factoring1.xsd" MetadataType="Schema" ID="14bbd042-0073-4358-a139-2f05deca30f8" SourceId="1" SourceUrl="http://netgateway/Settlements/Factoring.svc?xsd=xsd3" />
+    <MetadataFile FileName="Factoring2.xsd" MetadataType="Schema" ID="5a0e8b59-cb96-4601-a8b6-6ad01e92c0e4" SourceId="1" SourceUrl="http://netgateway/Settlements/Factoring.svc?xsd=xsd2" />
+    <MetadataFile FileName="Factoring3.xsd" MetadataType="Schema" ID="8389828a-04d0-4dde-9e22-d1e9deac30fc" SourceId="1" SourceUrl="http://netgateway/Settlements/Factoring.svc?xsd=xsd0" />
+    <MetadataFile FileName="Factoring.wsdl" MetadataType="Wsdl" ID="cd398e64-ee44-48e6-8984-302076b547e4" SourceId="1" SourceUrl="http://netgateway/Settlements/Factoring.svc?wsdl=wsdl0" />
+    <MetadataFile FileName="FactoringService.wsdl" MetadataType="Wsdl" ID="263d8324-22c4-4001-9905-af56b7141e98" SourceId="1" SourceUrl="http://netgateway/Settlements/Factoring.svc?wsdl" />
+    <MetadataFile FileName="Factoring.disco" MetadataType="Disco" ID="fb292f6a-fbcc-42cb-b89f-8af60e3d6b63" SourceId="1" SourceUrl="http://netgateway/Settlements/Factoring.svc?disco" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://transportdepot.net/factoring" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://transportdepot.net/factoring" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://transportdepot.net/factoring/Imports">
+      <xsd:import schemaLocation="http://netgateway/Settlements/Factoring.svc?xsd=xsd0" namespace="http://transportdepot.net/factoring" />
+      <xsd:import schemaLocation="http://netgateway/Settlements/Factoring.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://netgateway/Settlements/Factoring.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/TransportDepot.Models.Factoring" />
+      <xsd:import schemaLocation="http://netgateway/Settlements/Factoring.svc?xsd=xsd3" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="FactoringService_GetSchedules_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetSchedules" />
+  </wsdl:message>
+  <wsdl:message name="FactoringService_GetSchedules_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetSchedulesResponse" />
+  </wsdl:message>
+  <wsdl:message name="FactoringService_GetUnpostedInvoices_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetUnpostedInvoices" />
+  </wsdl:message>
+  <wsdl:message name="FactoringService_GetUnpostedInvoices_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetUnpostedInvoicesResponse" />
+  </wsdl:message>
+  <wsdl:message name="FactoringService_GetSchedue_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetSchedue" />
+  </wsdl:message>
+  <wsdl:message name="FactoringService_GetSchedue_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetSchedueResponse" />
+  </wsdl:message>
+  <wsdl:message name="FactoringService_SaveSchedule_InputMessage">
+    <wsdl:part name="parameters" element="tns:SaveSchedule" />
+  </wsdl:message>
+  <wsdl:message name="FactoringService_SaveSchedule_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SaveScheduleResponse" />
+  </wsdl:message>
+  <wsdl:message name="FactoringService_CreateSchedule_InputMessage">
+    <wsdl:part name="parameters" element="tns:CreateSchedule" />
+  </wsdl:message>
+  <wsdl:message name="FactoringService_CreateSchedule_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CreateScheduleResponse" />
+  </wsdl:message>
+  <wsdl:message name="FactoringService_DeleteSchedule_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteSchedule" />
+  </wsdl:message>
+  <wsdl:message name="FactoringService_DeleteSchedule_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteScheduleResponse" />
+  </wsdl:message>
+  <wsdl:portType name="FactoringService">
+    <wsdl:operation name="GetSchedules">
+      <wsdl:input wsaw:Action="http://transportdepot.net/factoring/FactoringService/GetSchedules" message="tns:FactoringService_GetSchedules_InputMessage" />
+      <wsdl:output wsaw:Action="http://transportdepot.net/factoring/FactoringService/GetSchedulesResponse" message="tns:FactoringService_GetSchedules_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetUnpostedInvoices">
+      <wsdl:input wsaw:Action="http://transportdepot.net/factoring/FactoringService/GetUnpostedInvoices" message="tns:FactoringService_GetUnpostedInvoices_InputMessage" />
+      <wsdl:output wsaw:Action="http://transportdepot.net/factoring/FactoringService/GetUnpostedInvoicesResponse" message="tns:FactoringService_GetUnpostedInvoices_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSchedue">
+      <wsdl:input wsaw:Action="http://transportdepot.net/factoring/FactoringService/GetSchedue" message="tns:FactoringService_GetSchedue_InputMessage" />
+      <wsdl:output wsaw:Action="http://transportdepot.net/factoring/FactoringService/GetSchedueResponse" message="tns:FactoringService_GetSchedue_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SaveSchedule">
+      <wsdl:input wsaw:Action="http://transportdepot.net/factoring/FactoringService/SaveSchedule" message="tns:FactoringService_SaveSchedule_InputMessage" />
+      <wsdl:output wsaw:Action="http://transportdepot.net/factoring/FactoringService/SaveScheduleResponse" message="tns:FactoringService_SaveSchedule_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateSchedule">
+      <wsdl:input wsaw:Action="http://transportdepot.net/factoring/FactoringService/CreateSchedule" message="tns:FactoringService_CreateSchedule_InputMessage" />
+      <wsdl:output wsaw:Action="http://transportdepot.net/factoring/FactoringService/CreateScheduleResponse" message="tns:FactoringService_CreateSchedule_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteSchedule">
+      <wsdl:input wsaw:Action="http://transportdepot.net/factoring/FactoringService/DeleteSchedule" message="tns:FactoringService_DeleteSchedule_InputMessage" />
+      <wsdl:output wsaw:Action="http://transportdepot.net/factoring/FactoringService/DeleteScheduleResponse" message="tns:FactoringService_DeleteSchedule_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

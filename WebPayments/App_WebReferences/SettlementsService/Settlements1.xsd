@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://netgateway/Settlements/Settlements.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Transport_Depot_WCF" />
+  <xs:import schemaLocation="http://netgateway/Settlements/Settlements.svc?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:import schemaLocation="http://netgateway/Settlements/Settlements.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Transport_Depot_WCF.Settlements" />
+  <xs:element name="GetLessor">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="lessor_id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLessorResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Transport_Depot_WCF" minOccurs="0" name="GetLessorResult" nillable="true" type="q1:Lessor" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLessors">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q2="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="lessor_ids" nillable="true" type="q2:ArrayOfstring" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLessorsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Transport_Depot_WCF" minOccurs="0" name="GetLessorsResult" nillable="true" type="q3:ArrayOfLessor" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetAllLessors">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetAllLessorsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Transport_Depot_WCF" minOccurs="0" name="GetAllLessorsResult" nillable="true" type="q4:ArrayOfLessor" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLessorSettlement">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="lessor_id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLessorSettlementResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/Transport_Depot_WCF.Settlements" minOccurs="0" name="GetLessorSettlementResult" nillable="true" type="q5:LessorSettlement" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPaidLessorSettlement">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="scheduled_payment_id" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPaidLessorSettlementResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/Transport_Depot_WCF.Settlements" minOccurs="0" name="GetPaidLessorSettlementResult" nillable="true" type="q6:PaidLessorSettlement" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SchedulePayment">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="lessor_id" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="ip_address" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SchedulePaymentResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/Transport_Depot_WCF.Settlements" minOccurs="0" name="SchedulePaymentResult" nillable="true" type="q7:PaidLessorSettlement" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPaidLessorSettlements">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="lessor_id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPaidLessorSettlementsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q8="http://schemas.datacontract.org/2004/07/Transport_Depot_WCF.Settlements" minOccurs="0" name="GetPaidLessorSettlementsResult" nillable="true" type="q8:ArrayOfPaidLessorSettlementListItem" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

@@ -1,0 +1,191 @@
+﻿#schedules-container
+{
+  float: left;
+  max-height: 30em;
+  overflow: auto;
+  width: 20em;
+  padding: 1em;
+}
+    
+#options-container
+{
+  width: 40%;
+}
+#options-container fieldset
+{
+  margin-left:0.5em;
+}
+#filters-selector-container
+{
+  width:13em;
+}
+.schedule-options
+{
+  width:13em;
+}
+.schedule-options > label
+{
+  width:3em;
+  text-align:right;
+  float:left;
+  padding:0 0.5em;
+}
+.schedule-options > input
+{
+  width:6em;
+  text-align:left;
+  float:left;
+}
+.hidden-element
+{
+  display: none;
+}
+#schedules-container-table    
+{
+  width:95%;
+  border-collapse:collapse;
+  border:none;
+}
+#schedule-dialog
+{
+  width:50em;
+  display:none;
+  position:absolute;
+  z-index:4000;
+  background-color:#FEFEFE;
+}
+
+#schedule-date-container
+{
+  width:12em;
+  float:left;
+  display:inline-block;
+}
+    
+#schedule-date-container label
+{
+  width:2.6em;
+  float:left;  
+  text-align:right;
+  padding:0 0.25em;
+}
+#schedule-date-container input
+{
+  width:6em;
+  float:left;  
+  text-align:left;
+}
+#schedule-menu-container
+{
+  width:17.5em;
+  float:left;
+  display:inline-block;
+  text-align:center;
+  padding-top:0.5em;
+      
+}
+#schedule-menu-container a
+{
+      
+  display:block;
+  padding:0.5em;
+  background-color:#DeDeDe;
+}
+#schedule-info-container
+{
+  width:16em;
+  float:right;
+  display:inline-block;
+}
+    
+label.schedule-form
+{
+  width:6em;
+  float:left;  
+  text-align:right;
+  padding:0 0.25em;
+}
+    
+input.schedule-form
+{
+  width:6em;
+  float:left;  
+  text-align:left;
+}
+#invoice-list table
+{
+  width:100%;
+}
+#invoice-list-container
+{
+	
+}    
+#invoice-list-header
+{
+  
+}
+#schedule-changes-menu-container
+{
+  background-color:#ccc;
+}
+#schedule-changes-menu-container a
+{
+  display:block;
+  float:left;
+  width:12em;
+  text-align:center;
+  background-color:transparent;
+  padding:0.25em;
+}
+
+#schedule-changes-menu-container a:hover
+{
+  background-color:#fff;
+}
+.schedule-row-menu-item
+{
+  padding:0 0.5em;  
+}
+#invoice-filter-dialog
+{
+  width:36em;
+  display:none;
+  position:absolute;
+  z-index:6000;
+  background-color:#FEFEFE; 
+  padding:0.5em;
+  margin:0.5em;
+}
+.invoice-filter-options
+{
+  width:17em;
+  display:block;
+  float:left;
+}
+.invoice-filter-options label 
+{
+  
+}
+#import-menu
+{
+  width:15em;
+  float:left;
+  padding:2.25em 0.5em;
+}
+
+#import-menu a
+{
+  padding:1em ;
+  width:5.5em;
+  display:inline-block;
+  float:left;
+  text-align:center;  
+}
+#import-menu a:hover
+{
+  background-color:#ccc;
+}
+#invoice-date-filter, #invoice-number-filter
+{
+  display:none;
+}

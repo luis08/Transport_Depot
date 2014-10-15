@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{99DCAE7F-FC2B-47B1-B7E2-3ED681BEA49E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TransportDepot.Reports</RootNamespace>
+    <AssemblyName>TransportDepot.Reports</AssemblyName>
+    <ProjectTypeGuids>{3D9AD99F-2412-4246-B90B-4EAA41C64699};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <StartArguments>/client:"WcfTestClient.exe"</StartArguments>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="MigraDoc.DocumentObjectModel">
+      <HintPath>..\..\Users\Luis\Documents\Computing\PDF\Assemblies\GDI+\MigraDoc.DocumentObjectModel.dll</HintPath>
+    </Reference>
+    <Reference Include="MigraDoc.Rendering">
+      <HintPath>..\..\Users\Luis\Documents\Computing\PDF\Assemblies\GDI+\MigraDoc.Rendering.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp">
+      <HintPath>..\..\Users\Luis\Documents\Computing\PDF\Assemblies\GDI+\PdfSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AccountsReceivable\ARPdfLetter.cs" />
+    <Compile Include="AccountsReceivable\ARReportService.cs" />
+    <Compile Include="AccountsReceivable\CollectionLetterPdfer.cs" />
+    <Compile Include="AccountsReceivable\CollectionsCustomerBlock.cs" />
+    <Compile Include="AccountsReceivable\CollectionsReportPdfer.cs" />
+    <Compile Include="AccountsReceivable\CustomerBlockPdfer.cs" />
+    <Compile Include="AccountsReceivable\FinalLetterPdfer.cs" />
+    <Compile Include="AccountsReceivable\InvoiceRowCell.cs" />
+    <Compile Include="AccountsReceivable\InvoiceTableMaker.cs" />
+    <Compile Include="DataFormats.cs" />
+    <Compile Include="Generic\Formats.cs" />
+    <Compile Include="Generic\GenericReport.cs" />
+    <Compile Include="IARReportService.cs" />
+    <Compile Include="PdfReportUtilities.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Safety\TrailerSafetyReport.cs" />
+    <Compile Include="Safety\DriverySafetyReport.cs" />
+    <Compile Include="Safety\ISafetyService.cs" />
+    <Compile Include="Safety\SafetyService.cs" />
+    <Compile Include="Safety\TractorSafetyReport.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TransportDepot.AccountsReceivable\TransportDepot.AccountsReceivable.csproj">
+      <Project>{41CB8496-00D4-4E2F-9E81-0CCD1AF2CDF5}</Project>
+      <Name>TransportDepot.AccountsReceivable</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TransportDepot.Business\TransportDepot.Business.csproj">
+      <Project>{7320A06F-8C6F-4C7C-A5E1-1D70100F781C}</Project>
+      <Name>TransportDepot.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TransportDepot.Data\TransportDepot.Data.csproj">
+      <Project>{424AC8B0-D26C-4DF3-8FD9-54B5F32B2313}</Project>
+      <Name>TransportDepot.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TransportDepot.Models\TransportDepot.Models.csproj">
+      <Project>{3FA6F134-A16F-45CC-A1EF-3CE8EBA36104}</Project>
+      <Name>TransportDepot.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TransportDepot.Safety\TransportDepot.Safety.csproj">
+      <Project>{08D02CA0-FB44-4251-9840-B265ECF3A71F}</Project>
+      <Name>TransportDepot.Safety</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{3D9AD99F-2412-4246-B90B-4EAA41C64699}">
+        <WcfProjectProperties>
+          <AutoStart>True</AutoStart>
+        </WcfProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

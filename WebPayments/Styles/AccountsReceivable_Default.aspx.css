@@ -1,0 +1,42 @@
+﻿#collection-customers-container
+{
+  width:55em;
+  float:left;
+  height:28em;
+  overflow:auto;
+}
+#collection-customers-container table
+{
+  width:100%;
+}
+#collections-menu-container
+{
+  width:15em;
+  float:left;
+  padding:0 0.5em 0.5em 0.5em;  
+}
+#collections-report-menu label
+{
+  width:3.25em;
+  display:block; 
+  float:left;  
+}
+#collections-report-menu select
+{
+  width:9em;
+  display:block; 
+  float:left;
+}
+.print-command
+{
+  padding:0.5em;
+  display:inline-block;
+}
+.overdue-by-days
+{
+  visibility:hidden;
+}
+input.overdue-by-days
+{
+  width:4em;
+}

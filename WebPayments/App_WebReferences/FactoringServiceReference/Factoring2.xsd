@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:tns="http://schemas.datacontract.org/2004/07/TransportDepot.Models.Factoring" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/TransportDepot.Models.Factoring" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://netgateway/Settlements/Factoring.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:import schemaLocation="http://netgateway/Settlements/Factoring.svc?xsd=xsd3" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:complexType name="ScheduleFilter">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="FromDate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="FromSchedule" type="xs:int" />
+      <xs:element minOccurs="0" name="PageNumber" type="xs:int" />
+      <xs:element minOccurs="0" name="RowsPerPage" type="xs:int" />
+      <xs:element minOccurs="0" name="ToDate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="ToSchedule" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ScheduleFilter" nillable="true" type="tns:ScheduleFilter" />
+  <xs:complexType name="ScheduleSetViewModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="PageNumber" type="xs:int" />
+      <xs:element minOccurs="0" name="RowsPerPage" type="xs:int" />
+      <xs:element minOccurs="0" name="Schedules" nillable="true" type="tns:ArrayOfScheduleSummaryViewModel" />
+      <xs:element minOccurs="0" name="TotalScheduleCount" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ScheduleSetViewModel" nillable="true" type="tns:ScheduleSetViewModel" />
+  <xs:complexType name="ArrayOfScheduleSummaryViewModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ScheduleSummaryViewModel" nillable="true" type="tns:ScheduleSummaryViewModel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfScheduleSummaryViewModel" nillable="true" type="tns:ArrayOfScheduleSummaryViewModel" />
+  <xs:complexType name="ScheduleSummaryViewModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Amount" type="xs:decimal" />
+      <xs:element minOccurs="0" name="Date" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ScheduleSummaryViewModel" nillable="true" type="tns:ScheduleSummaryViewModel" />
+  <xs:complexType name="InvoiceFilter">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="FromDate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="FromInvoiceNumber" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="OnlyWithoutSchedule" type="xs:boolean" />
+      <xs:element minOccurs="0" name="PageNumber" type="xs:int" />
+      <xs:element minOccurs="0" name="RowsPerPage" type="xs:int" />
+      <xs:element minOccurs="0" name="ToDate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="ToInvoiceNumber" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="InvoiceFilter" nillable="true" type="tns:InvoiceFilter" />
+  <xs:complexType name="InvoiceSet">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Invoices" nillable="true" type="tns:ArrayOfInvoiceViewModel" />
+      <xs:element minOccurs="0" name="PageNumber" type="xs:int" />
+      <xs:element minOccurs="0" name="RowsPerPage" type="xs:int" />
+      <xs:element minOccurs="0" name="TotalPages" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="InvoiceSet" nillable="true" type="tns:InvoiceSet" />
+  <xs:complexType name="ArrayOfInvoiceViewModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="InvoiceViewModel" nillable="true" type="tns:InvoiceViewModel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfInvoiceViewModel" nillable="true" type="tns:ArrayOfInvoiceViewModel" />
+  <xs:complexType name="InvoiceViewModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Amount" type="xs:decimal" />
+      <xs:element minOccurs="0" name="CustomerName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Date" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Number" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="InvoiceViewModel" nillable="true" type="tns:InvoiceViewModel" />
+  <xs:complexType name="ScheduleViewModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Date" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="Invoices" nillable="true" type="tns:ArrayOfInvoiceViewModel" />
+      <xs:element minOccurs="0" name="User" type="ser:guid" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ScheduleViewModel" nillable="true" type="tns:ScheduleViewModel" />
+  <xs:complexType name="NewScheduleViewModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Date" type="xs:dateTime" />
+      <xs:element xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="InvoiceNumbers" nillable="true" type="q1:ArrayOfstring" />
+      <xs:element minOccurs="0" name="User" type="ser:guid" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="NewScheduleViewModel" nillable="true" type="tns:NewScheduleViewModel" />
+</xs:schema>

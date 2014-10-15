@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="91762a2a-106f-4493-a26f-3f9e9a718334" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://netgateway/Settlements/Settlements.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="SettlementService.wsdl" MetadataType="Wsdl" ID="c0e11b88-d1b6-457b-82bc-11e86d0cec8e" SourceId="1" SourceUrl="http://netgateway/Settlements/Settlements.svc?wsdl" />
+    <MetadataFile FileName="Settlements.xsd" MetadataType="Schema" ID="8efbec49-ca1c-44ef-8230-70244e75dec8" SourceId="1" SourceUrl="http://netgateway/Settlements/Settlements.svc?xsd=xsd1" />
+    <MetadataFile FileName="Settlements1.xsd" MetadataType="Schema" ID="01977072-7977-466e-a507-6e094215dbd2" SourceId="1" SourceUrl="http://netgateway/Settlements/Settlements.svc?xsd=xsd0" />
+    <MetadataFile FileName="Settlements2.xsd" MetadataType="Schema" ID="d53e9e26-8134-4656-b08d-1688221334e2" SourceId="1" SourceUrl="http://netgateway/Settlements/Settlements.svc?xsd=xsd3" />
+    <MetadataFile FileName="Settlements3.xsd" MetadataType="Schema" ID="4d15c545-1ddf-4842-91ee-d12cdd852adb" SourceId="1" SourceUrl="http://netgateway/Settlements/Settlements.svc?xsd=xsd2" />
+    <MetadataFile FileName="Settlements4.xsd" MetadataType="Schema" ID="da6282db-6eca-40cd-9100-61d22f3cc44e" SourceId="1" SourceUrl="http://netgateway/Settlements/Settlements.svc?xsd=xsd4" />
+    <MetadataFile FileName="Settlements.disco" MetadataType="Disco" ID="08f1737e-39ef-4458-9983-09746fa3be72" SourceId="1" SourceUrl="http://netgateway/Settlements/Settlements.svc?disco" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

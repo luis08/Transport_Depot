@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="SettlementService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://netgateway/Settlements/Settlements.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://netgateway/Settlements/Settlements.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Transport_Depot_WCF.Settlements" />
+      <xsd:import schemaLocation="http://netgateway/Settlements/Settlements.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://netgateway/Settlements/Settlements.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Transport_Depot_WCF" />
+      <xsd:import schemaLocation="http://netgateway/Settlements/Settlements.svc?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="ISettlementService_GetLessor_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetLessor" />
+  </wsdl:message>
+  <wsdl:message name="ISettlementService_GetLessor_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetLessorResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISettlementService_GetLessor_InvalidLessorIdFault_FaultMessage">
+    <wsdl:part xmlns:q1="http://schemas.datacontract.org/2004/07/Transport_Depot_WCF.Settlements" name="detail" element="q1:InvalidLessorId" />
+  </wsdl:message>
+  <wsdl:message name="ISettlementService_GetLessors_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetLessors" />
+  </wsdl:message>
+  <wsdl:message name="ISettlementService_GetLessors_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetLessorsResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISettlementService_GetAllLessors_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllLessors" />
+  </wsdl:message>
+  <wsdl:message name="ISettlementService_GetAllLessors_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllLessorsResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISettlementService_GetLessorSettlement_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetLessorSettlement" />
+  </wsdl:message>
+  <wsdl:message name="ISettlementService_GetLessorSettlement_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetLessorSettlementResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISettlementService_GetLessorSettlement_NoSettlementsAvailableFault_FaultMessage">
+    <wsdl:part xmlns:q2="http://schemas.datacontract.org/2004/07/Transport_Depot_WCF.Settlements" name="detail" element="q2:NoSettlementsAvailable" />
+  </wsdl:message>
+  <wsdl:message name="ISettlementService_GetLessorSettlement_UnpostedSettlementsPendingFault_FaultMessage">
+    <wsdl:part xmlns:q3="http://schemas.datacontract.org/2004/07/Transport_Depot_WCF.Settlements" name="detail" element="q3:UnpostedSettlementsPending" />
+  </wsdl:message>
+  <wsdl:message name="ISettlementService_GetLessorSettlement_InvalidLessorIdFault_FaultMessage">
+    <wsdl:part xmlns:q4="http://schemas.datacontract.org/2004/07/Transport_Depot_WCF.Settlements" name="detail" element="q4:InvalidLessorId" />
+  </wsdl:message>
+  <wsdl:message name="ISettlementService_GetPaidLessorSettlement_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetPaidLessorSettlement" />
+  </wsdl:message>
+  <wsdl:message name="ISettlementService_GetPaidLessorSettlement_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetPaidLessorSettlementResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISettlementService_GetPaidLessorSettlement_UnpostedSettlementsPendingFault_FaultMessage">
+    <wsdl:part xmlns:q5="http://schemas.datacontract.org/2004/07/Transport_Depot_WCF.Settlements" name="detail" element="q5:UnpostedSettlementsPending" />
+  </wsdl:message>
+  <wsdl:message name="ISettlementService_GetPaidLessorSettlement_InvalidLessorIdFault_FaultMessage">
+    <wsdl:part xmlns:q6="http://schemas.datacontract.org/2004/07/Transport_Depot_WCF.Settlements" name="detail" element="q6:InvalidLessorId" />
+  </wsdl:message>
+  <wsdl:message name="ISettlementService_GetPaidLessorSettlement_NoSettlementsAvailableFault_FaultMessage">
+    <wsdl:part xmlns:q7="http://schemas.datacontract.org/2004/07/Transport_Depot_WCF.Settlements" name="detail" element="q7:NoSettlementsAvailable" />
+  </wsdl:message>
+  <wsdl:message name="ISettlementService_SchedulePayment_InputMessage">
+    <wsdl:part name="parameters" element="tns:SchedulePayment" />
+  </wsdl:message>
+  <wsdl:message name="ISettlementService_SchedulePayment_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SchedulePaymentResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISettlementService_SchedulePayment_InvalidLessorIdFault_FaultMessage">
+    <wsdl:part xmlns:q8="http://schemas.datacontract.org/2004/07/Transport_Depot_WCF.Settlements" name="detail" element="q8:InvalidLessorId" />
+  </wsdl:message>
+  <wsdl:message name="ISettlementService_SchedulePayment_NoSettlementsAvailableFault_FaultMessage">
+    <wsdl:part xmlns:q9="http://schemas.datacontract.org/2004/07/Transport_Depot_WCF.Settlements" name="detail" element="q9:NoSettlementsAvailable" />
+  </wsdl:message>
+  <wsdl:message name="ISettlementService_SchedulePayment_UnpostedSettlementsPendingFault_FaultMessage">
+    <wsdl:part xmlns:q10="http://schemas.datacontract.org/2004/07/Transport_Depot_WCF.Settlements" name="detail" element="q10:UnpostedSettlementsPending" />
+  </wsdl:message>
+  <wsdl:message name="ISettlementService_GetPaidLessorSettlements_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetPaidLessorSettlements" />
+  </wsdl:message>
+  <wsdl:message name="ISettlementService_GetPaidLessorSettlements_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetPaidLessorSettlementsResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISettlementService_GetPaidLessorSettlements_InvalidLessorIdFault_FaultMessage">
+    <wsdl:part xmlns:q11="http://schemas.datacontract.org/2004/07/Transport_Depot_WCF.Settlements" name="detail" element="q11:InvalidLessorId" />
+  </wsdl:message>
+  <wsdl:message name="ISettlementService_GetPaidLessorSettlements_NoSettlementsAvailableFault_FaultMessage">
+    <wsdl:part xmlns:q12="http://schemas.datacontract.org/2004/07/Transport_Depot_WCF.Settlements" name="detail" element="q12:NoSettlementsAvailable" />
+  </wsdl:message>
+  <wsdl:portType name="ISettlementService">
+    <wsdl:operation name="GetLessor">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISettlementService/GetLessor" message="tns:ISettlementService_GetLessor_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISettlementService/GetLessorResponse" message="tns:ISettlementService_GetLessor_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ISettlementService/GetLessorInvalidLessorIdFault" name="InvalidLessorIdFault" message="tns:ISettlementService_GetLessor_InvalidLessorIdFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetLessors">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISettlementService/GetLessors" message="tns:ISettlementService_GetLessors_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISettlementService/GetLessorsResponse" message="tns:ISettlementService_GetLessors_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAllLessors">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISettlementService/GetAllLessors" message="tns:ISettlementService_GetAllLessors_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISettlementService/GetAllLessorsResponse" message="tns:ISettlementService_GetAllLessors_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetLessorSettlement">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISettlementService/GetLessorSettlement" message="tns:ISettlementService_GetLessorSettlement_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISettlementService/GetLessorSettlementResponse" message="tns:ISettlementService_GetLessorSettlement_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ISettlementService/GetLessorSettlementNoSettlementsAvailableFault" name="NoSettlementsAvailableFault" message="tns:ISettlementService_GetLessorSettlement_NoSettlementsAvailableFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ISettlementService/GetLessorSettlementUnpostedSettlementsPendingFault" name="UnpostedSettlementsPendingFault" message="tns:ISettlementService_GetLessorSettlement_UnpostedSettlementsPendingFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ISettlementService/GetLessorSettlementInvalidLessorIdFault" name="InvalidLessorIdFault" message="tns:ISettlementService_GetLessorSettlement_InvalidLessorIdFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPaidLessorSettlement">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISettlementService/GetPaidLessorSettlement" message="tns:ISettlementService_GetPaidLessorSettlement_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISettlementService/GetPaidLessorSettlementResponse" message="tns:ISettlementService_GetPaidLessorSettlement_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ISettlementService/GetPaidLessorSettlementUnpostedSettlementsPendingFault" name="UnpostedSettlementsPendingFault" message="tns:ISettlementService_GetPaidLessorSettlement_UnpostedSettlementsPendingFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ISettlementService/GetPaidLessorSettlementInvalidLessorIdFault" name="InvalidLessorIdFault" message="tns:ISettlementService_GetPaidLessorSettlement_InvalidLessorIdFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ISettlementService/GetPaidLessorSettlementNoSettlementsAvailableFault" name="NoSettlementsAvailableFault" message="tns:ISettlementService_GetPaidLessorSettlement_NoSettlementsAvailableFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SchedulePayment">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISettlementService/SchedulePayment" message="tns:ISettlementService_SchedulePayment_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISettlementService/SchedulePaymentResponse" message="tns:ISettlementService_SchedulePayment_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ISettlementService/SchedulePaymentInvalidLessorIdFault" name="InvalidLessorIdFault" message="tns:ISettlementService_SchedulePayment_InvalidLessorIdFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ISettlementService/SchedulePaymentNoSettlementsAvailableFault" name="NoSettlementsAvailableFault" message="tns:ISettlementService_SchedulePayment_NoSettlementsAvailableFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ISettlementService/SchedulePaymentUnpostedSettlementsPendingFault" name="UnpostedSettlementsPendingFault" message="tns:ISettlementService_SchedulePayment_UnpostedSettlementsPendingFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPaidLessorSettlements">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISettlementService/GetPaidLessorSettlements" message="tns:ISettlementService_GetPaidLessorSettlements_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISettlementService/GetPaidLessorSettlementsResponse" message="tns:ISettlementService_GetPaidLessorSettlements_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ISettlementService/GetPaidLessorSettlementsInvalidLessorIdFault" name="InvalidLessorIdFault" message="tns:ISettlementService_GetPaidLessorSettlements_InvalidLessorIdFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ISettlementService/GetPaidLessorSettlementsNoSettlementsAvailableFault" name="NoSettlementsAvailableFault" message="tns:ISettlementService_GetPaidLessorSettlements_NoSettlementsAvailableFault_FaultMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_ISettlementService" type="tns:ISettlementService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetLessor">
+      <soap:operation soapAction="http://tempuri.org/ISettlementService/GetLessor" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="InvalidLessorIdFault">
+        <soap:fault use="literal" name="InvalidLessorIdFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetLessors">
+      <soap:operation soapAction="http://tempuri.org/ISettlementService/GetLessors" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllLessors">
+      <soap:operation soapAction="http://tempuri.org/ISettlementService/GetAllLessors" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetLessorSettlement">
+      <soap:operation soapAction="http://tempuri.org/ISettlementService/GetLessorSettlement" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="NoSettlementsAvailableFault">
+        <soap:fault use="literal" name="NoSettlementsAvailableFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="UnpostedSettlementsPendingFault">
+        <soap:fault use="literal" name="UnpostedSettlementsPendingFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="InvalidLessorIdFault">
+        <soap:fault use="literal" name="InvalidLessorIdFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetPaidLessorSettlement">
+      <soap:operation soapAction="http://tempuri.org/ISettlementService/GetPaidLessorSettlement" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="UnpostedSettlementsPendingFault">
+        <soap:fault use="literal" name="UnpostedSettlementsPendingFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="InvalidLessorIdFault">
+        <soap:fault use="literal" name="InvalidLessorIdFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="NoSettlementsAvailableFault">
+        <soap:fault use="literal" name="NoSettlementsAvailableFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="SchedulePayment">
+      <soap:operation soapAction="http://tempuri.org/ISettlementService/SchedulePayment" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="InvalidLessorIdFault">
+        <soap:fault use="literal" name="InvalidLessorIdFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="NoSettlementsAvailableFault">
+        <soap:fault use="literal" name="NoSettlementsAvailableFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="UnpostedSettlementsPendingFault">
+        <soap:fault use="literal" name="UnpostedSettlementsPendingFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetPaidLessorSettlements">
+      <soap:operation soapAction="http://tempuri.org/ISettlementService/GetPaidLessorSettlements" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="InvalidLessorIdFault">
+        <soap:fault use="literal" name="InvalidLessorIdFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="NoSettlementsAvailableFault">
+        <soap:fault use="literal" name="NoSettlementsAvailableFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="SettlementService">
+    <wsdl:port name="BasicHttpBinding_ISettlementService" binding="tns:BasicHttpBinding_ISettlementService">
+      <soap:address location="http://netgateway/Settlements/Settlements.svc" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

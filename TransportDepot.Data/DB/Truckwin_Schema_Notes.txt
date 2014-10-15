@@ -1,0 +1,6 @@
+﻿
+Values of 'jantogal' in
+
+Table_Name	Column_Name
+ApVendor	  cId
+ApVendor	  cAccountId

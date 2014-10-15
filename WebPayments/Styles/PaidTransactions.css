@@ -1,0 +1,17 @@
+﻿
+div.list-title
+{
+  width:100%;
+  clear:both;
+  padding:15px;
+}
+div.list-title h
+{
+  font-family:Verdana;  
+}
+
+.list-title-data
+{
+  font-family:Verdana;
+  font-style:italic;  
+}

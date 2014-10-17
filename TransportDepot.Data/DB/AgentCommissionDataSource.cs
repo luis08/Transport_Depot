@@ -29,8 +29,9 @@ namespace TransportDepot.Data.DB
         StartLocation = new Location { State = c.Field<string>("StartState") },
         EndLocatioin = new Location { State = c.Field<string>("EndState") },
         InvoiceNumber = c.Field<string>("InvoiceNumber"),
-        InvoiceAmount = c.Field<decimal>(""),
-        TripNumber = c.Field<string>("TripNumber")
+        InvoiceAmount = c.Field<decimal>("InvoiceAmount"),
+        TripNumber = c.Field<string>("TripNumber"),
+        AgentId = c.Field<string>("DispatcherID")
       });
       return candidates;
     }
@@ -45,7 +46,7 @@ namespace TransportDepot.Data.DB
               DECLARE @LastBillDate DATETIME
               SELECT @LastBillDate = MAX( [dBillDate] ) 
               FROM [Truckwin_TDPD_Access]...[BillingHistory] [BH]
-                INNER JOIN [dbo].[Paid_Invoice_Commision] [C]
+                INNER JOIN [dbo].[Paid_Invoice_Commission] [C]
                   ON ( [BH].[cProNumber] = [C].[ArInvoiceNumber] )
               SELECT TOP 100 [cTractorID]           AS [TractorId]
                            , [BH].[dShipDate]       AS [StartDate]
@@ -55,6 +56,7 @@ namespace TransportDepot.Data.DB
                            , [BH].[cProNumber]      AS [InvoiceNumber]
                            , [BH].[cTripNumber]     AS [TripNumber]
                            , [R].[cuSubMainRevenue] AS [InvoiceAmount]
+                           , [R].[cAgent1Id]        AS [DispatcherID]
               FROM [Truckwin_TDPD_Access]...[Revenue] [R]
                 INNER JOIN [Truckwin_TDPD_Access]...[BillingHistory] [BH]
                   ON ( [R].[cProNumber] = [BH].[cProNumber] )
@@ -64,10 +66,12 @@ namespace TransportDepot.Data.DB
                 AND NOT EXISTS
                 (
                   SELECT * 
-                  FROM [dbo].[Paid_Invoice_Commissions] [C]
+                  FROM [dbo].[Paid_Invoice_Commission] [C]
                   WHERE ( [C].[ArInvoiceNumber] = [BH].[cProNumber] )
                 )
+                AND ( COALESCE( [cTractorID], '' ) != '' )
                 AND ( [dBillDate] > @LastBillDate )
+                
           ";
         }
       }

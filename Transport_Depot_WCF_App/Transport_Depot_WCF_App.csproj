@@ -68,6 +68,7 @@
     <Content Include="ARReports.svc" />
     <Content Include="Factoring.svc" />
     <Content Include="FactoringPdf.svc" />
+    <Content Include="Payables.svc" />
     <Content Include="Posting.svc" />
     <Content Include="Safety.svc" />
     <Content Include="SafetyReports.svc" />
@@ -100,6 +101,10 @@
     <ProjectReference Include="..\TransportDepot.Factoring\TransportDepot.Factoring.csproj">
       <Project>{96B80933-33F8-4106-A6ED-4C613D9FC7B5}</Project>
       <Name>TransportDepot.Factoring</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TransportDepot.Payables\TransportDepot.Payables.csproj">
+      <Project>{36C2394E-6CD9-4EAE-A6E0-1CCBC11C56D9}</Project>
+      <Name>TransportDepot.Payables</Name>
     </ProjectReference>
     <ProjectReference Include="..\TransportDepot.Reports\TransportDepot.Reports.csproj">
       <Project>{99DCAE7F-FC2B-47B1-B7E2-3ED681BEA49E}</Project>

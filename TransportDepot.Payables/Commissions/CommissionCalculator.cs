@@ -3,6 +3,7 @@ using TransportDepot.Models.Payables.Commissions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections;
+using System;
 
 namespace TransportDepot.Payables.Commissions
 {
@@ -39,10 +40,13 @@ namespace TransportDepot.Payables.Commissions
     {
       if (!(span is TripSpan))
       {
-        return null;
+        throw new InvalidOperationException("it is not a trip span");
       }
       var tripSpan = span as TripSpan;
-
+      if (tripSpan == null)
+      {
+        throw new InvalidOperationException("Trip Span is null");
+      }
       var commission = new InvoiceCommission
       {
         InvoiceNumber = tripSpan.InvoiceNumber,

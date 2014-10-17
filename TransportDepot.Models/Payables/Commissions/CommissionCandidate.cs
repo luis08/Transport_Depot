@@ -8,6 +8,7 @@ namespace TransportDepot.Models.Payables.Commissions
   public class CommissionCandidate
   {
     public string TractorId { get; set; }
+    public string AgentId { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public Location StartLocation { get; set; }

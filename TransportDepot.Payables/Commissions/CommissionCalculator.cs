@@ -49,22 +49,18 @@ namespace TransportDepot.Payables.Commissions
       }
       var commission = new InvoiceCommission
       {
+        AgentId = this.AgentId,
+        TractorId = this.TractorId,
         InvoiceNumber = tripSpan.InvoiceNumber,
         InvoiceAmount = tripSpan.InvoiceAmout
       };
       if (span.PreviousSpan == null)
       {
-        if (tripSpan.TractorHome.State.Equals(span.StartLocation.State, System.StringComparison.OrdinalIgnoreCase))
-        {
-          commission.Percent = 0.5m;
-        }
-        else
-        {
-          commission.Percent = 1.0m;
-        }
+        commission = GetHomeCommission(span, tripSpan, commission);
         return commission;
       }
-      if (tripSpan.TractorHome.State.Equals(span.StartLocation.State, System.StringComparison.OrdinalIgnoreCase))
+      if(( tripSpan.TractorHome != null )
+        && (tripSpan.TractorHome.State.Equals(span.StartLocation.State, System.StringComparison.OrdinalIgnoreCase)))
       {
         commission.Percent = 0.5m;
         return commission;
@@ -77,6 +73,27 @@ namespace TransportDepot.Payables.Commissions
         return commission;
       }
       commission.Percent = decimal.Zero;
+      return commission;
+    }
+
+    private InvoiceCommission GetHomeCommission(Span span, TripSpan tripSpan, InvoiceCommission commission)
+    {
+      if (tripSpan.TractorHome == null)
+      {
+        commission.Percent = 1.0m;
+      }
+      else if (string.IsNullOrEmpty(tripSpan.TractorHome.State))
+      {
+        commission.Percent = 1.0m;
+      }
+      else if (tripSpan.TractorHome.State.Equals(span.StartLocation.State, System.StringComparison.OrdinalIgnoreCase))
+      {
+        commission.Percent = 0.5m;
+      }
+      else
+      {
+        commission.Percent = 1.0m;
+      }
       return commission;
     }
   }

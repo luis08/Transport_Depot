@@ -92,5 +92,15 @@ namespace Transport_Depot_WCF
       };
       return paymentGlModel;
     }
+
+    private string GetSetting(string settingName)
+    {
+      string settingValue = System.Configuration.ConfigurationManager.AppSettings[settingName];
+      if (settingName == null)
+      {
+        return string.Empty;
+      }
+      return settingValue.Trim(); 
+    }
   }
 }

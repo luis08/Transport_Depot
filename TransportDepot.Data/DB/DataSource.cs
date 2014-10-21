@@ -19,6 +19,17 @@ namespace TransportDepot.Data.DB
       }
     }
 
+    internal int ExecuteNonQuery(SqlCommand cmd)
+    {
+      using (var cn = new SqlConnection(this.ConnectionString))
+      {
+        cmd.Connection = cn;
+        if (cn.State != ConnectionState.Open)
+          cn.Open();
+        return cmd.ExecuteNonQuery();
+      }
+    }
+
     internal DataTable FetchCommand(SqlCommand cmd)
     {
       var dataTable = new DataTable();

@@ -13,5 +13,7 @@ namespace TransportDepot.Payables.Commissions
     IEnumerable<InvoiceCommission> GetCommissions(IEnumerable<CommissionRequest> request);
     [OperationContract]
     IEnumerable<CommissionCandidate> GetCandidates();
+    [OperationContract]
+    void SaveNewCommisions();
   }
 }

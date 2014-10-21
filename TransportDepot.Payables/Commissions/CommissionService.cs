@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using TransportDepot.Models.Payables.Commissions;
 using System.ServiceModel;
-using System.Collections;
 using System.Linq;
 using TransportDepot.Data.DB;
 
@@ -82,6 +81,22 @@ namespace TransportDepot.Payables.Commissions
 
       var commissions = this.GetCommissions(requests);
       return commissions;
+    }
+
+
+    public void SaveNewCommisions()
+    {
+      var commissions = this.GetAllCommissions();
+      if (commissions == null)
+      {
+        return;
+      }
+      else if (commissions.Count() == 0)
+      {
+        return;
+      }
+      var dataSource = new AgentCommissionDataSource();
+      dataSource.Save(commissions);
     }
   }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using TransportDepot.Models.Payables.Commissions;
 using System.Data.SqlClient;
 using System.Data;
+using System.Xml.Linq;
 
 namespace TransportDepot.Data.DB
 {
@@ -13,6 +14,7 @@ namespace TransportDepot.Data.DB
     {
       var candidatesTable = new DataTable();
       var dataSource = new DataSource();
+      
       using (var cmd = new SqlCommand(Queries.Candidates))
       {
         candidatesTable = dataSource.FetchCommand(cmd);
@@ -34,6 +36,39 @@ namespace TransportDepot.Data.DB
         AgentId = c.Field<string>("DispatcherID")
       });
       return candidates;
+    }
+
+    public void Save(IEnumerable<InvoiceCommission> commissions)
+    {
+      var xml = this.GetCommissionsXml(commissions);
+      xml.Save(@"c:\transport_depot\commissions.xml");
+      
+    }
+
+    private XDocument GetCommissionsXml(IEnumerable<InvoiceCommission> commissions)
+    {
+      var glDeparment = this.GetSetting("TransportDepot.Payables.Commissions.NewCommission.GLDepartment");
+      var glAccount = this.GetSetting("TransportDepot.Payables.Commissions.NewCommission.GLAccount");
+      var xml = new XDocument(new XElement("commissions",
+        commissions.Select(c => new XElement("commission",
+          new XAttribute("agent", c.AgentId),
+          new XAttribute("arInvoiceNumber", c.InvoiceNumber),
+          new XAttribute("arInvoiceAmount", c.InvoiceAmount.ToString()),
+          new XAttribute("commissionTotal", decimal.Multiply( c.Percent, c.InvoiceAmount).ToString() ),
+          new XAttribute("tractorId", c.TractorId),
+          new XAttribute("glDepartment", glDeparment),
+          new XAttribute("glAccount", glAccount)))));
+      return xml;
+    }
+
+    private string GetSetting(string settingName)
+    {
+      string settingValue = System.Configuration.ConfigurationManager.AppSettings[settingName];
+      if (settingName == null)
+      {
+        return string.Empty;
+      }
+      return settingValue.Trim(); 
     }
 
     static class Queries
@@ -75,6 +110,16 @@ namespace TransportDepot.Data.DB
           ";
         }
       }
+
+      public static string SaveCommissions
+      {
+        get
+        {
+          return string.Empty;
+        }
+      }
     }
+
+    
   }
 }

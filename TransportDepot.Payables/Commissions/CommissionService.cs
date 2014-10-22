@@ -3,11 +3,16 @@ using TransportDepot.Models.Payables.Commissions;
 using System.ServiceModel;
 using System.Linq;
 using TransportDepot.Data.DB;
+using System;
 
 namespace TransportDepot.Payables.Commissions
 {
   public class CommissionService : ICommissionService
   {
+    private AgentCommissionDataSource _dataSource = new AgentCommissionDataSource();
+
+    private const string CycleStartDayKey = "TransportDepot.Payables.Commissions.NewCommission.CycleStartDay";
+    
     public IEnumerable<InvoiceCommission> GetCommissions(IEnumerable<CommissionRequest> requests)
     {
       if (requests == null)
@@ -21,6 +26,13 @@ namespace TransportDepot.Payables.Commissions
       {
         commissions.AddRange(GetCommissions(r));
       });
+
+      var tripInvoiceMappings = this._dataSource.GetTripInvoiceMappings(
+        commissions.Select(t => t.InvoiceNumber));
+
+      this.IgnoreDupes(commissions, tripInvoiceMappings);
+      this.SetDueDates(commissions, tripInvoiceMappings);  
+
       return commissions;
     }
 
@@ -40,7 +52,67 @@ namespace TransportDepot.Payables.Commissions
 
         truckCommissions.AddRange(calc.GetCommissions());
       }
+
       return truckCommissions;
+    }
+
+    private void SetDueDates(IEnumerable<InvoiceCommission> commissions, IEnumerable<TripInvoiceMapping> map)
+    {
+      var periodStart = GetPeriodStart();
+
+      commissions.Join( map, c=>c.InvoiceNumber, m=> m.InvoiceNumber, 
+        (c,m)=> new { Map = m, Commission = c }).ToList()
+        .ForEach(mc=>
+        {
+          var billDate = mc.Map.BillDate;
+          if (billDate.Day < periodStart)
+          {
+            mc.Commission.DueDate = new DateTime(billDate.Year, billDate.Month, periodStart);
+          }
+          else
+          {
+            var dueDate = new DateTime(billDate.Year, billDate.Month, periodStart).AddMonths(1);
+            mc.Commission.DueDate = dueDate;
+          }
+        });
+    }
+
+    private static int GetPeriodStart()
+    {
+      var periodStartString = System.Configuration.ConfigurationManager.AppSettings[CycleStartDayKey];
+      var periodStart = 1;
+      if (!int.TryParse(periodStartString, out periodStart))
+      {
+        periodStart = 15;
+      }
+      else if (periodStart > 28)
+      {
+        periodStart = 28;
+      }
+      else if (periodStart < 1)
+      {
+        periodStart = 1;
+      }
+      return periodStart;
+    }
+
+
+    private void IgnoreDupes(IEnumerable<InvoiceCommission> commissions, IEnumerable<TripInvoiceMapping> mappings)
+    {
+      Action<InvoiceCommission> zeroOutComission = (c) =>
+        {
+          c.Percent = 0.0m;
+        };
+
+      commissions.GroupBy(t => t.InvoiceNumber)
+        .Where(g => g.Count() > 1)
+        .SelectMany(g => g)
+        .ToList().ForEach(i => zeroOutComission(i));
+
+      commissions.GroupBy(t=>t.TripNumber)
+        .Where(g => g.Count() > 1)
+        .SelectMany(g => g)
+        .ToList().ForEach(i => zeroOutComission(i));
     }
 
 
@@ -53,14 +125,12 @@ namespace TransportDepot.Payables.Commissions
 
     public IEnumerable<CommissionCandidate> GetCandidates()
     {
-      var dataSource = new AgentCommissionDataSource();
-      var candicates = dataSource.GetCommissionCandidates();
+      var candicates = this._dataSource.GetCommissionCandidates();
       return candicates;
     }
 
     public IEnumerable<InvoiceCommission> GetAllCommissions()
     {
-     
       var candidates = this.GetCandidates();
       var requests = candidates.GroupBy(c => c.AgentId  )
         .Select(r => new CommissionRequest
@@ -95,8 +165,8 @@ namespace TransportDepot.Payables.Commissions
       {
         return;
       }
-      var dataSource = new AgentCommissionDataSource();
-      dataSource.Save(commissions);
+
+      this._dataSource.Save(commissions);
     }
   }
 }

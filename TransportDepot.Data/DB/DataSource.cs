@@ -50,5 +50,12 @@ namespace TransportDepot.Data.DB
         PageNumber = fromPage
       };
     }
+
+    internal static bool IsEmpty(DataTable mapTable)
+    {
+      if (mapTable == null)
+      { return true; }
+      return mapTable.Rows.Count > 0;
+    }
   }
 }

@@ -52,7 +52,10 @@ namespace TransportDepot.Payables.Commissions
         AgentId = this.AgentId,
         TractorId = this.TractorId,
         InvoiceNumber = tripSpan.InvoiceNumber,
-        InvoiceAmount = tripSpan.InvoiceAmout
+        InvoiceAmount = tripSpan.InvoiceAmout,
+        TripNumber = tripSpan.TripNumber,
+        Description = string.Format("A/R Invoice: {0}  Tractor: {1} ", 
+          tripSpan.InvoiceNumber, this.TractorId)
       };
       if (span.PreviousSpan == null)
       {

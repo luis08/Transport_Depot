@@ -66,6 +66,7 @@
     <Compile Include="Payables\Commissions\Location.cs" />
     <Compile Include="Payables\Commissions\Span.cs" />
     <Compile Include="Payables\Commissions\TripSpan.cs" />
+    <Compile Include="Payables\Commissions\TripInvoiceMapping.cs" />
     <Compile Include="Safety\Trailer.cs" />
     <Compile Include="UI\OptionModel.cs" />
     <Compile Include="Factoring\InvoiceFilter.cs" />

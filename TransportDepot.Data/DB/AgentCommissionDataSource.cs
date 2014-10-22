@@ -49,16 +49,25 @@ namespace TransportDepot.Data.DB
     {
       var glDeparment = this.GetSetting("TransportDepot.Payables.Commissions.NewCommission.GLDepartment");
       var glAccount = this.GetSetting("TransportDepot.Payables.Commissions.NewCommission.GLAccount");
+      var dueDates = this.GetCommissionDueDates(commissions.Select(c=>c.InvoiceNumber));
       var xml = new XDocument(new XElement("commissions",
         commissions.Select(c => new XElement("commission",
           new XAttribute("agent", c.AgentId),
           new XAttribute("arInvoiceNumber", c.InvoiceNumber),
           new XAttribute("arInvoiceAmount", c.InvoiceAmount.ToString()),
-          new XAttribute("commissionTotal", decimal.Multiply( c.Percent, c.InvoiceAmount).ToString() ),
+          new XAttribute("commissionTotal", decimal.Multiply( 
+            decimal.Multiply(c.Percent, 0.01m), c.InvoiceAmount).ToString() ),
           new XAttribute("tractorId", c.TractorId),
+          new XAttribute("mInvoiceDescription", this.GetInvoiceDescription(c)),
+          new XAttribute("dueDate", dueDates[c.InvoiceNumber].ToShortDateString()),
           new XAttribute("glDepartment", glDeparment),
           new XAttribute("glAccount", glAccount)))));
       return xml;
+    }
+
+    private string GetInvoiceDescription(InvoiceCommission c)
+    {
+      return string.Format("Pro: {0}  Truck: {1}", c.InvoiceNumber, c.TractorId);
     }
 
     private string GetSetting(string settingName)
@@ -71,6 +80,46 @@ namespace TransportDepot.Data.DB
       return settingValue.Trim(); 
     }
 
+    private Dictionary<string, DateTime> GetCommissionDueDates(IEnumerable<string> invoiceNumbers)
+    {
+      var invoiceNumbersXml = new XDocument("invoices",
+        invoiceNumbers.Select(invNum => new XElement("invoice", invNum)));
+
+      var tbl = new DataTable();
+      var dict = tbl.AsEnumerable()
+        .ToDictionary(i => i.Field<string>("InvoiceNumber"), i => i.Field<DateTime>("BillDate"));
+      return dict;
+    }
+
+    public IEnumerable<TripInvoiceMapping> GetTripInvoiceMappings(IEnumerable<string> invoiceNumbers)
+    {
+      
+      var dataSource = new DataSource();
+      var invoicesXml = new XDocument( "invoices", 
+        invoiceNumbers.Select(i=> new XElement("invoice", i)));
+
+      var cmd = new SqlCommand
+      {
+        CommandText = Queries.InvoiceMappings,
+        CommandType = CommandType.Text
+      };
+      cmd.Parameters.AddWithValue("@InvoincesString", invoicesXml.ToString());
+      var mapTable = dataSource.FetchCommand(cmd);
+
+      if (DataSource.IsEmpty(mapTable))
+      {
+        return new List<TripInvoiceMapping>();
+      }
+      var map = mapTable.AsEnumerable()
+        .Select(t => new TripInvoiceMapping
+        {
+          TripNumber = t.Field<string>("TripNumber"),
+          InvoiceNumber = t.Field<string>("InvoiceNumber"),
+          BillDate = t.Field<DateTime>("BillDate")
+        });
+      return map;
+    }
+        
     static class Queries
     {
       public static string Candidates
@@ -116,6 +165,32 @@ namespace TransportDepot.Data.DB
         get
         {
           return string.Empty;
+        }
+      }
+
+      public static string InvoiceMappings
+      {
+        get
+        {
+          return @"
+            DECLARE @Invoinces XML
+            SET @Invoices = CAST( @InvoicesString AS XML )
+
+            ;WITH [Invoices] AS
+            (
+              SELECT [T].[C].value('.', 'varchar(20)') AS [InvoiceNumber]
+              FROM @Invoices.nodes('//invoice') AS T(C)
+            )
+            SELECT [cTripNumber] AS [TripNumber]
+                 , [cProNumber] AS [InvoiceNumber]
+                 , MAX( [dBillDate] ) AS [BillDate]
+            FROM [Truckwin_TDPD_Access]...[BillingHistory] [BH]
+              INNER JOIN [Invoices] [I]
+                ON ( [I].[InvoiceNumber] = [BH].[cProNumber] )
+            GROUP BY [cTripNumber]
+                 , [cProNumber]
+             
+          ";
         }
       }
     }

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://www.transportdepot.net/Payables" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.transportdepot.net/Payables" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://www.transportdepot.net/Payables/Imports">
+      <xsd:import schemaLocation="http://192.168.1.200/Settlements/Payables.svc?xsd=xsd0" namespace="http://www.transportdepot.net/Payables" />
+      <xsd:import schemaLocation="http://192.168.1.200/Settlements/Payables.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://192.168.1.200/Settlements/Payables.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/TransportDepot.Models.Payables.Commissions" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="ICommissionService_GetAllCommissions_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllCommissions" />
+  </wsdl:message>
+  <wsdl:message name="ICommissionService_GetAllCommissions_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllCommissionsResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICommissionService_SaveCommissions_InputMessage">
+    <wsdl:part name="parameters" element="tns:SaveCommissions" />
+  </wsdl:message>
+  <wsdl:message name="ICommissionService_SaveCommissions_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SaveCommissionsResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICommissionService_GetCommissions_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetCommissions" />
+  </wsdl:message>
+  <wsdl:message name="ICommissionService_GetCommissions_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetCommissionsResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICommissionService_GetCandidates_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetCandidates" />
+  </wsdl:message>
+  <wsdl:message name="ICommissionService_GetCandidates_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetCandidatesResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICommissionService_SaveNewCommisions_InputMessage">
+    <wsdl:part name="parameters" element="tns:SaveNewCommisions" />
+  </wsdl:message>
+  <wsdl:message name="ICommissionService_SaveNewCommisions_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SaveNewCommisionsResponse" />
+  </wsdl:message>
+  <wsdl:portType name="ICommissionService">
+    <wsdl:operation name="GetAllCommissions">
+      <wsdl:input wsaw:Action="http://www.transportdepot.net/Payables/ICommissionService/GetAllCommissions" message="tns:ICommissionService_GetAllCommissions_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.transportdepot.net/Payables/ICommissionService/GetAllCommissionsResponse" message="tns:ICommissionService_GetAllCommissions_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SaveCommissions">
+      <wsdl:input wsaw:Action="http://www.transportdepot.net/Payables/ICommissionService/SaveCommissions" message="tns:ICommissionService_SaveCommissions_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.transportdepot.net/Payables/ICommissionService/SaveCommissionsResponse" message="tns:ICommissionService_SaveCommissions_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCommissions">
+      <wsdl:input wsaw:Action="http://www.transportdepot.net/Payables/ICommissionService/GetCommissions" message="tns:ICommissionService_GetCommissions_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.transportdepot.net/Payables/ICommissionService/GetCommissionsResponse" message="tns:ICommissionService_GetCommissions_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCandidates">
+      <wsdl:input wsaw:Action="http://www.transportdepot.net/Payables/ICommissionService/GetCandidates" message="tns:ICommissionService_GetCandidates_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.transportdepot.net/Payables/ICommissionService/GetCandidatesResponse" message="tns:ICommissionService_GetCandidates_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SaveNewCommisions">
+      <wsdl:input wsaw:Action="http://www.transportdepot.net/Payables/ICommissionService/SaveNewCommisions" message="tns:ICommissionService_SaveNewCommisions_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.transportdepot.net/Payables/ICommissionService/SaveNewCommisionsResponse" message="tns:ICommissionService_SaveNewCommisions_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

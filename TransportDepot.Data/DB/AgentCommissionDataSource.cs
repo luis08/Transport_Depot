@@ -10,8 +10,11 @@ namespace TransportDepot.Data.DB
 {
   public class AgentCommissionDataSource
   {
+    private const string DecimalToStringFormat = "G";
+
     public IEnumerable<CommissionCandidate> GetCommissionCandidates()
     {
+
       var candidatesTable = new DataTable();
       var dataSource = new DataSource();
       
@@ -41,69 +44,145 @@ namespace TransportDepot.Data.DB
     public void Save(IEnumerable<InvoiceCommission> commissions)
     {
       var xml = this.GetCommissionsXml(commissions);
-      xml.Save(@"c:\transport_depot\commissions.xml");
+      var dataSource = new DataSource();
+      var insertedCommissions =this.TrackedCommissionPaid(xml, dataSource, commissions.Count());
+      if (insertedCommissions == 0)
+      {
+        throw new InvalidOperationException("no commissions inserted");
+      }
+      else if (insertedCommissions != commissions.Count())
+      {
+        throw new InvalidOperationException("The number of commissions is invalid");
+      }
+      {
+        this.SaveApInvoice(xml, dataSource);
+      }
       
+    }
+
+    public Dictionary<string, Location> GetTractorHomes(IEnumerable<string> tripIds)
+    {
+      var xml = new XDocument(new XElement("trips",
+        tripIds.Select(t => new XElement("trip", t))));
+      var tractorHomes = new DataTable();
+      using (var cmd = new SqlCommand
+      {
+        CommandText = Queries.TractorHome,
+        CommandType = CommandType.Text
+      })
+      {
+        var dataSource = new DataSource();
+        cmd.Parameters.AddWithValue("@TripsXmlString", xml.ToString());
+        tractorHomes = dataSource.FetchCommand(cmd);
+      }
+
+      if (tractorHomes.Rows.Count == 0)
+      {
+        return new Dictionary<string, Location>();
+      }
+      var homes = tractorHomes.AsEnumerable()
+        .ToDictionary(l => l.Field<string>("TractorID"), l =>
+        {
+          var location =l.Field<string>("State");
+          if (string.IsNullOrEmpty(location))
+          {
+            return null;
+          }
+          return new Location { State = location };
+        });
+      return homes;
+    }
+
+    private int TrackedCommissionPaid(XDocument commissionsXml, DataSource dataSource, int commissionCount)
+    {
+      commissionsXml.Save(@"c:\transport_depot\commissionsToSave.xml");
+      var recordsAffected = 0;
+      using(var cmd = new SqlCommand
+      {
+        CommandText = Queries.TrackCommissionPaid,
+        CommandType = CommandType.Text
+      })
+      {
+        cmd.Parameters.AddWithValue("@CommissionsXmlString", commissionsXml.ToString());
+        recordsAffected = dataSource.ExecuteNonQuery(cmd);
+        return recordsAffected;
+      }
+    }
+
+
+    private void SaveApInvoice(XDocument commissionsXml, DataSource dataSource)
+    {
+      using (var cmd = new SqlCommand
+      {
+        CommandText = Queries.SaveCommissionAPInvoices,
+        CommandType = CommandType.Text
+      })
+      {
+        cmd.Parameters.AddWithValue("@CommissionsXmlString", commissionsXml.ToString());
+        dataSource.ExecuteNonQuery(cmd);
+      }
     }
 
     private XDocument GetCommissionsXml(IEnumerable<InvoiceCommission> commissions)
     {
-      var glDeparment = this.GetSetting("TransportDepot.Payables.Commissions.NewCommission.GLDepartment");
+      
+      var glDepartment = this.GetSetting("TransportDepot.Payables.Commissions.NewCommission.GLDepartment");
       var glAccount = this.GetSetting("TransportDepot.Payables.Commissions.NewCommission.GLAccount");
-      var dueDates = this.GetCommissionDueDates(commissions.Select(c=>c.InvoiceNumber));
+      
+      var reference = "Dispatch Com";//varchar 12
+      var invoiceDate = DateTime.Today.ToShortDateString();
       var xml = new XDocument(new XElement("commissions",
+        new XAttribute("glDepartment", glDepartment),
+        new XAttribute("glAccount", glAccount),
+        new XAttribute("invoiceDate", invoiceDate),
+        new XAttribute("reference", reference),
         commissions.Select(c => new XElement("commission",
           new XAttribute("agent", c.AgentId),
+          new XAttribute("apInvoiceNumber", c.TripNumber),
           new XAttribute("arInvoiceNumber", c.InvoiceNumber),
-          new XAttribute("arInvoiceAmount", c.InvoiceAmount.ToString()),
-          new XAttribute("commissionTotal", decimal.Multiply( 
-            decimal.Multiply(c.Percent, 0.01m), c.InvoiceAmount).ToString() ),
+          new XAttribute("arInvoiceAmount", c.InvoiceAmount.ToString(DecimalToStringFormat)),
+          new XAttribute("percentCommission", decimal.Divide( c.Percent, 100m )),
+          new XAttribute("commissionTotal", decimal.Round(decimal.Multiply( 
+            decimal.Multiply(c.Percent, 0.01m), 
+            c.InvoiceAmount), 2).ToString() ),
           new XAttribute("tractorId", c.TractorId),
           new XAttribute("mInvoiceDescription", this.GetInvoiceDescription(c)),
-          new XAttribute("dueDate", dueDates[c.InvoiceNumber].ToShortDateString()),
-          new XAttribute("glDepartment", glDeparment),
-          new XAttribute("glAccount", glAccount)))));
+          new XAttribute("dueDate", c.DueDate.ToShortDateString())
+          ))));
       return xml;
     }
 
     private string GetInvoiceDescription(InvoiceCommission c)
     {
-      return string.Format("Pro: {0}  Truck: {1}", c.InvoiceNumber, c.TractorId);
+      return string.Format("Pro: {0} - {1:P} of {2:G}  Truck: {3}", c.InvoiceNumber, 
+         decimal.Divide(c.Percent, 100.0m) , 
+         c.InvoiceAmount, c.TractorId);
     }
 
     private string GetSetting(string settingName)
     {
-      string settingValue = System.Configuration.ConfigurationManager.AppSettings[settingName];
+      
       if (settingName == null)
       {
-        return string.Empty;
+        var message = string.Format("Setting '{0}' must be defined in the config file", settingName);
+        throw new InvalidOperationException(message);
       }
+      string settingValue = System.Configuration.ConfigurationManager.AppSettings[settingName];
       return settingValue.Trim(); 
-    }
-
-    private Dictionary<string, DateTime> GetCommissionDueDates(IEnumerable<string> invoiceNumbers)
-    {
-      var invoiceNumbersXml = new XDocument("invoices",
-        invoiceNumbers.Select(invNum => new XElement("invoice", invNum)));
-
-      var tbl = new DataTable();
-      var dict = tbl.AsEnumerable()
-        .ToDictionary(i => i.Field<string>("InvoiceNumber"), i => i.Field<DateTime>("BillDate"));
-      return dict;
     }
 
     public IEnumerable<TripInvoiceMapping> GetTripInvoiceMappings(IEnumerable<string> invoiceNumbers)
     {
-      
       var dataSource = new DataSource();
-      var invoicesXml = new XDocument( "invoices", 
-        invoiceNumbers.Select(i=> new XElement("invoice", i)));
-
+      var invoicesXml = new XDocument( new XElement("invoices", 
+        invoiceNumbers.Select(i=> new XElement("invoice", i))));
+      
       var cmd = new SqlCommand
       {
         CommandText = Queries.InvoiceMappings,
         CommandType = CommandType.Text
       };
-      cmd.Parameters.AddWithValue("@InvoincesString", invoicesXml.ToString());
+      cmd.Parameters.AddWithValue("@InvoicesString", invoicesXml.ToString());
       var mapTable = dataSource.FetchCommand(cmd);
 
       if (DataSource.IsEmpty(mapTable))
@@ -117,6 +196,7 @@ namespace TransportDepot.Data.DB
           InvoiceNumber = t.Field<string>("InvoiceNumber"),
           BillDate = t.Field<DateTime>("BillDate")
         });
+      
       return map;
     }
         
@@ -132,7 +212,7 @@ namespace TransportDepot.Data.DB
               FROM [Truckwin_TDPD_Access]...[BillingHistory] [BH]
                 INNER JOIN [dbo].[Paid_Invoice_Commission] [C]
                   ON ( [BH].[cProNumber] = [C].[ArInvoiceNumber] )
-              SELECT TOP 100 [cTractorID]           AS [TractorId]
+              SELECT         [cTractorID]           AS [TractorId]
                            , [BH].[dShipDate]       AS [StartDate]
                            , [BH].[dTripFinishDate] AS [EndDate]
                            , [BH].[cOrigState]      AS [StartState]
@@ -160,11 +240,115 @@ namespace TransportDepot.Data.DB
         }
       }
 
-      public static string SaveCommissions
+      public static string SaveCommissionAPInvoices
       {
         get
         {
-          return string.Empty;
+          return @"
+          /*  Needs parameter @CommissionsXmlString  */
+
+          DECLARE @Commissions XML
+                
+          SELECT @Commissions = CAST(@CommissionsXmlString AS XML)
+
+          /* Invoice Deetails */
+          ;WITH [NewCommissions] AS
+          (
+            SELECT [T].[c].value('./@agent', 'varchar(30)') AS [cVendorId]
+                 , [T].[c].value('./@apInvoiceNumber', 'varchar(30)') AS [cInvoiceNo]
+                 , 1 AS [niDetailNumber] 
+                 , [T].[c].value('./@mInvoiceDescription', 'varchar(200)') AS [mInvoiceDesc]  
+                 , [T].[c].value('../@glDepartment', 'varchar(30)') AS [cGlDept]
+                 , [T].[c].value('../@glAccount', 'varchar(30)') AS [cGlAcct]
+                 , 0 AS [b1099] 
+                 , [T].[c].value('./@percentCommission', 'smallmoney') AS [cuQuantity]
+                 , [T].[c].value('./@arInvoiceAmount', 'smallmoney') AS [cuUnitCost]
+            FROM @commissions.nodes('//commission') AS T(c)
+          )
+
+          INSERT INTO [Truckwin_TDPD_Access]...[ApInvoiceDetail]
+          (
+                [cVendorId] 
+              , [cInvoiceNumber] 
+              , [niDetailNumber] 
+              , [mDescription] 
+              , [cGlDept] 
+              , [cGlAcct] 
+              , [b1099] 
+              , [cuQuantity] 
+              , [cuUnitCost] 
+          )
+
+          SELECT [cVendorId] 
+               , [cInvoiceNo] AS [cInvoiceNumber] 
+               , [niDetailNumber] 
+               , [mInvoiceDesc]
+               , [cGlDept] 
+               , [cGlAcct] 
+               , [b1099] 
+               , [cuQuantity] 
+               , [cuUnitCost] 
+          FROM [NewCommissions]
+
+
+          ;WITH [NewCommissions] AS
+          (
+            SELECT [T].[c].value('./@apInvoiceNumber', 'varchar(30)') AS [cInvoiceNo]
+                 , [T].[c].value('./@agent', 'varchar(30)') AS [cVendorId]
+                 , [T].[c].value('../@invoiceDate', 'varchar(30)') AS [dInvoiceDate]
+                 , [T].[c].value('./@arInvoiceNumber', 'varchar(30)') AS [ArInvoiceNumber]
+                 , [T].[c].value('./@arInvoiceAmount', 'smallmoney') AS [ArInvoiceAmount]
+                 , [T].[c].value('./@commissionTotal', 'smallmoney') AS [cuInvoiceTotal]
+                 , [T].[c].value('./@commissionTotal', 'smallmoney') AS [cuBalanceDue]
+                 , [T].[c].value('./@tractorId', 'varchar(30)') AS [cTractorId]
+                 , [T].[c].value('./@mInvoiceDescription', 'varchar(200)') AS [mInvoiceDesc]  
+                 , '' AS [cTermsCode] 
+                 , [T].[c].value('./@dueDate', 'datetime') AS [dDueDate]  
+                 , [T].[c].value('../@invoiceDate', 'varchar(30)') AS [dDiscountDate] 
+                 , 0.0 AS [cuDiscountAmt]
+                 , 0.0 AS [cuGSTAmt]
+                 , 0.0 AS [cuPSTAmt]
+                 , [T].[c].value('../@glDepartment', 'varchar(30)') AS [cGlDept]
+                 , [T].[c].value('../@glAccount', 'varchar(30)') AS [cGlAcct]
+                 , 0 AS [bSelected]
+            FROM @commissions.nodes('//commission') AS T(c)
+          )
+          
+          INSERT INTO [Truckwin_TDPD_Access]...[ApInvoice]
+          (
+                [cInvoiceNo] 
+              , [cVendorId] 
+              , [dInvoiceDate] 
+              , [cuInvoiceTotal] 
+              , [cuBalanceDue] 
+              , [mInvoiceDesc] 
+              , [cTermsCode] 
+              , [dDueDate] 
+              , [dDiscountDate] 
+              , [cuDiscountAmt] 
+              , [cuGSTAmt] 
+              , [cuPSTAmt] 
+              , [bSelected] 
+          )
+
+          SELECT
+                [cInvoiceNo] 
+              , [cVendorId] 
+              , [dInvoiceDate] 
+              , [cuInvoiceTotal] 
+              , [cuBalanceDue] 
+              , [mInvoiceDesc] 
+              , [cTermsCode] 
+              , [dDueDate] 
+              , [dDiscountDate] 
+              , [cuDiscountAmt] 
+              , [cuGSTAmt] 
+              , [cuPSTAmt] 
+              , [bSelected] 
+          FROM [NewCommissions]       
+
+
+        ";
         }
       }
 
@@ -173,7 +357,7 @@ namespace TransportDepot.Data.DB
         get
         {
           return @"
-            DECLARE @Invoinces XML
+            DECLARE @Invoices XML
             SET @Invoices = CAST( @InvoicesString AS XML )
 
             ;WITH [Invoices] AS
@@ -193,6 +377,70 @@ namespace TransportDepot.Data.DB
           ";
         }
       }
+
+      public static string TrackCommissionPaid
+      {
+        get
+        {
+          return @"
+          DECLARE @Commissions XML
+          SET @Commissions = CAST( @CommissionsXmlString AS XML )
+
+
+          INSERT INTO [TDPD].[dbo].[Paid_Invoice_Commission]
+                   ([ApInvoiceNumber]
+                   ,[ArInvoiceNumber]
+                   ,[DueDate])
+          SELECT [T].[C].value('./@apInvoiceNumber', 'varchar(20)') AS [ApInvoiceNumber]
+              ,  [T].[C].value('./@arInvoiceNumber', 'varchar(20)') AS [ArInvoiceNumber]
+              ,  [T].[C].value('./@dueDate', 'varchar(20)')         AS [DueDate]
+          FROM @Commissions.nodes('//commission') AS T(C) 
+      ";
+        }
+      }
+
+      public static string TractorHome
+      {
+        get
+        {
+          return @"
+
+            DECLARE @Trips XML
+            SET @Trips = CAST( @TripsXmlString AS XML )
+
+            ;WITH [Trips] AS
+            (
+              SELECT T.C.value('.', 'varchar(20)') AS [TripNumber]
+              FROM @Trips.nodes('//trip') AS T(C)
+            ), [Tractors] AS
+            (
+              SELECT [ATH].[cTractorID] AS [TractorID]
+                   , CASE 
+                        WHEN ( [SqlL].[Home_State] IS NOT NULL ) THEN [SqlL].[Home_State]
+                        WHEN ( [L].[cState]   IS NOT NULL ) THEN [L].[cState]
+                        ELSE ''
+                     END AS [State]
+              FROM [Truckwin_TDPD_Access]...[AssignedToHist] [ATH]
+                LEFT JOIN [dbo].[Lessor] [SqlL]
+                  ON [ATH].[cLessorId1] = [SqlL].[LessorID]
+                LEFT JOIN [Truckwin_TDPD_Access]...[RsLessor] [L]
+                  ON [ATH].[cLessorId1] = [L].[cId]
+              WHERE EXISTS
+              (
+                SELECT * 
+                FROM [Trips] [T]
+                WHERE [T].[TripNumber] = [ATH].[cTripNumber]
+              )
+            )
+
+            SELECT [TractorID], [State]
+            FROM [Tractors]
+            WHERE ( COALESCE( [TractorID], '' ) <> '' )
+            GROUP BY [TractorID], [State]
+        ";
+        }
+      }
+    
     }
 
     

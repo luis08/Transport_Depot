@@ -55,7 +55,8 @@ namespace TransportDepot.Data.DB
     {
       if (mapTable == null)
       { return true; }
-      return mapTable.Rows.Count > 0;
+      return mapTable.Rows.Count == 0;
     }
+
   }
 }

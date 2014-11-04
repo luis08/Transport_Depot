@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://www.transportdepot.net/Payables" elementFormDefault="qualified" targetNamespace="http://www.transportdepot.net/Payables" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://192.168.1.200/Settlements/Payables.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/TransportDepot.Models.Payables.Commissions" />
+  <xs:element name="GetAllCommissions">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetAllCommissionsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/TransportDepot.Models.Payables.Commissions" minOccurs="0" name="GetAllCommissionsResult" nillable="true" type="q1:ArrayOfInvoiceCommission" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SaveCommissions">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/TransportDepot.Models.Payables.Commissions" minOccurs="0" name="commissions" nillable="true" type="q2:ArrayOfInvoiceCommission" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SaveCommissionsResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCommissions">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/TransportDepot.Models.Payables.Commissions" minOccurs="0" name="request" nillable="true" type="q3:ArrayOfCommissionRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCommissionsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/TransportDepot.Models.Payables.Commissions" minOccurs="0" name="GetCommissionsResult" nillable="true" type="q4:ArrayOfInvoiceCommission" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCandidates">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCandidatesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/TransportDepot.Models.Payables.Commissions" minOccurs="0" name="GetCandidatesResult" nillable="true" type="q5:ArrayOfCommissionCandidate" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SaveNewCommisions">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SaveNewCommisionsResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

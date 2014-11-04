@@ -38,25 +38,9 @@ namespace TransportDepot.Payables.Commissions
 
     private InvoiceCommission GetCommission(Span span)
     {
-      if (!(span is TripSpan))
-      {
-        throw new InvalidOperationException("it is not a trip span");
-      }
-      var tripSpan = span as TripSpan;
-      if (tripSpan == null)
-      {
-        throw new InvalidOperationException("Trip Span is null");
-      }
-      var commission = new InvoiceCommission
-      {
-        AgentId = this.AgentId,
-        TractorId = this.TractorId,
-        InvoiceNumber = tripSpan.InvoiceNumber,
-        InvoiceAmount = tripSpan.InvoiceAmout,
-        TripNumber = tripSpan.TripNumber,
-        Description = string.Format("A/R Invoice: {0}  Tractor: {1} ", 
-          tripSpan.InvoiceNumber, this.TractorId)
-      };
+      var tripSpan = GetTripSpan(span);
+      var commission = CreateInvoiceCommission(tripSpan);
+
       if (span.PreviousSpan == null)
       {
         commission = GetHomeCommission(span, tripSpan, commission);
@@ -77,6 +61,36 @@ namespace TransportDepot.Payables.Commissions
       }
       commission.Percent = decimal.Zero;
       return commission;
+    }
+
+    private InvoiceCommission CreateInvoiceCommission(TripSpan tripSpan)
+    {
+      var commission = new InvoiceCommission
+      {
+        AgentId = this.AgentId,
+        TractorId = this.TractorId,
+        InvoiceNumber = tripSpan.InvoiceNumber,
+        InvoiceAmount = tripSpan.InvoiceAmout,
+        TripNumber = tripSpan.TripNumber,
+        Description = string.Format("A/R Invoice: {0}  Tractor: {1} ",
+          tripSpan.InvoiceNumber, this.TractorId)
+
+      };
+      return commission;
+    }
+
+    private TripSpan GetTripSpan(Span span)
+    {
+      if (!(span is TripSpan))
+      {
+        throw new InvalidOperationException("it is not a trip span");
+      }
+      var tripSpan = span as TripSpan;
+      if (tripSpan == null)
+      {
+        throw new InvalidOperationException("Trip Span is null");
+      }
+      return tripSpan;
     }
 
     private InvoiceCommission GetHomeCommission(Span span, TripSpan tripSpan, InvoiceCommission commission)

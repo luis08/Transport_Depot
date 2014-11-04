@@ -59,7 +59,7 @@ namespace TransportDepot.Payables.Commissions
     private void SetDueDates(IEnumerable<InvoiceCommission> commissions, IEnumerable<TripInvoiceMapping> map)
     {
       var periodStart = GetPeriodStart();
-
+      
       commissions.Join( map, c=>c.InvoiceNumber, m=> m.InvoiceNumber, 
         (c,m)=> new { Map = m, Commission = c }).ToList()
         .ForEach(mc=>
@@ -103,12 +103,12 @@ namespace TransportDepot.Payables.Commissions
         {
           c.Percent = 0.0m;
         };
-
+      /* Partials */
       commissions.GroupBy(t => t.InvoiceNumber)
         .Where(g => g.Count() > 1)
         .SelectMany(g => g)
         .ToList().ForEach(i => zeroOutComission(i));
-
+      /* One invoice with more than one trip */
       commissions.GroupBy(t=>t.TripNumber)
         .Where(g => g.Count() > 1)
         .SelectMany(g => g)
@@ -132,6 +132,7 @@ namespace TransportDepot.Payables.Commissions
     public IEnumerable<InvoiceCommission> GetAllCommissions()
     {
       var candidates = this.GetCandidates();
+      var tractorHomes = this._dataSource.GetTractorHomes( candidates.Select(c=>c.TripNumber) );
       var requests = candidates.GroupBy(c => c.AgentId  )
         .Select(r => new CommissionRequest
         {
@@ -145,7 +146,9 @@ namespace TransportDepot.Payables.Commissions
             EndLocation = t.EndLocatioin,
             InvoiceNumber = t.InvoiceNumber,
             InvoiceAmout = t.InvoiceAmount,
-            TripNumber = t.TripNumber
+            TripNumber = t.TripNumber, 
+            TractorHome = tractorHomes.ContainsKey(t.TractorId ) ? 
+                            tractorHomes[t.TractorId] : null
           })
         });
 
@@ -157,6 +160,11 @@ namespace TransportDepot.Payables.Commissions
     public void SaveNewCommisions()
     {
       var commissions = this.GetAllCommissions();
+      this.SaveCommissions(commissions);
+    }
+
+    public void SaveCommissions(IEnumerable<InvoiceCommission> commissions)
+    {
       if (commissions == null)
       {
         return;

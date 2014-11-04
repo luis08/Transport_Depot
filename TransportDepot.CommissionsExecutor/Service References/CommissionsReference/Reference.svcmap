@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="c80898e1-f38e-4a3a-99a5-2fbe1b4185a7" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://192.168.1.200/settlements/Payables.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="Payables.xsd" MetadataType="Schema" ID="bff575cc-67fd-42e9-a22b-62a0b25dd071" SourceId="1" SourceUrl="http://192.168.1.200/Settlements/Payables.svc?xsd=xsd2" />
+    <MetadataFile FileName="Payables1.xsd" MetadataType="Schema" ID="3f4269af-43be-41ed-b24f-d71bc7ece16d" SourceId="1" SourceUrl="http://192.168.1.200/Settlements/Payables.svc?xsd=xsd1" />
+    <MetadataFile FileName="Payables2.xsd" MetadataType="Schema" ID="eac1aa8b-14e9-43bb-a5c9-c6b947cf8b2e" SourceId="1" SourceUrl="http://192.168.1.200/Settlements/Payables.svc?xsd=xsd0" />
+    <MetadataFile FileName="Payables.disco" MetadataType="Disco" ID="2fb8de2b-0e88-4a11-b108-7691e633e490" SourceId="1" SourceUrl="http://192.168.1.200/Settlements/Payables.svc?disco" />
+    <MetadataFile FileName="CommissionService.wsdl" MetadataType="Wsdl" ID="b852d6ae-fb6f-4c90-8361-776212d42839" SourceId="1" SourceUrl="http://192.168.1.200/Settlements/Payables.svc?wsdl" />
+    <MetadataFile FileName="Payables.wsdl" MetadataType="Wsdl" ID="d8d617e3-b774-4a78-9c19-44fc9255980c" SourceId="1" SourceUrl="http://192.168.1.200/Settlements/Payables.svc?wsdl=wsdl0" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

@@ -66,6 +66,7 @@
     <Content Include="AccountsReceivable.svc" />
     <Content Include="Business.svc" />
     <Content Include="ARReports.svc" />
+    <Content Include="Apex.svc" />
     <Content Include="Factoring.svc" />
     <Content Include="FactoringPdf.svc" />
     <Content Include="Payables.svc" />
@@ -113,6 +114,10 @@
     <ProjectReference Include="..\TransportDepot.Safety\TransportDepot.Safety.csproj">
       <Project>{08D02CA0-FB44-4251-9840-B265ECF3A71F}</Project>
       <Name>TransportDepot.Safety</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TransportDepot.Utilities\TransportDepot.Utilities.csproj">
+      <Project>{7B5A2726-523E-43B6-9FEB-252A90A2AA54}</Project>
+      <Name>TransportDepot.Utilities</Name>
     </ProjectReference>
     <ProjectReference Include="..\Transport_Depot_AutomaticDeductions\Transport_Depot_AutomaticDeductions.csproj">
       <Project>{17D2797B-D629-4B41-87D5-81AF9ACE1878}</Project>

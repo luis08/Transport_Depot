@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransportDepot.Dispatch", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransportDepot.Payables", "TransportDepot.Payables\TransportDepot.Payables.csproj", "{36C2394E-6CD9-4EAE-A6E0-1CCBC11C56D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransportDepot.Utilities", "TransportDepot.Utilities\TransportDepot.Utilities.csproj", "{7B5A2726-523E-43B6-9FEB-252A90A2AA54}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -167,6 +169,16 @@ Global
 		{36C2394E-6CD9-4EAE-A6E0-1CCBC11C56D9}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{36C2394E-6CD9-4EAE-A6E0-1CCBC11C56D9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{36C2394E-6CD9-4EAE-A6E0-1CCBC11C56D9}.Release|x86.ActiveCfg = Release|Any CPU
+		{7B5A2726-523E-43B6-9FEB-252A90A2AA54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B5A2726-523E-43B6-9FEB-252A90A2AA54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B5A2726-523E-43B6-9FEB-252A90A2AA54}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{7B5A2726-523E-43B6-9FEB-252A90A2AA54}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{7B5A2726-523E-43B6-9FEB-252A90A2AA54}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7B5A2726-523E-43B6-9FEB-252A90A2AA54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B5A2726-523E-43B6-9FEB-252A90A2AA54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B5A2726-523E-43B6-9FEB-252A90A2AA54}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{7B5A2726-523E-43B6-9FEB-252A90A2AA54}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{7B5A2726-523E-43B6-9FEB-252A90A2AA54}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

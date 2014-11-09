@@ -35,6 +35,7 @@ namespace TransportDepot.Data.DB
         EndLocatioin = new Location { State = c.Field<string>("EndState") },
         InvoiceNumber = c.Field<string>("InvoiceNumber"),
         InvoiceAmount = c.Field<decimal>("InvoiceAmount"),
+        LessorRevenue = c.Field<decimal>("LessorRevenue"),
         TripNumber = c.Field<string>("TripNumber"),
         AgentId = c.Field<string>("DispatcherID")
       });
@@ -93,9 +94,55 @@ namespace TransportDepot.Data.DB
       return homes;
     }
 
+    public IEnumerable<PreviousTrip> GetPreviousTrips(IEnumerable<CommissionCandidate> candidates)
+    {
+      var candidatesXml = new XDocument(new XElement("trips",
+        candidates.Select(c => new XElement("trip", c.TripNumber,
+          new XAttribute("tractorId", c.TractorId)))));
+
+      var tbl = new DataTable();
+      var dataSource = new DataSource();
+      using (var cmd = new SqlCommand(Queries.PreviousSpans))
+      {
+        cmd.Parameters.AddWithValue("@TripsXmlString", candidatesXml.ToString());
+        tbl = dataSource.FetchCommand(cmd);
+      }
+      if (tbl.Rows.Count.Equals(0))
+      { return new List<PreviousTrip>(); }
+
+      
+      var spans = tbl.AsEnumerable()
+        .Select(s => new PreviousTrip
+        {
+          TractorId = s.Field<string>("TractorID"),
+          TripNumber = s.Field<string>("TripNumber"),
+          PreviuosSpan = new Span
+          {
+            StartDate = s.Field<DateTime>("PreviousStartDate"),
+            EndDate = s.Field<DateTime>("PreviousEndDate"),
+            StartLocation = this.GetLocation(s, "PreviousStartState"),
+            EndLocation = this.GetLocation(s, "PreviousEndState"),
+            TractorId = s.Field<string>("TractorID"), 
+            PreviousSpan = null
+          }
+        });
+
+      return spans;
+    }
+
+    private Location GetLocation(DataRow s, string fieldName)
+    {
+      if (s.IsNull(fieldName))
+      {
+        return null;
+      }
+      return new Location { State = s.Field<string>(fieldName) };
+
+
+    }
+
     private int TrackedCommissionPaid(XDocument commissionsXml, DataSource dataSource, int commissionCount)
     {
-      commissionsXml.Save(@"c:\transport_depot\commissionsToSave.xml");
       var recordsAffected = 0;
       using(var cmd = new SqlCommand
       {
@@ -108,7 +155,6 @@ namespace TransportDepot.Data.DB
         return recordsAffected;
       }
     }
-
 
     private void SaveApInvoice(XDocument commissionsXml, DataSource dataSource)
     {
@@ -220,6 +266,7 @@ namespace TransportDepot.Data.DB
                            , [BH].[cProNumber]      AS [InvoiceNumber]
                            , [BH].[cTripNumber]     AS [TripNumber]
                            , [R].[cuSubMainRevenue] AS [InvoiceAmount]
+                           , [ATH].[cuLessor1Rate]  AS [LessorRevenue]
                            , [R].[cAgent1Id]        AS [DispatcherID]
               FROM [Truckwin_TDPD_Access]...[Revenue] [R]
                 INNER JOIN [Truckwin_TDPD_Access]...[BillingHistory] [BH]
@@ -236,6 +283,66 @@ namespace TransportDepot.Data.DB
                 AND ( COALESCE( [cTractorID], '' ) != '' )
                 AND ( [dBillDate] > @LastBillDate )
                 
+          ";
+        }
+      }
+
+      public static string PreviousSpans 
+      {
+        get
+        {
+          return @"
+  
+            DECLARE @TripsXml XML
+            SET @TripsXml = @TripsXmlString
+
+            ;WITH [TractorHistory]  AS
+            (
+              SELECT [AH].[cTractorID]      AS [TractorID] 
+                   , [AH].[cTripNumber]     AS [TripNumber]
+                   , [BH].[dShipDate]       AS [StartDate]
+                   , [BH].[dTripFinishDate] AS [EndDate]
+                   , [BH].[cOrigState]      AS [StartState]
+                   , [BH].[cDestState]      AS [EndState]
+              FROM  [Truckwin_TDPD_Access]...[BillingHistory] [BH]
+              INNER JOIN [Truckwin_TDPD_Access]...[AssignedToHist] [AH]
+                ON [BH].[cTripNumber] = [AH].[cTripNumber]
+            ), [Originals] AS
+            (
+              SELECT [T].[C].value('.', 'varchar(20)') AS [TripNumber]
+                   , [T].[C].value('./@tractorId', 'varchar(20)' ) AS [TractorID]
+              FROM @TripsXml.nodes('//trip') AS [T](C)
+            )
+
+            SELECT TOP 100 
+                  [P].[TripNumber] AS [PreviousTripNumber]
+                , [P].[StartDate]  AS [PreviousStartDate]
+                , [P].[EndDate]    AS [PreviousEndDate]
+                , [P].[StartState] AS [PreviousStartState]
+                , [P].[EndState]   AS [PreviousEndState]
+                , TH.* 
+            FROM TractorHistory [TH]
+            CROSS APPLY
+            (
+              SELECT TOP 1 [TractorID]
+                         , [TripNumber]
+                         , [StartDate] 
+                         , [EndDate]
+                         , [StartState]
+                         , [EndState]
+              FROM TractorHistory [THI]
+              WHERE ( [THI].[EndDate] < [TH].[StartDate] )
+                AND ( [THI].TractorID = [TH].[TractorID] )
+              ORDER BY [EndDate] DESC
+            )  AS [P] 
+            WHERE EXISTS
+            (
+              SELECT *
+              FROM [Originals] [O]
+              WHERE ( [O].[TractorID] = [TH].[TractorID] )
+               AND  ( [O].[TripNumber] = [TH].[TripNumber] )
+  
+            )  
           ";
         }
       }
@@ -442,7 +549,5 @@ namespace TransportDepot.Data.DB
       }
     
     }
-
-    
   }
 }

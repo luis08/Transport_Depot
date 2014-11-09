@@ -118,7 +118,7 @@ namespace TransportDepot.Payables.Commissions
 
     private Dictionary<string, IEnumerable<Span>> GroupAndSort(CommissionRequest request)
     {
-      var allSpans = request.OffDutySpans.Union(request.Trips).GroupBy(s=>s.TractorId).ToDictionary(s=>s.Key, s=>s.AsEnumerable<Span>());
+      var allSpans = request.NonCommissionSpans.Union(request.Trips).GroupBy(s=>s.TractorId).ToDictionary(s=>s.Key, s=>s.AsEnumerable<Span>());
       return allSpans;  
     }
 
@@ -132,11 +132,22 @@ namespace TransportDepot.Payables.Commissions
     public IEnumerable<InvoiceCommission> GetAllCommissions()
     {
       var candidates = this.GetCandidates();
+      var mappings = candidates
+        .Select(c => new TripInvoiceMapping
+        {
+          InvoiceNumber = c.InvoiceNumber,
+          TripNumber = c.TripNumber
+        });
+      var nonCommissionSpans = this._dataSource.GetPreviousTrips(candidates)
+        .GroupBy(t=>t.TripNumber).Where(t=>t.Count().Equals(1))
+        .Select(t=>t.First())
+        .ToDictionary(t => t.TripNumber, t => t.PreviuosSpan);
+
       var tractorHomes = this._dataSource.GetTractorHomes( candidates.Select(c=>c.TripNumber) );
       var requests = candidates.GroupBy(c => c.AgentId  )
         .Select(r => new CommissionRequest
         {
-          OffDutySpans = new List<Span>(),
+          NonCommissionSpans = new List<Span>(),
           AgentId = r.Key,
           Trips = r.Select(t=> new TripSpan{
             TractorId = t.TractorId,
@@ -148,7 +159,11 @@ namespace TransportDepot.Payables.Commissions
             InvoiceAmout = t.InvoiceAmount,
             TripNumber = t.TripNumber, 
             TractorHome = tractorHomes.ContainsKey(t.TractorId ) ? 
-                            tractorHomes[t.TractorId] : null
+                            tractorHomes[t.TractorId] : null,
+            PreviousSpan = nonCommissionSpans.ContainsKey(t.TripNumber)? 
+                            nonCommissionSpans[t.TripNumber] : null,
+            LessorRevenue = t.LessorRevenue
+
           })
         });
 

@@ -15,6 +15,7 @@ namespace TransportDepot.Models.Payables.Commissions
     public Location EndLocatioin { get; set; }
     public string InvoiceNumber { get; set; }
     public decimal InvoiceAmount { get; set; }
+    public decimal LessorRevenue { get; set; }
     public string TripNumber { get; set; }
   }
 }

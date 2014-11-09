@@ -105,6 +105,15 @@ namespace TransportDepot.Data
       { return true; }
       return false;
     }
+
+    internal DateTime Coalesce(DateTime dateTime)
+    {
+      if (dateTime == null)
+      {
+        return DateTime.MinValue;
+      }
+      return dateTime;
+    }
   }
 }
  

@@ -46,20 +46,24 @@ namespace TransportDepot.Payables.Commissions
         commission = GetHomeCommission(span, tripSpan, commission);
         return commission;
       }
-      if(( tripSpan.TractorHome != null )
-        && (tripSpan.TractorHome.State.Equals(span.StartLocation.State, System.StringComparison.OrdinalIgnoreCase)))
-      {
-        commission.Percent = 0.5m;
-        return commission;
-      }
-      var timeSpan = span.PreviousSpan.EndDate - span.StartDate;
 
-      if (timeSpan.TotalDays <= 1)
+      var timeSpan = span.StartDate - span.PreviousSpan.EndDate;
+
+      if (timeSpan.TotalDays < 1)
       {
         commission.Percent = 1.0m;
         return commission;
       }
-      commission.Percent = decimal.Zero;
+      else if (timeSpan.TotalDays < 2)
+      {
+        commission.Percent = 0.75m;
+        return commission;
+      }
+      else
+      {
+        commission.Percent = 0.5m;
+      }
+      
       return commission;
     }
 
@@ -74,7 +78,6 @@ namespace TransportDepot.Payables.Commissions
         TripNumber = tripSpan.TripNumber,
         Description = string.Format("A/R Invoice: {0}  Tractor: {1} ",
           tripSpan.InvoiceNumber, this.TractorId)
-
       };
       return commission;
     }
@@ -95,23 +98,16 @@ namespace TransportDepot.Payables.Commissions
 
     private InvoiceCommission GetHomeCommission(Span span, TripSpan tripSpan, InvoiceCommission commission)
     {
-      if (tripSpan.TractorHome == null)
-      {
-        commission.Percent = 1.0m;
-      }
-      else if (string.IsNullOrEmpty(tripSpan.TractorHome.State))
-      {
-        commission.Percent = 1.0m;
-      }
-      else if (tripSpan.TractorHome.State.Equals(span.StartLocation.State, System.StringComparison.OrdinalIgnoreCase))
-      {
-        commission.Percent = 0.5m;
-      }
-      else
-      {
-        commission.Percent = 1.0m;
-      }
+      commission.Percent = 0.5m;
       return commission;
+    }
+
+    private int GetDayDifference(Span span, TripSpan tripSpan)
+    {
+      var unloaded = new DateTime(span.EndDate.Year, span.EndDate.Month, span.EndDate.Day);
+      var loaded = new DateTime(tripSpan.StartDate.Year, tripSpan.StartDate.Month, tripSpan.StartDate.Day);
+      var diff = loaded - unloaded;
+      return diff.Days;
     }
   }
 }

@@ -10,7 +10,7 @@ namespace TransportDepot.Models.Factoring
     public int Schedule { get; set; }
     public string CheckNumber { get; set; }
     public string Debtor { get; set; }
-    public DateTime EffecitveDate { get; set; }
+    public DateTime EffectiveDate { get; set; }
     public decimal Amount { get; set; }
   }
 }

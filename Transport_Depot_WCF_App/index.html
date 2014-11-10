@@ -23,24 +23,35 @@
       <span>{{path}}</span>
     </div>
     <table>
+      <tr>
+       <td></td>
+        <!-- Invoice -->
+        <td>Invoice</td>
+        <!-- Check -->
+        <td>Check</td>
+        <!-- Client -->
+        <td>Client</td>
+        <!-- Effective Date -->
+        <td>Effective</td>
+        <!-- Invoice Amount-->
+        <td>Amount</td>
+      </tr>
       <tr ng-repeat="payment in payments">
         <!--<td ng-repeat="col in payment">
           {{col}}
         </td>-->
        <td><input type="checkbox" /></td>
         <!-- Invoice -->
-        <td>{{payment[0]}}</td>
-        <td>{{payment[1]}}</td>
+        <td>{{payment.InvoiceNumber}}</td>
         <!-- Check -->
-        <td>{{payment[3]}}</td>
+        <td>{{payment.CheckNumber}}</td>
         <!-- Client -->
-        <td>{{payment[4]}}</td>
+        <td>{{payment.Debtor}}</td>
         <!-- Effective Date -->
-        <td>{{payment[5]}}</td>
+        <td>{{payment.EffectiveDate | date:'MM/dd/yyyy'}}</td>
         <!-- Invoice Amount-->
-        <td>{{payment[6]}}</td>
-        <!-- Amount Advanced-->
-        <td>{{payment[7]}}</td>
+        <td>{{payment.Amount | currency }}</td>
+        
         
       </tr>
     </table> 
@@ -49,6 +60,10 @@
   <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>  
   <script>
+    function parseWcfDate(wcfDate){
+        var d=wcfDate.match(/(\d+)/)[1];
+        return new Date(+d);
+    }
     angular.module('apexUpload', [])
       .controller('uploader', ['$scope', '$http',
         function ($scope, $http) {
@@ -72,7 +87,13 @@
               headers: { 'Content-Type': 'multipart/form-data' }
             })
             .success(function (d) {
-              $scope.render(d);
+              var json = d.ReadCsvResult;
+              
+              
+              angular.forEach(json, function(value, key) {
+                value.EffectiveDate = parseWcfDate(value.EffectiveDate);
+              });
+              $scope.render(json);
             })
             .error(function (data, status, headers, config) {
               debugger;

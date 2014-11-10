@@ -99,7 +99,7 @@ namespace TransportDepot.AccountsReceivable
         CheckNumber = csvRow[this.fieldIndexes["CheckNumber"]],
         Amount = paymentAmount,
         Debtor = csvRow[this.fieldIndexes["Debtor"]],
-        EffecitveDate = effectiveDate
+        EffectiveDate = effectiveDate
       };
       return payment;
     }
@@ -142,7 +142,7 @@ namespace TransportDepot.AccountsReceivable
 
         payments.Select(p => new XElement("apexPayment",
           new XAttribute("invoiceNumber", p.InvoiceNumber),
-          new XAttribute("effectiveDate", p.EffecitveDate),
+          new XAttribute("effectiveDate", p.EffectiveDate),
           new XAttribute("invoiceAmount", p.Amount),
           new XAttribute("description", string.Format("Schedule {0} - {1}", p.Schedule, description)
             )))));

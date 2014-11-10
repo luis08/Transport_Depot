@@ -69,11 +69,13 @@
     <Content Include="Apex.svc" />
     <Content Include="Factoring.svc" />
     <Content Include="FactoringPdf.svc" />
+    <Content Include="index.html" />
     <Content Include="Payables.svc" />
     <Content Include="Posting.svc" />
     <Content Include="Safety.svc" />
     <Content Include="SafetyReports.svc" />
     <Content Include="Settlements.svc" />
+    <Content Include="Utilities.svc" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

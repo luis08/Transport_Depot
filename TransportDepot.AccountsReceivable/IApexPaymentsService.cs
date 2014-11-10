@@ -4,6 +4,7 @@ using System.ServiceModel.Web;
 using System.Collections.Generic;
 using TransportDepot.Models.Factoring;
 using System.IO;
+using TransportDepot.Utilities.Csv;
 namespace TransportDepot.AccountsReceivable
 {
   [ServiceContract]
@@ -17,7 +18,7 @@ namespace TransportDepot.AccountsReceivable
 
     [OperationContract]
     [WebInvoke(Method = "POST",
-      UriTemplate = "?apexCsv={fileName}")]
+      UriTemplate = "/read?paymentsCsv={fileName}")]
     IEnumerable<FactoringPayment> ReadCsv(string fileName, Stream stream);
   }
 }

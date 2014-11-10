@@ -4,6 +4,8 @@ using System.Xml.Linq;
 using System.Collections.Generic;
 using TransportDepot.Models.Factoring;
 using TransportDepot.Utilities;
+using TransportDepot.Utilities.Csv;
+using System.IO;
 
 
 namespace TransportDepot.AccountsReceivable
@@ -13,7 +15,7 @@ namespace TransportDepot.AccountsReceivable
 
     private Dictionary<string, int> fieldIndexes = new Dictionary<string, int>();
     private List<string> transactionTypes =
-      new List<string>(System.Configuration.ConfigurationManager.AppSettings["WCF.Receivables.ApexPayments.TransactionTypes"].Split('|').ToArray());
+      new List<string>(System.Configuration.ConfigurationManager.AppSettings["TransportDepot.AccountsReceivable.ApexPayments.TransactionTypes"].Split('|'));
     public System.Collections.Generic.IEnumerable<FactoringPayment> ParsePayments(string path)
     {
 
@@ -24,8 +26,9 @@ namespace TransportDepot.AccountsReceivable
 
 
 
-    public IEnumerable<FactoringPayment> ReadCsv(string fileName, System.IO.Stream stream)
+    public IEnumerable<FactoringPayment> ReadCsv(string fileName, Stream stream)
     {
+      
       var svc = new CsvUtilities();
       var parsedCsv = svc.ReadCsv(stream);
       return GetPayments(parsedCsv);

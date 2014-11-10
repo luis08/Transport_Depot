@@ -1,5 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
-  <body>
-  C:\Transport_Depot\Transport_Depot_WCF_App
-  </body>
+<head>
+    <title></title>
+  <style type="text/css">
+    body { font-size:small; }
+    table { border-collapse: collapse; }
+    table tr td 
+    { 
+      border: solid 1px #ccc; 
+      padding: .2em;
+    }
+  </style>
+</head>
+<body ng-app="apexUpload">
+  <form ng-controller="uploader">
+    <input type='file' 
+           onchange="angular.element(this).scope().fileChanged(this)"  />
+    <button ng-click="upload()" >Upload</button>
+    <br />
+    <div>
+      <span>{{file.name}}</span><br />
+      <span>{{path}}</span>
+    </div>
+    <table>
+      <tr ng-repeat="payment in payments">
+        <!--<td ng-repeat="col in payment">
+          {{col}}
+        </td>-->
+       <td><input type="checkbox" /></td>
+        <!-- Invoice -->
+        <td>{{payment[0]}}</td>
+        <td>{{payment[1]}}</td>
+        <!-- Check -->
+        <td>{{payment[3]}}</td>
+        <!-- Client -->
+        <td>{{payment[4]}}</td>
+        <!-- Effective Date -->
+        <td>{{payment[5]}}</td>
+        <!-- Invoice Amount-->
+        <td>{{payment[6]}}</td>
+        <!-- Amount Advanced-->
+        <td>{{payment[7]}}</td>
+        
+      </tr>
+    </table> 
+    
+  </form>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>  
+  <script>
+    angular.module('apexUpload', [])
+      .controller('uploader', ['$scope', '$http',
+        function ($scope, $http) {
+          $scope.payments = [];
+          $scope.selected = {};
+          $scope.fileChanged = function (elem) {
+            $scope.path = elem.value;
+            $scope.file = elem.files[0];
+            $scope.$apply();
+          };
+
+          $scope.render = function (data) {
+            $scope.payments = data;
+          }
+
+          $scope.upload = function () {
+            var uri = 'Apex.svc/read?paymentsCsv=' + $scope.file.name;
+            //var uri = 'Utilities.svc/ReadCsv?fileName=' + $scope.file.name;
+            //var uri = 'http://localhost:4055/Apex.svc?apexCsv=' + $scope.file.name;
+            $http.post(uri, $scope.file, {
+              headers: { 'Content-Type': 'multipart/form-data' }
+            })
+            .success(function (d) {
+              $scope.render(d);
+            })
+            .error(function (data, status, headers, config) {
+              debugger;
+            });
+          };
+        }
+      ]);
+  </script>
+</body>
 </html>

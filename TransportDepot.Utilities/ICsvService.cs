@@ -19,7 +19,7 @@ namespace TransportDepot.Utilities
     [OperationContract(Name = "ReadCsvFromPath")]
     IEnumerable<string[]> ReadCsv(string path);
 
-    [OperationContract(Name = "ReadCsvFromUri")]
+    [OperationContract]
     [WebInvoke(Method = "POST",
       UriTemplate = "/ReadCsv?fileName={fileName}")]
     IEnumerable<string[]> ReadCsvFromUri(string fileName, Stream stream);

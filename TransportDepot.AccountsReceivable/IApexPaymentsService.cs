@@ -18,7 +18,8 @@ namespace TransportDepot.AccountsReceivable
 
     [OperationContract]
     [WebInvoke(Method = "POST",
-      UriTemplate = "/read?paymentsCsv={fileName}")]
+      UriTemplate = "?paymentsCsv={fileName}",
+      ResponseFormat=WebMessageFormat.Json)]
     IEnumerable<FactoringPayment> ReadCsv(string fileName, Stream stream);
   }
 }

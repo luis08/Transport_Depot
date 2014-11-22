@@ -46,6 +46,7 @@
             <asp:MenuItem NavigateUrl="~/Factoring/Schedules.aspx" Text="Factoring" />
             <asp:MenuItem NavigateUrl="~/Safety/SafetyMain.aspx" Text="Safety" />
             <asp:MenuItem NavigateUrl="~/AccountsReceivable/Default.aspx" Text="A/R" />
+            <%--<asp:MenuItem NavigateUrl="~/AccountsPayable/commissions.aspx" Text="Commissions" />--%>
           </Items>
         </asp:Menu>
       </div>

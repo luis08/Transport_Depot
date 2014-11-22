@@ -41,8 +41,8 @@ namespace TransportDepot.AccountsReceivable
       this.FindFields(headers);
 
       var payments = data.Select(r => GetApexPayment(r))
-        .Where(p => p != null)
-        .Where(p => this.transactionTypes.Contains(p.Type));
+        .Where(p => p != null);
+
       Save(payments);
       return payments;
     }
@@ -50,7 +50,7 @@ namespace TransportDepot.AccountsReceivable
     {
       throw new NotImplementedException();
       /*
-       * Public Sub AppendTruckWin(ByVal cDept As String, ByVal cAcct As String, ByVal cArAcct As String, ByVal cReference As String)
+         Public Sub AppendTruckWin(ByVal cDept As String, ByVal cAcct As String, ByVal cArAcct As String, ByVal cReference As String)
             Dim sql As String
     
             sql = "INSERT INTO ArPayment ( cPronumber, niNumber, cCustomerId, dDate, cuAmount, cDept, cAcct, mDescription, cArAcct, cReference, bPosted, cTripNumber, cPayAdj, nlOrderNumber, bACHTransfer ) " & _
@@ -60,14 +60,55 @@ namespace TransportDepot.AccountsReceivable
                   "'Imported Automatically' AS mDescription, " & _
                   "'" & cArAcct & "' AS cArAcct, " & _
                   "'" & cReference & "' AS cReference, " & _
-                  "0 AS bPosted, G.ctripnumber, 'P' AS cPayAdj, 0 AS nlOrderNumber, 0 AS bACHTransfer " & _
+                  "0 AS bPosted
+                  , G.ctripnumber, 'P' AS cPayAdj, 0 AS nlOrderNumber, 0 AS bACHTransfer " & _
                   "FROM Apex_Payment AS P INNER JOIN ArAging AS G ON P.Invoice_Number = G.cPronumber " & _
                   "WHERE ( P.Invoice_Amount = [G].[cuBalanceDue] ) AND Not P.Exclude "
     
             DoCmd.RunSQL sql
             DoCmd.RunSQL "DELETE * FROM Apex_Payment A WHERE Not A.Exclude"
         End Sub
-
+            INSERT INTO [Truckwin_TDPD_Access]...[ArPayment] 
+            ( 
+                  cPronumber       
+                , niNumber         
+                , cCustomerId
+                , dDate
+                , cuAmount
+                , cDept
+                , cAcct
+                , mDescription
+                , cArAcct
+                , cReference
+                , bPosted
+                , cTripNumber
+                , cPayAdj
+                , nlOrderNumber
+                , bACHTransfer 
+            ) 
+            
+            SELECT 
+                  [P].[Invoice_Number] (object)
+                , 1 AS [niNumber]      
+                , [G].[cCustomerId]    (ArAging or BillingHistory)
+                , Effective_Date       (object)
+                , P.Invoice_Amount     (object)
+                , cDept                Fixed value
+                , cAcct                Fixed value
+                , 'Imported Automatically' AS mDescription
+                , cArAcct              Fixed value
+                , cReference           
+                , 0 AS bPosted
+                , G.ctripnumber         Billing History
+                , 'P' AS cPayAdj
+                , 0 AS nlOrderNumber 
+                , 0 AS bACHTransfer  
+            FROM [Truckwin_TDPD_Access]...[Apex_Payment] AS P INNER JOIN ArAging AS G 
+              ON ( P.Invoice_Number = G.cPronumber )
+            WHERE ( [P].[Invoice_Amount] = [G].[cuBalanceDue] ) 
+    
+         
+       * 
        * */
     }
 
@@ -90,11 +131,17 @@ namespace TransportDepot.AccountsReceivable
       {
         return null;
       }
+      string paymentType = this.CleanString(csvRow[this.fieldIndexes["Type"]]);
+      if (!this.transactionTypes.Contains(paymentType))
+      { 
+        return null; 
+      }
+      string invoiceNumber = this.GetInvoiceNumber(csvRow);
 
       var payment = new FactoringPayment
       {
-        Type = csvRow[this.fieldIndexes["Type"]],
-        InvoiceNumber = csvRow[this.fieldIndexes["InvoiceNumber"]],
+        Type = paymentType,
+        InvoiceNumber = invoiceNumber,
         Schedule = scheduleId,
         CheckNumber = csvRow[this.fieldIndexes["CheckNumber"]],
         Amount = paymentAmount,
@@ -103,6 +150,22 @@ namespace TransportDepot.AccountsReceivable
       };
       return payment;
     }
+
+    private string GetInvoiceNumber(string[] csvRow)
+    {
+      var invoiceNumber = this.CleanString( csvRow[this.fieldIndexes["InvoiceNumber"]] );
+      string paymentType = this.CleanString(csvRow[this.fieldIndexes["Type"]]);
+      
+      
+      if (string.IsNullOrEmpty(invoiceNumber))
+      {
+        return string.Empty;
+      }
+            
+
+      throw new NotImplementedException();
+    }
+
 
     private void FindFields(string[] headers)
     {
@@ -149,6 +212,13 @@ namespace TransportDepot.AccountsReceivable
 
       xmlDoc.Save(@"C:\Projects\WCF_Tests\WCF.Test.Upload\0_Test_Files\t.xml");
 
+    }
+
+    private string CleanString(string str)
+    {
+      if (string.IsNullOrEmpty(str)) { return string.Empty; }
+      str = str.Trim();
+      return str;
     }
   }
 }

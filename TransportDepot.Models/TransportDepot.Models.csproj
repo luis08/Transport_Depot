@@ -59,6 +59,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DB\Trailer.cs" />
+    <Compile Include="Dispatch\DispatcherCommission.cs" />
+    <Compile Include="Dispatch\DispatcherCommissionDate.cs" />
     <Compile Include="Dispatch\DriverContact.cs" />
     <Compile Include="Factoring\FactoringPayment.cs" />
     <Compile Include="Payables\Commissions\CommissionCandidate.cs" />

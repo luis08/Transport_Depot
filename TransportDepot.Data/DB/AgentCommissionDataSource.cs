@@ -267,14 +267,15 @@ namespace TransportDepot.Data.DB
                            , [BH].[cTripNumber]     AS [TripNumber]
                            , [R].[cuSubMainRevenue] AS [InvoiceAmount]
                            , [ATH].[cuLessor1Rate]  AS [LessorRevenue]
-                           , [R].[cAgent1Id]        AS [DispatcherID]
+                           , [DA].[VendorID]        AS [DispatcherID]
               FROM [Truckwin_TDPD_Access]...[Revenue] [R]
                 INNER JOIN [Truckwin_TDPD_Access]...[BillingHistory] [BH]
                   ON ( [R].[cProNumber] = [BH].[cProNumber] )
                 INNER JOIN [Truckwin_TDPD_Access]...[AssignedToHist] [ATH]
                   ON ( [BH].[cTripNumber] = [ATH].[cTripNumber] )      
-              WHERE ( CAST( [bAgent1Mark] AS BIT ) != 0 )
-                AND NOT EXISTS
+                INNER JOIN [DispatcherAgent] [DA] 
+                  ON ([DA].[Initials] = [BH].[cDispatcherInit] )
+              WHERE NOT EXISTS
                 (
                   SELECT * 
                   FROM [dbo].[Paid_Invoice_Commission] [C]

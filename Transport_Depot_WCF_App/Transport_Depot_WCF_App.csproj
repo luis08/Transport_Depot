@@ -67,6 +67,7 @@
     <Content Include="Business.svc" />
     <Content Include="ARReports.svc" />
     <Content Include="Apex.svc" />
+    <Content Include="Dispatch.svc" />
     <Content Include="Factoring.svc" />
     <Content Include="FactoringPdf.svc" />
     <Content Include="index.html" />
@@ -100,6 +101,10 @@
     <ProjectReference Include="..\TransportDepot.Business\TransportDepot.Business.csproj">
       <Project>{7320A06F-8C6F-4C7C-A5E1-1D70100F781C}</Project>
       <Name>TransportDepot.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TransportDepot.Dispatch\TransportDepot.Dispatch.csproj">
+      <Project>{BCFC18A1-6AAE-49DE-AD84-075A81BBCF6A}</Project>
+      <Name>TransportDepot.Dispatch</Name>
     </ProjectReference>
     <ProjectReference Include="..\TransportDepot.Factoring\TransportDepot.Factoring.csproj">
       <Project>{96B80933-33F8-4106-A6ED-4C613D9FC7B5}</Project>

@@ -10,6 +10,10 @@
       border: solid 1px #ccc; 
       padding: .2em;
     }
+    .right {
+      text-align: right;
+    }
+    .even { background-color:#ddd; }
   </style>
 </head>
 <body ng-app="apexUpload">
@@ -23,8 +27,9 @@
       <span>{{path}}</span>
     </div>
     <table>
+      
       <tr>
-       <td></td>
+       <td>Exclude</td>
         <!-- Invoice -->
         <td>Invoice</td>
         <!-- Check -->
@@ -36,11 +41,8 @@
         <!-- Invoice Amount-->
         <td>Amount</td>
       </tr>
-      <tr ng-repeat="payment in payments">
-        <!--<td ng-repeat="col in payment">
-          {{col}}
-        </td>-->
-       <td><input type="checkbox" /></td>
+      <tr ng-repeat="payment in payments" ng-class-even="'even'">
+       <td><input type="checkbox" ng-model="payment.exclude" /></td>
         <!-- Invoice -->
         <td>{{payment.InvoiceNumber}}</td>
         <!-- Check -->
@@ -50,9 +52,7 @@
         <!-- Effective Date -->
         <td>{{payment.EffectiveDate | date:'MM/dd/yyyy'}}</td>
         <!-- Invoice Amount-->
-        <td>{{payment.Amount | currency }}</td>
-        
-        
+        <td class='right'>{{payment.Amount | currency }}</td>
       </tr>
     </table> 
     
@@ -68,7 +68,7 @@
       .controller('uploader', ['$scope', '$http',
         function ($scope, $http) {
           $scope.payments = [];
-          $scope.selected = {};
+          
           $scope.fileChanged = function (elem) {
             $scope.path = elem.value;
             $scope.file = elem.files[0];
@@ -91,6 +91,7 @@
               
               
               angular.forEach(json, function(value, key) {
+                value.exclude = false;
                 value.EffectiveDate = parseWcfDate(value.EffectiveDate);
               });
               $scope.render(json);

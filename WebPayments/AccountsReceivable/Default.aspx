@@ -61,6 +61,7 @@
       </tbody>
     </table>
   </div>
+
   <div id='collections-menu-container'>
     <fieldset>
     <legend>Print Letters</legend>

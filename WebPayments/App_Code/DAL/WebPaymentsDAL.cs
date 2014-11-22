@@ -14,6 +14,94 @@ namespace DAL
 
   public class WebPaymentsDAL
   {
+    public IEnumerable<DispatcherPayable> GetDispatcherPayables()
+    {
+      var cn = new SqlConnection(this.GetConnectionString());
+      return GetDispatchers(cn);
+    }
+
+    private IEnumerable<DispatcherPayable> GetDispatchers(SqlConnection cn)
+    {
+
+      var query = @"
+        SELECT [D].[cInitial] AS [Initials], 
+               [DA].[VendorID]
+        FROM [Truckwin_TDPD_Access]...[Dispatcher] [D]
+        LEFT JOIN [dbo].[DispatcherAgent] [DA]
+          ON [D].[cInitial] = [DA].[Initials]
+      ";
+      var connectionString = this.GetConnectionString();
+      var tbl = new DataTable();
+
+      using (var cmd = new SqlCommand(query, cn))
+      using (var adapter = new SqlDataAdapter(cmd))
+      {
+        adapter.Fill(tbl);
+      }
+      if (tbl.Rows.Count == 0)
+      { return new List<DispatcherPayable>(); }
+
+      var dispatchers = tbl.AsEnumerable().Select(d => new DispatcherPayable
+      {
+        Initials =d.Field<string>("Initials"),
+        VendorId = d.Field<string>("VendorID")
+      });
+      return dispatchers;
+    }
+
+    public DispatcherPayablesModel GetDispatcherPayableModel()
+    {
+      var model = new DispatcherPayablesModel();
+      using( var cn = new SqlConnection(this.GetConnectionString()))
+      {
+        model.Dispatchers = this.GetDispatchers(cn).ToList();
+        model.Initials = this.GetDispatcherInitials(cn).ToList();
+        model.Vendors = this.GetDispatcherVendors(cn).ToList();
+      }
+      return model;
+    }
+    private IEnumerable<string> GetDispatcherInitials(SqlConnection cn)
+    {
+      var fieldName = "Initials";
+      var query = "SELECT [cInitial] AS [Initials] FROM [Truckwin_TDPD_Access]...[Dispatcher] ORDER BY [cInitial]";
+      return GetStrings(cn, fieldName, query);
+
+    }
+
+    private IEnumerable<string> GetDispatcherVendors(SqlConnection cn)
+    {
+      var fieldName = "VendorId";
+      var query = "SELECT [cId] AS [VendorId] FROM [Truckwin_TDPD_Access]...[ApVendor] WHERE [cVendorType] = 'Agent' ORDER BY [cId]";
+      return GetStrings(cn, fieldName, query);
+    }
+
+    private IEnumerable<string> GetStrings(SqlConnection cn, string fieldName, string query)
+    {
+      var tbl = new DataTable();
+      using (var cmd = new SqlCommand(query, cn))
+      {
+        tbl = this.FetchDataTable(cmd);
+
+      }
+      if (tbl.Rows.Count == 0)
+      {
+        return new List<string>();
+      }
+
+      return tbl.AsEnumerable().Select(v => v.Field<string>(fieldName));
+    }
+
+    private DataTable FetchDataTable(SqlCommand cmd)
+    {
+      var tbl = new DataTable();
+      using (var adapter = new SqlDataAdapter(cmd))
+      {
+        adapter.Fill(tbl);
+      }
+      return tbl;
+    }
+
+    
     internal WebPaymentsDue GetWebPaymentsDue()
     {
       var settlementsDue = this.GetUnPostedSettlements();
@@ -435,6 +523,12 @@ namespace DAL
     {
       return System.Configuration.ConfigurationManager
       .ConnectionStrings["ACHFileStorageConnectionString"].ConnectionString;
+    }
+
+    private string GetConnectionString()
+    {
+      return System.Configuration.ConfigurationManager
+      .ConnectionStrings["AccessReplacementConnectionString"].ConnectionString;
     }
 
     private bool IsSingleTableDataSetEmpty(DataSet data_set)

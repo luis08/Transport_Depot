@@ -372,7 +372,7 @@ table.tabular-data > td
 {
   background-color: #dee6f3;
 }
-
+.alternating-item { background-color: #dee6f3; }
 .standard-table
 {
   border-collapse: collapse;

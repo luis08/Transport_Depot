@@ -21,6 +21,9 @@ namespace TransportDepot.Dispatch
     [OperationContract]
     [WebInvoke(Method="POST")]
     IEnumerable<DispatcherCommission> GetCommissions(DispatcherCommissionDate request);
+    [OperationContract]
+    [WebInvoke(Method = "POST")]
+    IEnumerable<Dispatcher> GetDispatchers();
 
   }
 }

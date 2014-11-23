@@ -12,6 +12,7 @@ namespace TransportDepot.Models.Dispatch
     public decimal CommissionTotal { get; set; }
     public string TripNumber { get; set; }
     public string ArInvoiceNumber { get; set; }
+    public decimal InvoiceAmount { get; set; }
     public DateTime BillDate { get; set; }
     public DateTime CommissionPayableDate { get; set; }
     public string TractorId { get; set; }

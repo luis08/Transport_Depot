@@ -18,6 +18,9 @@ Utilities.formatCurrency = function (number) {
 }
 
 Utilities.formatDate = function (date) {
+  if (!$.datepicker) {
+    throw 'This function requires jQuery UI';
+  }
   var formattedDate = $.datepicker.formatDate('mm/dd/yy', new Date(JSON.parseDateOnly(date)));
   return formattedDate;
 }

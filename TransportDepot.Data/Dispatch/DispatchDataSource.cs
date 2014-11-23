@@ -15,6 +15,24 @@ namespace TransportDepot.Data.Dispatch
       get { return this._utilities.ConnectionString; }
     }
 
+    public IEnumerable<Dispatcher> GetDispatchers()
+    {
+      var dt = new DataTable();
+      using (var cmd = new SqlCommand(Queries.Dispatchers))
+      {
+        var ds = new DataSource();
+        dt = ds.FetchDataTable(cmd);
+      }
+      var dispatchers = dt.AsEnumerable()
+        .Select(d => new Dispatcher
+        {
+          VendorId = d.Field<string>("VendorID"),
+          Initials = d.Field<string>("Initials"),
+          Name = d.Field<string>("Name")
+        });
+      return dispatchers.ToList();
+    }
+
     public IEnumerable<DateTime> GetAllCommissionDates()
     {
       var dates = GetCommissionDates().Select(d=>d.CommissionPaymentDate).Distinct();
@@ -161,7 +179,8 @@ namespace TransportDepot.Data.Dispatch
         TractorId = c.Field<string>("TractorId"),
         CommissionDescription= c.Field<string>("CommisionDescription"),
         Lane = this.GetLane(c),
-        CustomerName = c.Field<string>("CustomerName")
+        CustomerName = c.Field<string>("CustomerName"),
+        InvoiceAmount = c.Field<decimal>("InvoiceAmount")
       }).ToList();
       return commissions;
     }

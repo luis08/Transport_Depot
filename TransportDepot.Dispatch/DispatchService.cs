@@ -20,9 +20,18 @@ namespace TransportDepot.Dispatch
 
     public System.Collections.Generic.IEnumerable<Models.Dispatch.DispatcherCommission> GetCommissions(Models.Dispatch.DispatcherCommissionDate request)
     {
-      var commissions = this._datasource.GetDispatcherCommissions(request.CommissionPaymentDate)
-        .Where(d=>d.DispatcherId.Equals(request.DispatcherId, System.StringComparison.OrdinalIgnoreCase));
-      return commissions;
+      if (string.IsNullOrEmpty(request.DispatcherId) ||
+          string.IsNullOrEmpty(request.DispatcherId.Trim()))
+      {
+        var commissions = this._datasource.GetDispatcherCommissions(request.CommissionPaymentDate);
+        return commissions;
+      }
+      else
+      {
+        var commissions = this._datasource.GetDispatcherCommissions(request.CommissionPaymentDate)
+          .Where(d => d.DispatcherId.Equals(request.DispatcherId, System.StringComparison.OrdinalIgnoreCase));
+        return commissions;
+      }
     }
 
 
@@ -30,6 +39,13 @@ namespace TransportDepot.Dispatch
     {
       var dates = this._datasource.GetAllCommissionDates();
       return dates;
+    }
+
+
+    public System.Collections.Generic.IEnumerable<Models.Dispatch.Dispatcher> GetDispatchers()
+    {
+      var dispatchers = this._datasource.GetDispatchers().OrderBy(d=>d.Name);
+      return dispatchers;
     }
   }
 }

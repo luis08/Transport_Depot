@@ -6,6 +6,7 @@ using TransportDepot.Models.Factoring;
 using TransportDepot.Utilities;
 using TransportDepot.Utilities.Csv;
 using System.IO;
+using TransportDepot.Data.Factoring;
 
 
 namespace TransportDepot.AccountsReceivable
@@ -48,7 +49,8 @@ namespace TransportDepot.AccountsReceivable
     }
     public void SavePayments(IEnumerable<FactoringPayment> payments)
     {
-      throw new NotImplementedException();
+      var dataSource = new ApexDataSource();
+      dataSource.Save(payments);
       /*
          Public Sub AppendTruckWin(ByVal cDept As String, ByVal cAcct As String, ByVal cArAcct As String, ByVal cReference As String)
             Dim sql As String

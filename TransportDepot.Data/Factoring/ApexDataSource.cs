@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TransportDepot.Models.Factoring;
+using System.Xml.Linq;
 
 namespace TransportDepot.Data.Factoring
 {
@@ -10,7 +11,13 @@ namespace TransportDepot.Data.Factoring
   {
     public void Save(IEnumerable<FactoringPayment> payments)
     {
-
+      var fileName = string.Format(@"C:\Test\ApexPayments\payments_{0:yyyyMMdd_mmss}.xml", DateTime.Now);
+      var paymentsXml = new XDocument(new XElement("apexPayments",
+        payments.Select(p => new XElement("payment",
+          new XAttribute("invoiceNumber", p.InvoiceNumber),
+          new XAttribute("amount", p.Amount),
+          new XAttribute("effectiveDate", p.EffectiveDate.ToShortDateString())))));
+      paymentsXml.Save(fileName);
     }
 
 

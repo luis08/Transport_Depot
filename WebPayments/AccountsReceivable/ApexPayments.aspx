@@ -14,6 +14,8 @@
     .amount{ width: 5.5em; text-align:right; }
     .alternating-item {background-color: #dee6f3;}
   </style>
+  <script src="../Scripts/json.js" type="text/javascript"></script>
+  <script src="../Scripts/JSON.NET.js" type="text/javascript"></script>
   <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>  
   <script src="../Scripts/ApexPayments.aspx.js" type="text/javascript"></script>
@@ -23,6 +25,7 @@
       <input type='file' 
            onchange="angular.element(this).scope().fileChanged(this)"  />
     <button ng-click="upload($event)" >Upload</button>
+    <button ng-click="save($event)" >Save</button>
     <br />
     <div>
       <span>{{file.name}}</span><br />

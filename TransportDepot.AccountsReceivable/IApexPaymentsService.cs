@@ -14,6 +14,7 @@ namespace TransportDepot.AccountsReceivable
     IEnumerable<FactoringPayment> ParsePayments(string path);
 
     [OperationContract]
+    [WebInvoke(Method = "POST")]
     void SavePayments(IEnumerable<FactoringPayment> payments);
 
     [OperationContract]

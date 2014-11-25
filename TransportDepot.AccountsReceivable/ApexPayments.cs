@@ -161,9 +161,13 @@ namespace TransportDepot.AccountsReceivable
       {
         return string.Empty;
       }
-            
 
-      throw new NotImplementedException();
+
+      if (this.transactionTypes.Contains(paymentType))
+      {
+        return invoiceNumber;
+      }
+      return string.Empty;
     }
 
 

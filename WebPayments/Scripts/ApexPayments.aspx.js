@@ -16,13 +16,14 @@ var app = angular.module('apexUpload', [])
 
           $scope.render = function (data) {
             $scope.payments = data;
+
           };
 
           $scope.upload = function (event) {
 
             //var uri = 'http://localhost:22768/Apex.svc/?paymentsCsv=' + $scope.file.name;
-            var uri = 'http://localhost/td/Apex.svc/?paymentsCsv=' + $scope.file.name;
-            //var uri = 'http://netgateway/settlements/Apex.svc/?paymentsCsv=' + $scope.file.name;
+            //var uri = 'http://localhost/td/Apex.svc/?paymentsCsv=' + $scope.file.name;
+            var uri = 'http://netgateway/settlements/Apex.svc/?paymentsCsv=' + $scope.file.name;
 
             event.preventDefault();
             var ajaxRequest = $.ajax({
@@ -62,9 +63,9 @@ var app = angular.module('apexUpload', [])
                 selectedPayments.push(p);
               }
             });
-            alert('mapped!');
-            //var uri = 'http://netgateway/settlements/Apex.svc/SavePayments';
-            var uri = 'http://localhost/td/Apex.svc/SavePayments';
+
+            var uri = 'http://netgateway/settlements/Apex.svc/GetExistingPayments';
+            //var uri = 'http://localhost/td/Apex.svc/SavePayments';
             var model = { 'payments': selectedPayments };
             var wcfModel = JSON.stringifyWcf(model);
             var ajaxRequest = $.ajax({
@@ -72,10 +73,24 @@ var app = angular.module('apexUpload', [])
               url: uri,
               contentType: 'application/json; charset=utf-8',
               dataType: 'json',
-              data: model
+              data: wcfModel
             });
-            ajaxRequest.success(function () {
-              alert('saved');
+            ajaxRequest.success(function (data) {
+              var existingInvoices = data.GetExistingPaymentsResult;
+              if (existingInvoices.length > 0) {
+                var dupes = existingInvoices.join('\n');
+                alert('The following cannot be saved. They exist\nor there is no such invoice. \nThey were excluded: \n' + dupes);
+                angular.forEach(existingInvoices, function (dupe, idx) {
+                  angular.forEach($scope.payments, function (payment, idx) {
+                    if (payment.InvoiceNumber === dupe) {
+                      payment.exclude = true;
+                    }
+                  });
+                });
+              } else {
+                alert('this will save');
+              }
+
             });
 
             ajaxRequest.fail(function () {

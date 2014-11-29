@@ -47,71 +47,17 @@ namespace TransportDepot.AccountsReceivable
       Save(payments);
       return payments;
     }
+
+    public IEnumerable<string> GetExistingPayments(IEnumerable<FactoringPayment> payments)
+    {
+      var dataSource = new ApexDataSource();
+      return dataSource.GetExistingPayments(payments);
+    }
+
     public void SavePayments(IEnumerable<FactoringPayment> payments)
     {
       var dataSource = new ApexDataSource();
       dataSource.Save(payments);
-      /*
-         Public Sub AppendTruckWin(ByVal cDept As String, ByVal cAcct As String, ByVal cArAcct As String, ByVal cReference As String)
-            Dim sql As String
-    
-            sql = "INSERT INTO ArPayment ( cPronumber, niNumber, cCustomerId, dDate, cuAmount, cDept, cAcct, mDescription, cArAcct, cReference, bPosted, cTripNumber, cPayAdj, nlOrderNumber, bACHTransfer ) " & _
-                  "SELECT P.Invoice_Number, 1 AS niNumber, G.cCustomerId, P.Effective_Date, P.Invoice_Amount, " & _
-                  "'" & cDept & "' AS cDept, " & _
-                  "'" & cAcct & "' AS cAcct, " & _
-                  "'Imported Automatically' AS mDescription, " & _
-                  "'" & cArAcct & "' AS cArAcct, " & _
-                  "'" & cReference & "' AS cReference, " & _
-                  "0 AS bPosted
-                  , G.ctripnumber, 'P' AS cPayAdj, 0 AS nlOrderNumber, 0 AS bACHTransfer " & _
-                  "FROM Apex_Payment AS P INNER JOIN ArAging AS G ON P.Invoice_Number = G.cPronumber " & _
-                  "WHERE ( P.Invoice_Amount = [G].[cuBalanceDue] ) AND Not P.Exclude "
-    
-            DoCmd.RunSQL sql
-            DoCmd.RunSQL "DELETE * FROM Apex_Payment A WHERE Not A.Exclude"
-        End Sub
-            INSERT INTO [Truckwin_TDPD_Access]...[ArPayment] 
-            ( 
-                  cPronumber       
-                , niNumber         
-                , cCustomerId
-                , dDate
-                , cuAmount
-                , cDept
-                , cAcct
-                , mDescription
-                , cArAcct
-                , cReference
-                , bPosted
-                , cTripNumber
-                , cPayAdj
-                , nlOrderNumber
-                , bACHTransfer 
-            ) 
-            
-            SELECT 
-                  [P].[Invoice_Number] (object)
-                , 1 AS [niNumber]      
-                , [G].[cCustomerId]    (ArAging or BillingHistory)
-                , Effective_Date       (object)
-                , P.Invoice_Amount     (object)
-                , cDept                Fixed value
-                , cAcct                Fixed value
-                , 'Imported Automatically' AS mDescription
-                , cArAcct              Fixed value
-                , cReference           
-                , 0 AS bPosted
-                , G.ctripnumber         Billing History
-                , 'P' AS cPayAdj
-                , 0 AS nlOrderNumber 
-                , 0 AS bACHTransfer  
-            FROM [Truckwin_TDPD_Access]...[Apex_Payment] AS P INNER JOIN ArAging AS G 
-              ON ( P.Invoice_Number = G.cPronumber )
-            WHERE ( [P].[Invoice_Amount] = [G].[cuBalanceDue] ) 
-    
-         
-       * 
-       * */
     }
 
     private FactoringPayment GetApexPayment(string[] csvRow)
@@ -156,8 +102,8 @@ namespace TransportDepot.AccountsReceivable
     private string GetInvoiceNumber(string[] csvRow)
     {
       var invoiceNumber = this.CleanString( csvRow[this.fieldIndexes["InvoiceNumber"]] );
+      invoiceNumber = this.PadInvoiceNumber(invoiceNumber);
       string paymentType = this.CleanString(csvRow[this.fieldIndexes["Type"]]);
-      
       
       if (string.IsNullOrEmpty(invoiceNumber))
       {
@@ -225,6 +171,20 @@ namespace TransportDepot.AccountsReceivable
       if (string.IsNullOrEmpty(str)) { return string.Empty; }
       str = str.Trim();
       return str;
+    }
+    private string PadInvoiceNumber(string invoiceNumber)
+    {
+      var padding = System.Configuration.ConfigurationManager.AppSettings["Factoring.InvoiceLeftFill"] ?? string.Empty;
+      var lengthDifference = padding.Length - invoiceNumber.Length;
+      if (padding.Length == 0)
+      { return invoiceNumber; }
+      else if (lengthDifference < 1)
+      { return invoiceNumber; }
+
+      var newInvoiceNumber = string.Format("{0}{1}",
+        padding.Substring(0, lengthDifference),
+        invoiceNumber);
+      return newInvoiceNumber;
     }
   }
 }

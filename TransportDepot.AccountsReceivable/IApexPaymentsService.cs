@@ -18,6 +18,10 @@ namespace TransportDepot.AccountsReceivable
     void SavePayments(IEnumerable<FactoringPayment> payments);
 
     [OperationContract]
+    [WebInvoke(Method = "POST")]
+    IEnumerable<string> GetExistingPayments(IEnumerable<FactoringPayment> payments);
+
+    [OperationContract]
     [WebInvoke(Method = "POST",
       UriTemplate = "?paymentsCsv={fileName}",
       ResponseFormat=WebMessageFormat.Json)]

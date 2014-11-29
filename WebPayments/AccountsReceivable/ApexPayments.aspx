@@ -24,7 +24,7 @@
   <div ng-app="apexUpload" ng-controller="uploader">
       <input type='file' 
            onchange="angular.element(this).scope().fileChanged(this)"  />
-    <button ng-click="upload($event)" >Upload</button>
+    <button ng-click="upload($event)" >Upload and Review Payments</button>
     <button ng-click="save($event)" >Save</button>
     <br />
     <div>

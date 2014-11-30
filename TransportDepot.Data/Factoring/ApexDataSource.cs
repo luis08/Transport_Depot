@@ -47,6 +47,7 @@ namespace TransportDepot.Data.Factoring
     private void SavePayments(SqlConnection cn, IEnumerable<FactoringPayment> payments)
     {
       var paymentsXml = this.GetPaymentsXml(payments);
+      var saveCount = 0;
       using (var cmd = new SqlCommand(SavePaymentsSql, cn))
       {
         cmd.Parameters.AddWithValue("@ApexPaymentsString", paymentsXml.ToString());
@@ -54,20 +55,48 @@ namespace TransportDepot.Data.Factoring
         {
           cn.Open();
         }
-        cmd.ExecuteNonQuery();
+        saveCount = cmd.ExecuteNonQuery();
       }
     }
-
+    
     private XDocument GetPaymentsXml(IEnumerable<FactoringPayment> payments)
     {
+      var glDeparmtment = this.GetSetting("TransportDepot.AccountsReceivable.Apex.GLDeparment");
+      var glAccount = this.GetSetting("TransportDepot.AccountsReceivable.Apex.GLAccount");
+      var glArAccount = this.GetSetting("TransportDepot.AccountsReceivable.Apex.GLArAccount");
       var paymentsXml = new XDocument(new XElement("apexPayments",
+        new XAttribute("glDepartment", glDeparmtment),
+        new XAttribute("glAccount", glAccount),
+        new XAttribute("glArAccount", glArAccount),
         payments.Select(p => new XElement("payment",
           new XAttribute("invoiceNumber", p.InvoiceNumber),
           new XAttribute("amount", p.Amount),
           new XAttribute("effectiveDate", p.EffectiveDate.ToShortDateString()),
-          new XAttribute("comments", string.Format("Schedule: {0}", p.Schedule))))));
+          new XAttribute("comments",  this.GetComments(p))))));
       return paymentsXml;
     }
+
+    private string GetSetting(string settingName)
+    {
+
+      if (settingName == null)
+      {
+        var message = string.Format("Setting '{0}' must be defined in the config file", settingName);
+        throw new InvalidOperationException(message);
+      }
+      string settingValue = System.Configuration.ConfigurationManager.AppSettings[settingName];
+      return settingValue.Trim();
+    }
+
+
+    private string GetComments(FactoringPayment p)
+    {
+      return string.Format("Schedule {0} - Automatically Imported {1}",
+        p.Schedule,
+        DateTime.Today.ToString("MM/dd/yyyy"));
+    }
+
+    
 
     private IEnumerable<string> GetDuplicateInvoices(SqlConnection cn, XDocument paymentsXml)
     {
@@ -104,9 +133,14 @@ namespace TransportDepot.Data.Factoring
             SELECT [P].[InvoiceNumber] /* (object) */
             FROM [Payments] AS [P] LEFT JOIN [Truckwin_TDPD_Access]...[ArAging]  AS [G] 
               ON ( [P].[InvoiceNumber] = G.cPronumber )
-            WHERE ( ( [G].[cProNumber] IS NULL ) OR ( [P].[Amount] = [G].[cuBalanceDue] ) )
-
-";
+            WHERE ( ( [G].[cProNumber] IS NULL ) OR ( [P].[Amount] != [G].[cuBalanceDue] ) )
+              OR EXISTS
+              (
+                SELECT * 
+                FROM [Truckwin_TDPD_Access]...[ArPayment] [A]
+                WHERE ( [A].[cProNumber] = [P].[InvoiceNumber] )
+              )
+            ";
 
     private const string SavePaymentsSql = @"
 
@@ -121,7 +155,7 @@ namespace TransportDepot.Data.Factoring
                   ,  [T].[c].value('../@glAccount', 'varchar(20)')    AS [GLAccount]
                   ,  [T].[c].value('../@glArAccount', 'varchar(20)')  AS [GLArAccount]
                   ,  [T].[c].value('../@glDepartment', 'varchar(20)') AS [GLDepartment]
-                  ,  [T].[c].value('./@comments', 'varchar(20)')      AS [Comments]
+                  ,  [T].[c].value('./@comments', 'varchar(1000)')    AS [Comments]
               FROM @ApexPayments.nodes('//payment') AS T(C)
             )
 
@@ -146,16 +180,16 @@ namespace TransportDepot.Data.Factoring
 
             
             SELECT 
-                  [P].[InvoiceNumber] /* (object) */
+                  [P].[InvoiceNumber]      AS [cProNumber] /* (object) */
                 , 1 AS [niNumber]      
                 , [G].[cCustomerId]   /* (ArAging or BillingHistory) */
                 , [P].[EffectiveDate]      AS [dDate]    
                 , [P].[Amount]             AS [cuAmount] 
                 , [P].[GLDepartment]       AS [cDept]    
                 , [P].[GLAccount]          AS [cAcct]
-                , 'Imported Automatically' AS [mDescription]
+                , [P].[Comments]           AS [mDescription]
                 , [P].[GLArAccount]        AS [cArAcct]
-                , [P].[Comments]           AS [cReference] /* (object) Schedule Number */
+                , 'Apex Dwnld'             AS [cReference] /* (object) Schedule Number */
                 , 0                        AS [bPosted] 
                 , [G].[cTripNumber]         
                 , 'P'                      AS [cPayAdj]
@@ -164,7 +198,12 @@ namespace TransportDepot.Data.Factoring
             FROM [Payments] AS [P] INNER JOIN [Truckwin_TDPD_Access]...[ArAging]  AS [G] 
               ON ( [P].[InvoiceNumber] = G.cPronumber )
             WHERE ( [P].[Amount] = [G].[cuBalanceDue] ) 
-            
+              AND NOT EXISTS
+              (
+                SELECT * 
+                FROM [Truckwin_TDPD_Access]...[ArPayment] [A]
+                WHERE ( [A].[cProNumber] = [P].[InvoiceNumber] )
+              )            
     ";
   }
 }

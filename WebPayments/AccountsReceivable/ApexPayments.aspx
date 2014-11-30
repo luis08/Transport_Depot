@@ -27,10 +27,6 @@
     <button ng-click="upload($event)" >Upload and Review Payments</button>
     <button ng-click="save($event)" >Save</button>
     <br />
-    <div>
-      <span>{{file.name}}</span><br />
-      <span>{{path}}</span>
-    </div>
   <ul class='payments-container' >
     <li class='payment-group payment-header'>
       <div class='exclude'>Exclude</div>

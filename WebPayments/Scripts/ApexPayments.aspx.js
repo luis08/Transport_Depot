@@ -6,6 +6,21 @@ function parseWcfDate(wcfDate) {
 var app = angular.module('apexUpload', [])
       .controller('uploader', ['$scope', '$http',
         function ($scope, $http) {
+          function getSelectedPayments() {
+
+            var selectedPayments = [];
+
+            angular.forEach($scope.payments, function (payment, idx) {
+              if (!payment.exclude) {
+                var p = jQuery.extend(true, {}, payment);
+                p.EffectiveDate = payment.OriginalDate;
+                delete p.OriginalDate;
+                delete p.exclude;
+                selectedPayments.push(p);
+              }
+            });
+            return selectedPayments;
+          }
           $scope.payments = [];
 
           $scope.fileChanged = function (elem) {
@@ -52,18 +67,11 @@ var app = angular.module('apexUpload', [])
           };
           $scope.save = function (event) {
             event.preventDefault();
-            var selectedPayments = [];
-
-            angular.forEach($scope.payments, function (payment, idx) {
-              if (!payment.exclude) {
-                var p = jQuery.extend(true, {}, payment);
-                p.EffectiveDate = payment.OriginalDate;
-                delete p.OriginalDate;
-                delete p.exclude;
-                selectedPayments.push(p);
-              }
-            });
-
+            var selectedPayments = getSelectedPayments();
+            if (selectedPayments.length === 0) {
+              alert('No payments to save');
+              return;
+            }
             var uri = 'http://netgateway/settlements/Apex.svc/GetExistingPayments';
             //var uri = 'http://localhost/td/Apex.svc/SavePayments';
             var model = { 'payments': selectedPayments };
@@ -79,7 +87,7 @@ var app = angular.module('apexUpload', [])
               var existingInvoices = data.GetExistingPaymentsResult;
               if (existingInvoices.length > 0) {
                 var dupes = existingInvoices.join('\n');
-                alert('The following cannot be saved. They exist\nor there is no such invoice. \nThey were excluded: \n' + dupes);
+                alert('The following cannot be saved. Either: \n-There is a payment for that invoice\n-There is no such invoice, or \n-Invoice amounts do not match. \n\nThey were all excluded (checked): \n' + dupes);
                 angular.forEach(existingInvoices, function (dupe, idx) {
                   angular.forEach($scope.payments, function (payment, idx) {
                     if (payment.InvoiceNumber === dupe) {
@@ -89,7 +97,33 @@ var app = angular.module('apexUpload', [])
                 });
                 $scope.$apply();
               } else {
-                alert('this will save');
+                uri = 'http://netgateway/settlements/Apex.svc/SavePayments';
+                var saveAjaxRequest = $.ajax({
+                  type: "POST",
+                  url: uri,
+                  contentType: 'application/json; charset=utf-8',
+                  dataType: 'json',
+                  data: wcfModel
+                });
+                saveAjaxRequest.success(function () {
+                  var removedInvoices = [];
+                  angular.forEach(selectedPayments, function (paid, idx) {
+                    angular.forEach($scope.payments, function (payment, paymentIdx) {
+                      if (payment.InvoiceNumber === paid.InvoiceNumber) {
+                        var removedInvoice = $scope.payments.splice(paymentIdx, 1 /*how many */)[0];
+                        removedInvoices.push(removedInvoice.InvoiceNumber);
+                      }
+                    });
+                  });
+                  var removedInvoiceString = removedInvoices.join('\n- ');
+                  $scope.$apply();
+                  alert('The following saved payments were removed from the list.\n- ' + removedInvoiceString);
+
+                });
+
+                saveAjaxRequest.fail(function (jqXHR, textStatus, errorThrown) {
+                  alert(errorThrown);
+                });
               }
 
             });

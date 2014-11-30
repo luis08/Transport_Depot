@@ -16,7 +16,7 @@ var app = angular.module('apexUpload', [])
 
           $scope.render = function (data) {
             $scope.payments = data;
-
+            $scope.$apply();
           };
 
           $scope.upload = function (event) {
@@ -87,6 +87,7 @@ var app = angular.module('apexUpload', [])
                     }
                   });
                 });
+                $scope.$apply();
               } else {
                 alert('this will save');
               }

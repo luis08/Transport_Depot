@@ -176,7 +176,7 @@ namespace TransportDepot.Data.Dispatch
         ArInvoiceNumber = c.Field<string>("ArInvoiceNumber"),
         BillDate = c.Field<DateTime>("BillDate"),
         CommissionPayableDate = c.Field<DateTime>("CommissionPaymentDate"),
-        TractorId = c.Field<string>("TractorId"),
+        LessorId = c.Field<string>("LessorId"),
         CommissionDescription= c.Field<string>("CommisionDescription"),
         Lane = this.GetLane(c),
         CustomerName = c.Field<string>("CustomerName"),

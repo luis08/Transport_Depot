@@ -7,7 +7,7 @@ namespace TransportDepot.Models.Payables.Commissions
 {
   public class Span
   {
-    public string TractorId { get; set; }
+    public string LessorId { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public Location StartLocation { get; set; }

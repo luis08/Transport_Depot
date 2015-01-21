@@ -72,7 +72,7 @@ namespace TransportDepot.Payables.Commissions
       var commission = new InvoiceCommission
       {
         AgentId = this.AgentId,
-        TractorId = this.TractorId,
+        LessorId = this.TractorId,
         InvoiceNumber = tripSpan.InvoiceNumber,
         InvoiceAmount = tripSpan.InvoiceAmout,
         TripNumber = tripSpan.TripNumber,

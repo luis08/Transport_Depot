@@ -28,7 +28,7 @@ namespace TransportDepot.Data.DB
       }
       var candidates = candidatesTable.AsEnumerable().Select(c => new CommissionCandidate
       {
-        TractorId = c.Field<string>("TractorId"),
+        LessorId = c.Field<string>("LessorId"),
         StartDate = c.Field<DateTime>("StartDate"),
         EndDate = c.Field<DateTime>("EndDate"),
         StartLocation = new Location { State = c.Field<string>("StartState") },
@@ -61,14 +61,14 @@ namespace TransportDepot.Data.DB
       
     }
 
-    public Dictionary<string, Location> GetTractorHomes(IEnumerable<string> tripIds)
+    public Dictionary<string, Location> GetLessorHomes(IEnumerable<string> tripIds)
     {
       var xml = new XDocument(new XElement("trips",
         tripIds.Select(t => new XElement("trip", t))));
       var tractorHomes = new DataTable();
       using (var cmd = new SqlCommand
       {
-        CommandText = Queries.TractorHome,
+        CommandText = Queries.LessorHome,
         CommandType = CommandType.Text
       })
       {
@@ -98,7 +98,7 @@ namespace TransportDepot.Data.DB
     {
       var candidatesXml = new XDocument(new XElement("trips",
         candidates.Select(c => new XElement("trip", c.TripNumber,
-          new XAttribute("tractorId", c.TractorId)))));
+          new XAttribute("lessorId", c.LessorId)))));
 
       var tbl = new DataTable();
       var dataSource = new DataSource();
@@ -114,7 +114,7 @@ namespace TransportDepot.Data.DB
       var spans = tbl.AsEnumerable()
         .Select(s => new PreviousTrip
         {
-          TractorId = s.Field<string>("TractorID"),
+          LessorId = s.Field<string>("LessorID"),
           TripNumber = s.Field<string>("TripNumber"),
           PreviuosSpan = new Span
           {
@@ -122,7 +122,7 @@ namespace TransportDepot.Data.DB
             EndDate = s.Field<DateTime>("PreviousEndDate"),
             StartLocation = this.GetLocation(s, "PreviousStartState"),
             EndLocation = this.GetLocation(s, "PreviousEndState"),
-            TractorId = s.Field<string>("TractorID"), 
+            LessorId = s.Field<string>("LessorID"), 
             PreviousSpan = null
           }
         });
@@ -191,7 +191,7 @@ namespace TransportDepot.Data.DB
           new XAttribute("commissionTotal", decimal.Round(decimal.Multiply( 
             decimal.Multiply(c.Percent, 0.01m), 
             c.InvoiceAmount), 2).ToString() ),
-          new XAttribute("tractorId", c.TractorId),
+          new XAttribute("tractorId", c.LessorId),
           new XAttribute("mInvoiceDescription", this.GetInvoiceDescription(c)),
           new XAttribute("dueDate", c.DueDate.ToShortDateString())
           ))));
@@ -200,9 +200,9 @@ namespace TransportDepot.Data.DB
 
     private string GetInvoiceDescription(InvoiceCommission c)
     {
-      return string.Format("Pro: {0} - {1:P} of {2:G}  Truck: {3}", c.InvoiceNumber, 
+      return string.Format("Pro: {0} - {1:P} of {2:G}  Lessor: {3}", c.InvoiceNumber, 
          decimal.Divide(c.Percent, 100.0m) , 
-         c.InvoiceAmount, c.TractorId);
+         c.InvoiceAmount, c.LessorId);
     }
 
     private string GetSetting(string settingName)
@@ -258,7 +258,7 @@ namespace TransportDepot.Data.DB
               FROM [Truckwin_TDPD_Access]...[BillingHistory] [BH]
                 INNER JOIN [dbo].[Paid_Invoice_Commission] [C]
                   ON ( [BH].[cProNumber] = [C].[ArInvoiceNumber] )
-              SELECT         [cTractorID]           AS [TractorId]
+              SELECT         [ATH].[cLessorId1]     AS [LessorID]
                            , [BH].[dShipDate]       AS [StartDate]
                            , [BH].[dTripFinishDate] AS [EndDate]
                            , [BH].[cOrigState]      AS [StartState]
@@ -281,7 +281,6 @@ namespace TransportDepot.Data.DB
                   FROM [dbo].[Paid_Invoice_Commission] [C]
                   WHERE ( [C].[ArInvoiceNumber] = [BH].[cProNumber] )
                 )
-                AND ( COALESCE( [cTractorID], '' ) != '' )
                 AND ( [dBillDate] > @LastBillDate )
                 
           ";
@@ -297,9 +296,9 @@ namespace TransportDepot.Data.DB
             DECLARE @TripsXml XML
             SET @TripsXml = @TripsXmlString
 
-            ;WITH [TractorHistory]  AS
+            ;WITH [LessorHistory]  AS
             (
-              SELECT [AH].[cTractorID]      AS [TractorID] 
+              SELECT [AH].[cLessorId1]      AS [LessorID] 
                    , [AH].[cTripNumber]     AS [TripNumber]
                    , [BH].[dShipDate]       AS [StartDate]
                    , [BH].[dTripFinishDate] AS [EndDate]
@@ -311,37 +310,37 @@ namespace TransportDepot.Data.DB
             ), [Originals] AS
             (
               SELECT [T].[C].value('.', 'varchar(20)') AS [TripNumber]
-                   , [T].[C].value('./@tractorId', 'varchar(20)' ) AS [TractorID]
+                   , [T].[C].value('./@lessorId', 'varchar(20)' ) AS [LessorID]
               FROM @TripsXml.nodes('//trip') AS [T](C)
             )
 
-            SELECT TOP 100 
+            SELECT 
                   [P].[TripNumber] AS [PreviousTripNumber]
                 , [P].[StartDate]  AS [PreviousStartDate]
                 , [P].[EndDate]    AS [PreviousEndDate]
                 , [P].[StartState] AS [PreviousStartState]
                 , [P].[EndState]   AS [PreviousEndState]
-                , TH.* 
-            FROM TractorHistory [TH]
+                , [LH].* 
+            FROM [LessorHistory] [LH]
             CROSS APPLY
             (
-              SELECT TOP 1 [TractorID]
+              SELECT TOP 1 [LessorID]
                          , [TripNumber]
                          , [StartDate] 
                          , [EndDate]
                          , [StartState]
                          , [EndState]
-              FROM TractorHistory [THI]
-              WHERE ( [THI].[EndDate] < [TH].[StartDate] )
-                AND ( [THI].TractorID = [TH].[TractorID] )
+              FROM [LessorHistory] [LHI]
+              WHERE ( [LHI].[EndDate] < [LH].[StartDate] )
+                AND ( [LHI].[LessorID] = [LH].[LessorID] )
               ORDER BY [EndDate] DESC
             )  AS [P] 
             WHERE EXISTS
             (
               SELECT *
               FROM [Originals] [O]
-              WHERE ( [O].[TractorID] = [TH].[TractorID] )
-               AND  ( [O].[TripNumber] = [TH].[TripNumber] )
+              WHERE ( [O].[LessorID]   = [LH].[LessorID] )
+               AND  ( [O].[TripNumber] = [LH].[TripNumber] )
   
             )  
           ";
@@ -507,7 +506,7 @@ namespace TransportDepot.Data.DB
         }
       }
 
-      public static string TractorHome
+      public static string LessorHome
       {
         get
         {

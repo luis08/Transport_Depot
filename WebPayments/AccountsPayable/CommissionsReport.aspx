@@ -52,7 +52,7 @@
         <div class='trip-number'>{{TripNumber}}</div>
         <div class='invoice-date'>{{InvoiceDate}}</div>
         <div class='lane'>{{Lane}}</div>
-        <div class='tractor-id'>{{TractorId}}</div>
+        <div class='tractor-id'>{{LessorId}}</div>
         <div class='customer-name'>{{CustomerName}}</div>
         <div class='commission-total'>{{CommissionTotal}}</div>
         <div class='invoice-amount'>{{InvoiceAmount}}</div>
@@ -71,7 +71,7 @@
         <div class='trip-number'>Trip</div>
         <div class='invoice-date'>Inv. Date</div>
         <div class='lane'>Lane</div>
-        <div class='tractor-id'>TractorId</div>
+        <div class='tractor-id'>Lessor</div>
         <div class='customer-name'>Customer Name</div>
         <div class='commission-total'>Commission</div>
         <div class='invoice-amount'>Inv. Amt</div>

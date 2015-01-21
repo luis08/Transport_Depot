@@ -15,7 +15,7 @@ namespace TransportDepot.Models.Dispatch
     public decimal InvoiceAmount { get; set; }
     public DateTime BillDate { get; set; }
     public DateTime CommissionPayableDate { get; set; }
-    public string TractorId { get; set; }
+    public string LessorId { get; set; }
     public string CommissionDescription { get; set; }
     public string Lane { get; set; }
     public string CustomerName { get; set; }

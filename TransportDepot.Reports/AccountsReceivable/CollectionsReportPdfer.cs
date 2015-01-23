@@ -8,6 +8,7 @@ using MigraDoc.DocumentObjectModel;
 using System.Linq;
 using MigraDoc.Rendering;
 using System;
+using TransportDepot.Reports.Generic;
 
 
 namespace TransportDepot.Reports.AccountsReceivable
@@ -113,12 +114,22 @@ namespace TransportDepot.Reports.AccountsReceivable
     {
       var pageHeightRemaining = GridHeightInCm;
       LinkedList<CustomerBlockPdfer> customerBlockPdfers = new LinkedList<CustomerBlockPdfer>();
+      var totalBalance = decimal.Zero;
+      var totalCurrentBalance = decimal.Zero;
+      var totalLateBalance = decimal.Zero;
+      var totalOver30Balance = decimal.Zero;
 
       this.CustomerBlocks.ToList().ForEach(b =>
       {
+        totalBalance = decimal.Add(totalBalance, b.Balance);
+        totalCurrentBalance = decimal.Add(totalCurrentBalance, b.BalanceCurrent);
+        totalLateBalance = decimal.Add(totalLateBalance, b.BalanceLate);
+        totalOver30Balance = decimal.Add(totalOver30Balance, b.BalanceOver30);
+
         pageHeightRemaining = this.AddCustomerBlockPdfers(customerBlockPdfers, b, pageHeightRemaining);
       });
       customerBlockPdfers.ToList().ForEach(b => b.Render());
+      this.RenderReportTotals(totalBalance, totalCurrentBalance, totalLateBalance, totalOver30Balance);
     }
 
     private double AddCustomerBlockPdfers(LinkedList<CustomerBlockPdfer> blockPdfers, CollectionsCustomerBlock block, double pageHeightRemaining)
@@ -200,6 +211,59 @@ namespace TransportDepot.Reports.AccountsReceivable
       style.ParagraphFormat.SpaceBefore = "5mm";
       style.ParagraphFormat.SpaceAfter = "5mm";
       style.ParagraphFormat.TabStops.AddTabStop("16cm", TabAlignment.Right);
+    }
+
+    private void RenderReportTotals(decimal totalBalance, decimal totalCurrentBalance, decimal totalLateBalance, decimal totalOver30Balance)
+    {
+      //throw new NotImplementedException();
+      var mainRow = this._table.AddRow();
+      mainRow.Format.Font.Bold = true;
+      
+
+      var totalsFrame = mainRow.Cells[0].AddTextFrame();
+      var totalsTable = totalsFrame.AddTable();
+      totalsTable.Borders.Width = 0.0;
+      //totalsTable.Borders.Top.Width = 1.0;
+      //totalsTable.Borders.Top.Color = Colors.Black;
+
+      var dummyColumn = totalsTable.AddColumn(CustomerBlockPdfer.ColumnWidths.Dummy);
+      var invoiceNumberCol = totalsTable.AddColumn(CustomerBlockPdfer.ColumnWidths.InvoiceNumber);
+      var invoiceDateCol = totalsTable.AddColumn(CustomerBlockPdfer.ColumnWidths.Date);
+      var invoiceAgeCol = totalsTable.AddColumn(CustomerBlockPdfer.ColumnWidths.Age);
+      var customerRefCol = totalsTable.AddColumn(CustomerBlockPdfer.ColumnWidths.Reference);
+      var currentCol = totalsTable.AddColumn(CustomerBlockPdfer.ColumnWidths.Current);
+      var lateCol = totalsTable.AddColumn(CustomerBlockPdfer.ColumnWidths.Late);
+      var over30Col = totalsTable.AddColumn(CustomerBlockPdfer.ColumnWidths.Over30);
+      
+      invoiceNumberCol.Format.Alignment =
+        invoiceDateCol.Format.Alignment =
+        invoiceAgeCol.Format.Alignment = ParagraphAlignment.Center;
+      dummyColumn.Format.Alignment = 
+        currentCol.Format.Alignment =
+        lateCol.Format.Alignment =
+        over30Col.Format.Alignment = ParagraphAlignment.Right;
+
+      var rowHeight = CustomerBlockPdfer.InvoiceRowHeight;
+      totalsTable.AddRow();
+      var totalsRow = totalsTable.AddRow();
+      totalsRow.Height = string.Format("{0}cm", CustomerBlockPdfer.InvoiceRowHeight);
+      totalsRow.TopPadding = totalsRow.BottomPadding = 0;
+      totalsRow.Format.Font.Bold = true;
+      totalsRow.Format.Font.Size = this.FontSize;
+      totalsRow.Cells[0].AddParagraph();
+      totalsRow.Cells[1].AddParagraph( );
+      totalsRow.Cells[2].AddParagraph();
+      totalsRow.Cells[3].AddParagraph();
+      totalsRow.Cells[4].AddParagraph("Report Totals:");
+      totalsRow.Cells[5].AddParagraph( totalCurrentBalance.ToString(DataFormats.Currency));
+      totalsRow.Cells[6].AddParagraph(totalLateBalance.ToString(DataFormats.Currency));
+      totalsRow.Cells[7].AddParagraph( totalOver30Balance.ToString(DataFormats.Currency));
+
+      totalsRow.Cells[4].Format.Borders.Top.Color =
+        totalsRow.Cells[5].Format.Borders.Top.Color =
+        totalsRow.Cells[6].Format.Borders.Top.Color =
+        totalsRow.Cells[7].Format.Borders.Top.Color = Colors.Black;
+      totalsRow.Cells[4].Format.Alignment = ParagraphAlignment.Right;
     }
 
   }

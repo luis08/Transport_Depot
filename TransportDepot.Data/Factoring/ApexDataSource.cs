@@ -29,7 +29,6 @@ namespace TransportDepot.Data.Factoring
     public IEnumerable<string> Save(IEnumerable<FactoringPayment> payments)
     {
       
-      var fileName = string.Format(@"C:\Test\ApexPayments\payments_{0:yyyyMMdd_mmss}.xml", DateTime.Now);
       var paymentsXml = GetPaymentsXml(payments);
       
       var ds  = new DataSource();
@@ -40,7 +39,7 @@ namespace TransportDepot.Data.Factoring
         payments = payments.Where(p => !dupes.Contains(p.InvoiceNumber));
         this.SavePayments(cn, payments);
       }
-      paymentsXml.Save(fileName);
+      
       return dupes;
     }
 
@@ -91,8 +90,17 @@ namespace TransportDepot.Data.Factoring
 
     private string GetComments(FactoringPayment p)
     {
+      var schedule = string.Empty;
+      if (p.Schedule < 1)
+      {
+        schedule = string.Format("['{0}' - No Schedule]", p.Type);
+      }
+      else
+      {
+        schedule = p.Schedule.ToString();
+      }
       return string.Format("Schedule {0} - Automatically Imported {1}",
-        p.Schedule,
+        schedule,
         DateTime.Today.ToString("MM/dd/yyyy"));
     }
 

@@ -86,8 +86,9 @@ var app = angular.module('apexUpload', [])
             ajaxRequest.success(function (data) {
               var existingInvoices = data.GetExistingPaymentsResult;
               if (existingInvoices.length > 0) {
+                existingInvoices.sort();
                 var dupes = existingInvoices.join('\n');
-                alert('The following cannot be saved. Either: \n-There is a payment for that invoice\n-There is no such invoice, or \n-Invoice amounts do not match. \n\nThey were all excluded (checked): \n' + dupes);
+                alert('The following ' + existingInvoices.length + ' invoice(s) cannot be saved. Either: \n-There is a payment for that invoice\n-There is no such invoice, or \n-Invoice amounts do not match. \n\nThey were all excluded (checked): \n' + dupes);
                 angular.forEach(existingInvoices, function (dupe, idx) {
                   angular.forEach($scope.payments, function (payment, idx) {
                     if (payment.InvoiceNumber === dupe) {
@@ -150,9 +151,20 @@ app.directive('clickbox', [function () {
     link: function (scope, element, attrs) {
       element.bind('click', function (e) {
         e.stopPropagation();
-        var chbox = $(e.target).closest('li').find('input[type=checkbox]');
+        /*
+        var chbox = $(e.target).closest('li').find('d');
         $(chbox).prop("checked", !$(chbox).prop("checked"));
+        */
+        var invoiceNumber = $(element).closest('li').find('.invoice').text();
+        angular.forEach(scope.payments, function (payment, idx) {
+          
+          if( payment.InvoiceNumber === invoiceNumber ){
+            payment.exclude = ( ! payment.exclude );
+          }
+        });
+        scope.$apply();
       });
+      
     }
   };
 } ]);

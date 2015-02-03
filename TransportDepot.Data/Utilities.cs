@@ -114,6 +114,41 @@ namespace TransportDepot.Data
       }
       return dateTime;
     }
+    public static string Clean(string str)
+    {
+      if (string.IsNullOrEmpty(str)) { return string.Empty; }
+      str = str.Trim();
+      return str;
+    }
+
+    public static DateTime? ParseDateTime(string dateTime)
+    {
+      if (string.IsNullOrEmpty(dateTime))
+      {
+        return null;
+      }
+      var parsedDateTime = DateTime.Today;
+
+      if (!DateTime.TryParse(dateTime, out parsedDateTime))
+      {
+        return null;
+      }
+      return parsedDateTime;
+    }
+
+    public static decimal ParseDecimalOrZero(string amount)
+    {
+      if (string.IsNullOrEmpty(amount))
+      {
+        return decimal.Zero;
+      }
+      var decimalAmount = decimal.Zero;
+      if (!decimal.TryParse(amount, out decimalAmount))
+      {
+        return decimal.Zero;
+      }
+      return decimalAmount;
+    }
   }
 }
  

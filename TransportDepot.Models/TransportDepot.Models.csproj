@@ -63,6 +63,8 @@
     <Compile Include="Dispatch\DispatcherCommission.cs" />
     <Compile Include="Dispatch\DispatcherCommissionDate.cs" />
     <Compile Include="Dispatch\DriverContact.cs" />
+    <Compile Include="Dispatch\MovingFreightStop.cs" />
+    <Compile Include="Dispatch\MovingFreightTrip.cs" />
     <Compile Include="Factoring\FactoringPayment.cs" />
     <Compile Include="Payables\Commissions\CommissionCandidate.cs" />
     <Compile Include="Payables\Commissions\CommissionRequest.cs" />
@@ -85,6 +87,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Safety\Driver.cs" />
     <Compile Include="Safety\Tractor.cs" />
+    <Compile Include="Utilities\EmailModel.cs" />
+    <Compile Include="Utilities\FileAttachment.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

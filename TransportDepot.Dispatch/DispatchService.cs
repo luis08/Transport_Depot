@@ -34,18 +34,22 @@ namespace TransportDepot.Dispatch
       }
     }
 
-
     public System.Collections.Generic.IEnumerable<System.DateTime> GetAllCommissionDates()
     {
       var dates = this._datasource.GetAllCommissionDates();
       return dates;
     }
 
-
     public System.Collections.Generic.IEnumerable<Models.Dispatch.Dispatcher> GetDispatchers()
     {
       var dispatchers = this._datasource.GetDispatchers().OrderBy(d=>d.Name);
       return dispatchers;
+    }
+
+    public System.Collections.Generic.IEnumerable<Models.Dispatch.MovingFreightTrip> GetMovingFreight()
+    {
+      var movingFreight = this._datasource.GetMovingFreight();
+      return movingFreight;
     }
   }
 }

@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountsReceivableService.cs" />
+    <Compile Include="ApexPaymentBuilder.cs" />
     <Compile Include="ApexPayments.cs" />
     <Compile Include="IAccountsReceivableService.cs" />
     <Compile Include="IApexPaymentsService.cs" />

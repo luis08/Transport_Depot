@@ -50,7 +50,9 @@
     <Compile Include="CsvUtilities.cs" />
     <Compile Include="Csv\Csv.cs" />
     <Compile Include="Csv\CsvRequest.cs" />
+    <Compile Include="Debugger.cs" />
     <Compile Include="ICsvService.cs" />
+    <Compile Include="IEmailService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

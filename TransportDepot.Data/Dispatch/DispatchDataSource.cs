@@ -140,6 +140,96 @@ namespace TransportDepot.Data.Dispatch
       return contacts;
     }
 
+    public IEnumerable<MovingFreightTrip> GetMovingFreight()
+    {
+      var tbl = new DataTable();
+      var ds = new DataSource();
+
+      using (var cmd = new SqlCommand(Queries.MovingFreight))
+      {
+        tbl = ds.FetchDataTable(cmd);
+      }
+      try
+      {
+        var movingFreight = tbl.AsEnumerable()
+          .Select(t => new MovingFreightTrip
+          {
+            Customer = GetCustomer(t),
+            CustomerId = t.Field<string>("CustomerID"),
+            Drivers = GetDrivers(t),
+            TripNumber = t.Field<string>("TripNumber"),
+            Tractor = t.Field<string>("TractorID"),
+            Trailer = t.Field<string>("TrailerID"),
+            From = this.GetFrom(t),
+            To = this.GetTo(t)
+          });
+        return movingFreight;
+      }
+      catch (Exception e)
+      {
+        return new MovingFreightTrip[] { new MovingFreightTrip { Customer = new Models.Business.Company { Name = "Luis " + tbl.Rows.Count.ToString(), Address = e.Message } } };
+      }
+      
+    }
+
+    private DriverContact[] GetDrivers(DataRow t)
+    {
+      return new DriverContact[] 
+          {
+            this.GetDriver(t, 1),
+            this.GetDriver(t,2)
+          };
+    }
+
+    private static Models.Business.Company GetCustomer(DataRow t)
+    {
+      return new Models.Business.Company
+      {
+        Name = t.Field<string>("Customer_Name"),
+        Phone = t.Field<string>("Customer_Phone")
+      };
+    }
+
+    private MovingFreightStop GetFrom(DataRow t)
+    {
+      return new MovingFreightStop
+      {
+        City = t.Field<string>("FromCity"),
+        State = t.Field<string>("FromState"),
+        DateTime = t.Field<DateTime>("Pickup")
+      };
+    }
+
+    private MovingFreightStop GetTo(DataRow t)
+    {
+      return new MovingFreightStop
+      {
+        City = t.Field<string>("ToCity"),
+        State = t.Field<string>("ToState"),
+        DateTime = t.Field<DateTime>("Delivery")
+      };
+    }
+
+    private DriverContact GetDriver(DataRow t, int p)
+    {
+      var firstNameField = string.Format("Driver{0}_FirstName", p);
+      var lastNameField = string.Format("Driver{0}_lastName", p);
+      var phoneField = string.Format("Driver{0}_Phone", p);
+      var cardField = string.Format("Driver{0}_Card", p);
+      
+      var driver = new DriverContact
+      {
+        Name = t.Field<string>(firstNameField) + " " + t.Field<string>(lastNameField),
+        CellPhone = t.Field<string>(phoneField)
+      };
+      if (p == 1)
+      {
+        driver.Card = t.Field<string>(cardField);
+      }
+      return driver;
+    }
+
+
     private IEnumerable<DispatcherCommissionDate> GetCommissionDates()
     {
       var tbl = new DataTable();
@@ -217,6 +307,8 @@ namespace TransportDepot.Data.Dispatch
         FROM [Drivers] 
         ORDER BY [Name]
     ";
+
+
   }
 
 

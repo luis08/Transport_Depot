@@ -14,9 +14,8 @@ namespace TransportDepot.AccountsReceivable
   public class ApexPayments : IApexPaymentsService
   {
 
-    private Dictionary<string, int> fieldIndexes = new Dictionary<string, int>();
-    private List<string> transactionTypes =
-      new List<string>(System.Configuration.ConfigurationManager.AppSettings["TransportDepot.AccountsReceivable.ApexPayments.TransactionTypes"].Split('|'));
+    private Dictionary<string, int> _fieldIndexes = new Dictionary<string, int>();
+    private List<string> transactionTypes = new List<string>();
     public System.Collections.Generic.IEnumerable<FactoringPayment> ParsePayments(string path)
     {
 
@@ -24,8 +23,6 @@ namespace TransportDepot.AccountsReceivable
       var parsedCsv = svc.ReadCsv(path);
       return GetPayments(parsedCsv);
     }
-
-
 
     public IEnumerable<FactoringPayment> ReadCsv(string fileName, Stream stream)
     {
@@ -40,12 +37,25 @@ namespace TransportDepot.AccountsReceivable
       var headers = parsedCsv.First();
       var data = parsedCsv.Skip(1);
       this.FindFields(headers);
+      var payments = new Dictionary<string, FactoringPayment>();
+      data.ToList().ForEach(csvRow =>
+      {
+        var payment = GetApexPayment(csvRow);
+        if (payment != null)
+        {
+          if (payments.ContainsKey(payment.InvoiceNumber))
+          {
+            payments.Remove(payment.InvoiceNumber);
+          }
+          else
+          {
+            payments.Add(payment.InvoiceNumber, payment);
+          }
+        }
+      });
 
-      var payments = data.Select(r => GetApexPayment(r))
-        .Where(p => p != null);
-
-      Save(payments);
-      return payments;
+      Save(payments.Values);
+      return payments.Values;
     }
 
     public IEnumerable<string> GetExistingPayments(IEnumerable<FactoringPayment> payments)
@@ -62,60 +72,20 @@ namespace TransportDepot.AccountsReceivable
 
     private FactoringPayment GetApexPayment(string[] csvRow)
     {
-      var scheduleIdString = csvRow[this.fieldIndexes["Schedule"]];
-      var scheduleId = -1;
-      if (!int.TryParse(scheduleIdString, out scheduleId))
+      var builder = new ApexPaymentBuilder
       {
-        return null;
-      }
-      var paymentAmount = 0.0m;
-      var amountString = csvRow[this.fieldIndexes["Amount"]].Replace("$", "");
-      if (!decimal.TryParse(amountString, out paymentAmount))
-      {
-        return null;
-      }
-      var effectiveDate = DateTime.Today;
-      if (!DateTime.TryParse(csvRow[this.fieldIndexes["EffectiveDate"]], out effectiveDate))
-      {
-        return null;
-      }
-      string paymentType = this.CleanString(csvRow[this.fieldIndexes["Type"]]);
-      if (!this.transactionTypes.Contains(paymentType))
-      { 
-        return null; 
-      }
-      string invoiceNumber = this.GetInvoiceNumber(csvRow);
-
-      var payment = new FactoringPayment
-      {
-        Type = paymentType,
-        InvoiceNumber = invoiceNumber,
-        Schedule = scheduleId,
-        CheckNumber = csvRow[this.fieldIndexes["CheckNumber"]],
-        Amount = paymentAmount,
-        Debtor = csvRow[this.fieldIndexes["Debtor"]],
-        EffectiveDate = effectiveDate
+        Amount = csvRow[this._fieldIndexes["Amount"]].Replace("$", ""),
+        CheckNumber = csvRow[this._fieldIndexes["CheckNumber"]],
+        Debtor = csvRow[this._fieldIndexes["Debtor"]],
+        EffectiveDate = csvRow[this._fieldIndexes["EffectiveDate"]],
+        InvoiceNumber = csvRow[this._fieldIndexes["InvoiceNumber"]],
+        Schedule = csvRow[this._fieldIndexes["Schedule"]],
+        Type = csvRow[this._fieldIndexes["Type"]],
+        ReserveChange = csvRow[this._fieldIndexes["Reserve Change"]].Replace("$", "")
       };
+
+      var payment = builder.GetPayment();
       return payment;
-    }
-
-    private string GetInvoiceNumber(string[] csvRow)
-    {
-      var invoiceNumber = this.CleanString( csvRow[this.fieldIndexes["InvoiceNumber"]] );
-      invoiceNumber = this.PadInvoiceNumber(invoiceNumber);
-      string paymentType = this.CleanString(csvRow[this.fieldIndexes["Type"]]);
-      
-      if (string.IsNullOrEmpty(invoiceNumber))
-      {
-        return string.Empty;
-      }
-
-
-      if (this.transactionTypes.Contains(paymentType))
-      {
-        return invoiceNumber;
-      }
-      return string.Empty;
     }
 
 
@@ -125,19 +95,24 @@ namespace TransportDepot.AccountsReceivable
       {
         var h = headers[i];
         if (h.LastIndexOf("Type", StringComparison.OrdinalIgnoreCase) >= 0)
-        { this.fieldIndexes.Add("Type", i); }
+        { this._fieldIndexes.Add("Type", i); }
         else if (h.LastIndexOf("Sched.", StringComparison.OrdinalIgnoreCase) >= 0)
-        { this.fieldIndexes.Add("Schedule", i); }
+        { this._fieldIndexes.Add("Schedule", i); }
         else if (h.LastIndexOf("Check", StringComparison.OrdinalIgnoreCase) >= 0)
-        { this.fieldIndexes.Add("CheckNumber", i); }
+        { this._fieldIndexes.Add("CheckNumber", i); }
         else if (h.LastIndexOf("Eff Date", StringComparison.OrdinalIgnoreCase) >= 0)
-        { this.fieldIndexes.Add("EffectiveDate", i); }
+        { this._fieldIndexes.Add("EffectiveDate", i); }
         else if (h.LastIndexOf("Invoice", StringComparison.OrdinalIgnoreCase) >= 0)
-        { this.fieldIndexes.Add("InvoiceNumber", i); }
+        { this._fieldIndexes.Add("InvoiceNumber", i); }
         else if (h.LastIndexOf("Inv Am", StringComparison.OrdinalIgnoreCase) >= 0)
-        { this.fieldIndexes.Add("Amount", i); }
+        { this._fieldIndexes.Add("Amount", i); }
         else if (h.LastIndexOf("Debtor", StringComparison.OrdinalIgnoreCase) >= 0)
-        { this.fieldIndexes.Add("Debtor", i); }
+        { this._fieldIndexes.Add("Debtor", i); }
+        else if (h.LastIndexOf("Debtor", StringComparison.OrdinalIgnoreCase) >= 0)
+        { this._fieldIndexes.Add("Debtor", i); }
+        else if ((h.LastIndexOf("Reserve", StringComparison.OrdinalIgnoreCase) >= 0) 
+          && (h.LastIndexOf("Change", StringComparison.OrdinalIgnoreCase) >= 0) )
+        { this._fieldIndexes.Add("Reserve Change", i); }
       }
     }
 
@@ -164,27 +139,6 @@ namespace TransportDepot.AccountsReceivable
 
       xmlDoc.Save(@"C:\Projects\WCF_Tests\WCF.Test.Upload\0_Test_Files\t.xml");
 
-    }
-
-    private string CleanString(string str)
-    {
-      if (string.IsNullOrEmpty(str)) { return string.Empty; }
-      str = str.Trim();
-      return str;
-    }
-    private string PadInvoiceNumber(string invoiceNumber)
-    {
-      var padding = System.Configuration.ConfigurationManager.AppSettings["Factoring.InvoiceLeftFill"] ?? string.Empty;
-      var lengthDifference = padding.Length - invoiceNumber.Length;
-      if (padding.Length == 0)
-      { return invoiceNumber; }
-      else if (lengthDifference < 1)
-      { return invoiceNumber; }
-
-      var newInvoiceNumber = string.Format("{0}{1}",
-        padding.Substring(0, lengthDifference),
-        invoiceNumber);
-      return newInvoiceNumber;
     }
   }
 }

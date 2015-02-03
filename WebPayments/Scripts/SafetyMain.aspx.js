@@ -288,7 +288,7 @@ SafetyMain.getDriver = function (tr) {
     LastValidLogDate: $(tr).find('.driver-last-valid-log').datepicker('getDate'),
     DriversLicenseExpiration: $(tr).find('.driver-licence-expiration').datepicker('getDate'),
     MVRExpiration: $(tr).find('.driver-mvr-expiration').datepicker('getDate'),
-    Comments: $(tr).find('.driver-comments').text()
+    Comments: $(tr).find('.driver-comments').val()
   };
   return driver;
 };

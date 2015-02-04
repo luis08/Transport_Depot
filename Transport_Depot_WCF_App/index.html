@@ -16,92 +16,71 @@
     .even { background-color:#ddd; }
   </style>
 </head>
-<body ng-app="apexUpload">
-  <form ng-controller="uploader">
-    <input type='file' 
-           onchange="angular.element(this).scope().fileChanged(this)"  />
-    <button ng-click="upload()" >Upload</button>
-    <br />
-    <div>
-      <span>{{file.name}}</span><br />
-      <span>{{path}}</span>
-    </div>
-    <table>
-      
-      <tr>
-       <td>Exclude</td>
-        <!-- Invoice -->
-        <td>Invoice</td>
-        <!-- Check -->
-        <td>Check</td>
-        <!-- Client -->
-        <td>Client</td>
-        <!-- Effective Date -->
-        <td>Effective</td>
-        <!-- Invoice Amount-->
-        <td>Amount</td>
+<body >
+  <div ng-app='freightApp'>
+    <table >
+      <thead>
+        <tr>
+          <th>
+            Truck<br/>Trip#
+          </th>
+          <th>
+            Trailer<br/>Driver Phone
+          </th>
+          <th>
+            Driver<br/>Card
+          </th>
+          <th>
+            Line Haul<br/>Pickup
+          </th>
+          <th>
+            Arrival
+          </th>
+          <th>
+            Truck<br/>Trip#
+          </th>                
       </tr>
-      <tr ng-repeat="payment in payments" ng-class-even="'even'">
-       <td><input type="checkbox" ng-model="payment.exclude" /></td>
-        <!-- Invoice -->
-        <td>{{payment.InvoiceNumber}}</td>
-        <!-- Check -->
-        <td>{{payment.CheckNumber}}</td>
-        <!-- Client -->
-        <td>{{payment.Debtor}}</td>
-        <!-- Effective Date -->
-        <td>{{payment.EffectiveDate | date:'MM/dd/yyyy'}}</td>
-        <!-- Invoice Amount-->
-        <td class='right'>{{payment.Amount | currency }}</td>
-      </tr>
-    </table> 
+        </thead>
+      <tbody ng-controller="freightController" > 
+        <tr ng-repeat="trip in trips">
+          <td>{{trip.Tractor}}<br/>{{trip.TripNumber}}</td>
+          <td>{{trip.Trailer}}<br/>{{trip.Drivers[0].CellPhone}}</td>
+          <td>{{trip.Drivers[0].Name}}<br/>{{trip.Drivers[0].Card}}</td>
+          <td>{{trip.From.State}} - {{trip.To.State}}<br/>{{trip.From.Date | date: "MM/dd/yyyy"}}</td>
+          <td>{{trip.To.Date | date: "MM/dd/yyyy"}}<br/>{{trip.To.City}}</td>
+          
+          
+          <td>{{trip.Customer.Name}}<br/>{{trip.Customer.Phone}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
     
-  </form>
+  
   <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>  
-  <script>
+  <script type="text/javascript"> 
     function parseWcfDate(wcfDate){
         var d=wcfDate.match(/(\d+)/)[1];
         return new Date(+d);
     }
-    angular.module('apexUpload', [])
-      .controller('uploader', ['$scope', '$http',
-        function ($scope, $http) {
-          $scope.payments = [];
+    var app = angular.module('freightApp', []);
+    
+    app.controller('freightController', function($scope, $http){
+       $http.get("http://192.168.1.200/settlements/Dispatch.svc/GetMovingFreight")
+        .success(function(response) {
+          $scope.trips = response.GetMovingFreightResult;
+          angular.forEach($scope.trips, function(trip, key) {
+            trip.From.Date = parseWcfDate(trip.From.DateTime);
+            trip.To.Date = parseWcfDate(trip.To.DateTime);
+          });
           
-          $scope.fileChanged = function (elem) {
-            $scope.path = elem.value;
-            $scope.file = elem.files[0];
-            $scope.$apply();
-          };
-
-          $scope.render = function (data) {
-            $scope.payments = data;
-          }
-
-          $scope.upload = function () {
-            var uri = 'Apex.svc/read?paymentsCsv=' + $scope.file.name;
-            //var uri = 'Utilities.svc/ReadCsv?fileName=' + $scope.file.name;
-            //var uri = 'http://localhost:4055/Apex.svc?apexCsv=' + $scope.file.name;
-            $http.post(uri, $scope.file, {
-              headers: { 'Content-Type': 'multipart/form-data' }
-            })
-            .success(function (d) {
-              var json = d.ReadCsvResult;
-              
-              
-              angular.forEach(json, function(value, key) {
-                value.exclude = false;
-                value.EffectiveDate = parseWcfDate(value.EffectiveDate);
-              });
-              $scope.render(json);
-            })
-            .error(function (data, status, headers, config) {
-              debugger;
-            });
-          };
-        }
-      ]);
+        }).error(function (http, status, fnc, httpObj ) {
+          console.log('albums retrieval failed.',http,status,httpObj);
+        });
+    });
   </script>
 </body>
 </html>

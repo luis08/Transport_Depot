@@ -16,35 +16,58 @@ namespace TransportDepot.AccountsReceivable
 
     private Dictionary<string, int> _fieldIndexes = new Dictionary<string, int>();
     private List<string> transactionTypes = new List<string>();
-    public System.Collections.Generic.IEnumerable<FactoringPayment> ParsePayments(string path)
+    private Dictionary<string, FactoringPayment> payments = new Dictionary<string, FactoringPayment>();
+    private Dictionary<string, List<FactoringPayment>> doubleEntries = new Dictionary<string, List<FactoringPayment>>();
+    public ApexPaymentBatch ParsePayments(string path)
     {
 
       var svc = new CsvUtilities();
       var parsedCsv = svc.ReadCsv(path);
-      return GetPayments(parsedCsv);
+      ReadPayments(parsedCsv);
+      return new ApexPaymentBatch
+      {
+        InvalidPayments = this.doubleEntries.Values.SelectMany(p => p).OrderBy(p => p.InvoiceNumber),
+        ValidPayments = this.payments.Values
+      };
     }
 
-    public IEnumerable<FactoringPayment> ReadCsv(string fileName, Stream stream)
+    public ApexPaymentBatch ReadCsv(string fileName, Stream stream)
     {
       
       var svc = new CsvUtilities();
       var parsedCsv = svc.ReadCsv(stream);
-      return GetPayments(parsedCsv);
+      ReadPayments(parsedCsv);
+      return new ApexPaymentBatch
+      {
+        InvalidPayments = this.doubleEntries.Values.SelectMany(p=>p).OrderBy(p=>p.InvoiceNumber),
+        ValidPayments = this.payments.Values
+      };
     }
 
-    private IEnumerable<FactoringPayment> GetPayments(IEnumerable<string[]> parsedCsv)
+    private void ReadPayments(IEnumerable<string[]> parsedCsv)
     {
       var headers = parsedCsv.First();
       var data = parsedCsv.Skip(1);
       this.FindFields(headers);
-      var payments = new Dictionary<string, FactoringPayment>();
+      payments = new Dictionary<string, FactoringPayment>();
+      doubleEntries = new Dictionary<string, List<FactoringPayment>>();
+
       data.ToList().ForEach(csvRow =>
       {
         var payment = GetApexPayment(csvRow);
+
         if (payment != null)
         {
           if (payments.ContainsKey(payment.InvoiceNumber))
           {
+            if( !doubleEntries.ContainsKey(payment.InvoiceNumber))
+            {
+              doubleEntries.Add(payment.InvoiceNumber, new List<FactoringPayment>());
+            }
+            var oldPayment = payments[payment.InvoiceNumber];
+            doubleEntries[payment.InvoiceNumber].Add(oldPayment);
+            doubleEntries[payment.InvoiceNumber].Add(payment);
+            
             payments.Remove(payment.InvoiceNumber);
           }
           else
@@ -55,7 +78,6 @@ namespace TransportDepot.AccountsReceivable
       });
 
       Save(payments.Values);
-      return payments.Values;
     }
 
     public IEnumerable<string> GetExistingPayments(IEnumerable<FactoringPayment> payments)

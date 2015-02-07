@@ -51,9 +51,20 @@
     <Compile Include="Csv\Csv.cs" />
     <Compile Include="Csv\CsvRequest.cs" />
     <Compile Include="Debugger.cs" />
+    <Compile Include="Email\EmailService.cs" />
+    <Compile Include="Email\EmailUtilities.cs" />
     <Compile Include="ICsvService.cs" />
     <Compile Include="IEmailService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TransportDepot.Models\TransportDepot.Models.csproj">
+      <Project>{3FA6F134-A16F-45CC-A1EF-3CE8EBA36104}</Project>
+      <Name>TransportDepot.Models</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

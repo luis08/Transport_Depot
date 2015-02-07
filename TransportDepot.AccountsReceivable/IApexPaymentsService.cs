@@ -11,7 +11,7 @@ namespace TransportDepot.AccountsReceivable
   public interface IApexPaymentsService
   {
     [OperationContract]
-    IEnumerable<FactoringPayment> ParsePayments(string path);
+    ApexPaymentBatch ParsePayments(string path);
 
     [OperationContract]
     [WebInvoke(Method = "POST")]
@@ -25,6 +25,6 @@ namespace TransportDepot.AccountsReceivable
     [WebInvoke(Method = "POST",
       UriTemplate = "?paymentsCsv={fileName}",
       ResponseFormat=WebMessageFormat.Json)]
-    IEnumerable<FactoringPayment> ReadCsv(string fileName, Stream stream);
+    ApexPaymentBatch ReadCsv(string fileName, Stream stream);
   }
 }

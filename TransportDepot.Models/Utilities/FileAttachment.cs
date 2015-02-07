@@ -6,6 +6,6 @@ namespace TransportDepot.Models.Utilities
   public class FileAttachment
   {
     public string FileContent { get; set; }
-    public FileInfo Info { get; set; }
+    public MemoryStream Stream { get; set; }
   }
 }

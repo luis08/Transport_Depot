@@ -26,6 +26,7 @@ var app = angular.module('apexUpload', [])
           $scope.fileChanged = function (elem) {
             $scope.path = elem.value;
             $scope.file = elem.files[0];
+            $scope.payments = [];
             $scope.$apply();
           };
 

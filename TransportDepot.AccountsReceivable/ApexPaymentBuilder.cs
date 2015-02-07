@@ -161,7 +161,8 @@ namespace TransportDepot.AccountsReceivable
       {
         return false;
       }
-      if (string.IsNullOrEmpty(this.Amount))
+      else if (string.IsNullOrEmpty(this.Amount) &&
+        string.IsNullOrEmpty(this.ReserveChange))
       {
         return false;
       }

@@ -94,9 +94,11 @@ namespace TransportDepot.Data.Dispatch
                       ELSE ( [AT].[cCarrierID] )
                    END AS [TractorID]
                  , [AT].[cTrailer1Id] AS [TrailerID]
-                 , [E].[cFirst] AS [Driver1_FirstName] 
-                 , [E].[cLast]  AS [Driver1_LastName] 
-                 , [E].[cCellularPager] AS [Driver1_Phone]
+                 , [AT].[cDriver1Id]  AS [Driver1_EmployeeID]
+                 , [AT].[cDriver2Id]  AS [Driver2_EmployeeID]
+                 ,  [E].[cFirst] AS [Driver1_FirstName] 
+                 ,  [E].[cLast]  AS [Driver1_LastName] 
+                 ,  [E].[cCellularPager] AS [Driver1_Phone]
                  , [E2].[cFirst] AS [Driver2_FirstName] 
                  , [E2].[cLast]  AS [Driver2_LastName] 
                  , [E2].[cCellularPager] AS [Driver2_Phone]
@@ -108,7 +110,8 @@ namespace TransportDepot.Data.Dispatch
                  , [TN].[dDeliveryDate] AS [Delivery]
                  , [TN].[cDestCity] AS [City]
                  , [TN].[cCustomerID] AS [CustomerID]
-                 , E.cEmployeeId
+                 ,  [E].[cEmployeeId] AS [Driver1ID]
+
           FROM [Truckwin_TDPD_Access]...[AssignedTo] [AT]
             LEFT JOIN  [Truckwin_TDPD_Access]...[PrEmployee] AS [E]  ON [AT].[cDriver1Id] = [E].[cEmployeeId]
             LEFT JOIN  [Truckwin_TDPD_Access]...[PrEmployee] AS [E2] ON [AT].[cDriver2Id] = [E2].[cEmployeeId]

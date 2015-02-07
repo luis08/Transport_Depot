@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 namespace TransportDepot.Models.Factoring
 {
   public class FactoringPayment

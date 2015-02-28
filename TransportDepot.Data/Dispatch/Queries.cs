@@ -142,7 +142,7 @@ namespace TransportDepot.Data.Dispatch
                , [DI].[cFuelCardNumber1] [Driver1_Card]
         FROM [MovingFreight] AS [M]
             INNER JOIN [Truckwin_TDPD_Access]...[Customer]   AS [C]  ON [M].[CustomerID] = [C].[cID]
-            INNER JOIN [Truckwin_TDPD_Access]...[DriverInfo] AS [DI] ON [M].[cEmployeeId] = [DI].[cDriverID] 
+            INNER JOIN [Truckwin_TDPD_Access]...[DriverInfo] AS [DI] ON [M].[Driver1_EmployeeID] = [DI].[cDriverID] 
 
         ";
       }

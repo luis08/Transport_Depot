@@ -1,13 +1,15 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="Dispatch_Default" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" Runat="Server">
+  
   <style type="text/css">
+
     body { font-size:small; }
     table { border-collapse: collapse; }
     table tr td 
     { 
       border: solid 1px #ccc; 
-      padding: .2em;
+      padding: .4em;
     }
     .right {
       text-align: right;
@@ -35,7 +37,7 @@
     var app = angular.module('freightApp', []);
     
     app.controller('freightController', function($scope, $http){
-       $http.get("http://192.168.1.200/settlements/Dispatch.svc/GetMovingFreight")
+       $http.get("http://netgateway/settlements/Dispatch.svc/GetMovingFreight")
         .success(function(response) {
           $scope.trips = response.GetMovingFreightResult;
           angular.forEach($scope.trips, function(trip, key) {

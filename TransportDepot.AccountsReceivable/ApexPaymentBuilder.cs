@@ -61,10 +61,7 @@ namespace TransportDepot.AccountsReceivable
       }
       var parsedAmount = TransportDepot.Data.Utilities.ParseDecimalOrZero(this.Amount);
 
-      if (parsedAmount.Equals(decimal.Zero))
-      {
-        return null;
-      }
+
       return this.GetPayment(scheduleId, this.InvoiceNumber, parsedAmount);
     }
 

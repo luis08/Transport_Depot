@@ -67,6 +67,7 @@
     <Content Include="Business.svc" />
     <Content Include="ARReports.svc" />
     <Content Include="Apex.svc" />
+    <Content Include="Email.svc" />
     <Content Include="Dispatch.svc" />
     <Content Include="Factoring.svc" />
     <Content Include="FactoringPdf.svc" />
@@ -76,6 +77,7 @@
     <Content Include="Safety.svc" />
     <Content Include="SafetyReports.svc" />
     <Content Include="Settlements.svc" />
+    <Content Include="Templates\company_setup_email_template.html" />
     <Content Include="Utilities.svc" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

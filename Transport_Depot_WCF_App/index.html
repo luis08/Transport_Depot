@@ -62,25 +62,7 @@
   <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>  
   <script type="text/javascript"> 
-    function parseWcfDate(wcfDate){
-        var d=wcfDate.match(/(\d+)/)[1];
-        return new Date(+d);
-    }
-    var app = angular.module('freightApp', []);
-    
-    app.controller('freightController', function($scope, $http){
-       $http.get("http://192.168.1.200/settlements/Dispatch.svc/GetMovingFreight")
-        .success(function(response) {
-          $scope.trips = response.GetMovingFreightResult;
-          angular.forEach($scope.trips, function(trip, key) {
-            trip.From.Date = parseWcfDate(trip.From.DateTime);
-            trip.To.Date = parseWcfDate(trip.To.DateTime);
-          });
-          
-        }).error(function (http, status, fnc, httpObj ) {
-          console.log('albums retrieval failed.',http,status,httpObj);
-        });
-    });
+
   </script>
 </body>
 </html>

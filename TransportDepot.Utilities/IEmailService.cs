@@ -19,7 +19,6 @@ namespace TransportDepot.Utilities
     [OperationContract]
     int Send(EmailModel email);
 
-
     [OperationContract]
     int GetQueueId(int emailId);
   }

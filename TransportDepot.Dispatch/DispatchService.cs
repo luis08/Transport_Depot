@@ -1,5 +1,10 @@
 ﻿using System.Linq;
 using TransportDepot.Data.Dispatch;
+using TransportDepot.Data.DB;
+using TransportDepot.Models.Dispatch;
+using TransportDepot.Models.Utilities;
+using TransportDepot.Dispatch.CompanySetup;
+using TransportDepot.Utilities.Email;
 namespace TransportDepot.Dispatch
 {
   public class DispatchService: IDispatchService
@@ -50,6 +55,19 @@ namespace TransportDepot.Dispatch
     {
       var movingFreight = this._datasource.GetMovingFreight();
       return movingFreight;
+    }
+
+    public void SendCompanySetup(Models.Dispatch.CompanySetupRequest request)
+    {
+      var ds = new CustomerDataSource();
+      var bds = new BusinessDataSource();
+      var customer = ds.GetCustomers(new string[] { request.ClientId }).FirstOrDefault();
+      var company = bds.GetCompany();
+      var emailBuilder = new CompanySetupEmailBuilder(request, company, customer);
+      var emailService = new EmailService();
+      var model = emailBuilder.GetEmailModel();
+      emailService.Send(model);
+      
     }
   }
 }

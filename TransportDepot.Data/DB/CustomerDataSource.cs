@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Xml.Linq;
 using System.Linq;
 using System.Data;
+using TransportDepot.Models.Business;
 
 namespace TransportDepot.Data.DB
 {
@@ -26,6 +27,23 @@ namespace TransportDepot.Data.DB
       }
 
       var customers = this.GetCustomersFromTable(customersDataTable);
+      return customers;
+    }
+
+    public IEnumerable<CustomerMenuItem> GetCustomerMenuItems()
+    {
+      var customersDataTable = new DataTable();
+      using (var cmd = new SqlCommand(CustomerQueries.ForMenuItems))
+      {
+        customersDataTable = this._dataSource.FetchCommand(cmd);
+      }
+
+      var customers = customersDataTable.AsEnumerable()
+        .Select(c => new CustomerMenuItem
+        {
+          Id = c.Field<string>("ID"),
+          Name = c.Field<string>("Customer_Name")
+        }).ToList();
       return customers;
     }
 

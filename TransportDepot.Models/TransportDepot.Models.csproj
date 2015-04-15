@@ -49,6 +49,9 @@
     <Compile Include="AR\CustomerAgingSummary.cs" />
     <Compile Include="AR\AgingInvoice.cs" />
     <Compile Include="Business\Company.cs" />
+    <Compile Include="Business\CustomerMenuItem.cs" />
+    <Compile Include="DataValidation\ValidationRequest.cs" />
+    <Compile Include="DataValidation\ValidationResponse.cs" />
     <Compile Include="DB\Customer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -59,6 +62,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DB\Trailer.cs" />
+    <Compile Include="Dispatch\CompanySetupRequest.cs" />
     <Compile Include="Dispatch\Dispatcher.cs" />
     <Compile Include="Dispatch\DispatcherCommission.cs" />
     <Compile Include="Dispatch\DispatcherCommissionDate.cs" />

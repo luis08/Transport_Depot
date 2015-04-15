@@ -54,6 +54,12 @@ namespace TransportDepot.Data.DB
       
     ";
 
+    public static string ForMenuItems
+    {
+      get { return "SELECT [ID], ,[cName] AS [Customer_Name] FROM [Truckwin_TDPD_Access]...[Customer] [C] WHERE ( [bInactive] = 0  )"; }
+    }
+
+
     public static string PagedById
     {
       get

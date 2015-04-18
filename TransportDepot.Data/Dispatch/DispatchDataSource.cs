@@ -295,10 +295,10 @@ namespace TransportDepot.Data.Dispatch
            , COALESCE( [L].[cPhone], '' ) AS [Lessor_Phone]
            , [D].[bAssigned] AS [Has_Trip]
            , COALESCE( [D].[cLicenseNumber], '' ) AS [Drivers_License]
-          FROM [Truckwin_TDPD_Access]...[DriverInfo] [D]
-            INNER JOIN [Truckwin_TDPD_Access]...[PrEmployee] [E]
+          FROM [dbo].[DriverInfo] [D]
+            INNER JOIN [dbo].[PrEmployee] [E]
               ON [D].[cDriverID] = [E].[cEmployeeId]
-            INNER JOIN [Truckwin_TDPD_Access]...[RsLessor] [L]
+            INNER JOIN [dbo].[RsLessor] [L]
               ON [D].[cLessorID] = [L].[cId]
           WHERE ( [E].[bActive] != 0 )
         )

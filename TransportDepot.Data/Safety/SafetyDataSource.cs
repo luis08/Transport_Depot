@@ -257,7 +257,7 @@ namespace TransportDepot.Data.Safety
     {
       var allDriverIdsQuery = @"
         SELECT [cDriverID] AS [ID] 
-        FROM [Truckwin_TDPD_Access]...[DriverInfo] [D]
+        FROM [dbo].[DriverInfo] [D]
       ";
       var tbl = new DataTable();
       using (var cmd = new SqlCommand(allDriverIdsQuery,cn))
@@ -409,16 +409,16 @@ namespace TransportDepot.Data.Safety
             , SD.col.value( './@comments', 'VARCHAR(MAX)' ) AS [Comments]
         FROM @DriverSafetyXml.nodes('//driver') AS SD(col)
 
-        UPDATE [Truckwin_TDPD_Access]...[DriverInfo]
+        UPDATE [dbo].[DriverInfo]
           SET [dLicenseExpDate] = [S].[Drivers_License_Expiration]
             , [dPhysicalExpDate] = [S].[Physical_Expiration]
-        FROM [Truckwin_TDPD_Access]...[DriverInfo] [D]
+        FROM [dbo].[DriverInfo] [D]
           INNER JOIN @DriverSafety [S]
             ON ( [S].[ID] = [D].[cDriverID] )
 
-        UPDATE [Truckwin_TDPD_Access]...[PrEmployee]
+        UPDATE [dbo].[PrEmployee]
           SET [bActive] = [S].[Active]
-        FROM [Truckwin_TDPD_Access]...[PrEmployee] [E]
+        FROM [dbo].[PrEmployee] [E]
           INNER JOIN @DriverSafety [S]
             ON ( [S].[ID] = [E].[cEmployeeId] )
 
@@ -444,7 +444,7 @@ namespace TransportDepot.Data.Safety
         SELECT   [E].[cEmployeeID] AS [ID]
                 ,[E].[cLast] AS [Last_Name] 
                 ,[E].[cFirst] AS [First_Name]
-        FROM [Truckwin_TDPD_Access]...[PrEmployee] [E]
+        FROM [dbo].[PrEmployee] [E]
         WHERE NOT EXISTS
         (
           SELECT * 
@@ -486,9 +486,9 @@ namespace TransportDepot.Data.Safety
         FROM [dbo].[Driver_Qualification] [Q]
           INNER JOIN [dbo].[Driver_Trackable] [T]
             ON ( [Q].[ID] = [T].[ID] )
-          INNER JOIN [Truckwin_TDPD_Access]...[DriverInfo] [D]
+          INNER JOIN [dbo].[DriverInfo] [D]
             ON ( [Q].[ID] = [D].[cDriverID] )
-          INNER JOIN [Truckwin_TDPD_Access]...[PrEmployee] [E]
+          INNER JOIN [dbo].[PrEmployee] [E]
             ON ( [Q].[ID] = [E].[cEmployeeId] )
           INNER JOIN [Drivers] [SD]
             ON ( [Q].[ID] = [SD].[ID] )

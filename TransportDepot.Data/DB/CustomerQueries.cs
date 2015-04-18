@@ -49,14 +49,14 @@ namespace TransportDepot.Data.DB
               ,[cEmail] AS [Email]
               ,[cCustomField] AS [Custom_Field]
               ,[bRequireBOLNumber] AS [Requires_BOL_Number]
-        FROM [Truckwin_TDPD_Access]...[Customer] [C]
+        FROM [dbo].[Customer] [C]
       )
       
     ";
 
     public static string ForMenuItems
     {
-      get { return "SELECT [ID], ,[cName] AS [Customer_Name] FROM [Truckwin_TDPD_Access]...[Customer] [C] WHERE ( [bInactive] = 0  )"; }
+      get { return "SELECT [ID], ,[cName] AS [Customer_Name] FROM [dbo].[Customer] [C] WHERE ( [bInactive] = 0  )"; }
     }
 
 

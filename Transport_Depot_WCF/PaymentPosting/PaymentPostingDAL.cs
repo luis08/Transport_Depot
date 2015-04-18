@@ -96,7 +96,7 @@ namespace Transport_Depot_WCF.PaymentPosting
 		          ELSE 1
 		        END AS [Exists]
         FROM [RequestedChecks] [R]
-          LEFT JOIN [Truckwin_TDPD_Access]...[CheckRegister] [E]
+          LEFT JOIN [dbo].[CheckRegister] [E]
 	        ON [E].[cCheckNumber]  = [R].[Check_Number]
           LEFT JOIN [Web_Payments].[dbo].[Ignore_Check] [I]
             ON [R].[Check_Number] = [I].[Check_Number_K]

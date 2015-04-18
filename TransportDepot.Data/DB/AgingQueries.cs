@@ -17,7 +17,7 @@ namespace TransportDepot.Data.DB
             , [ctripnumber]  AS [Trip_Number]
             , [cCustomerRef]  AS [Customer_Reference]
             , [cuBalanceDue]  AS [Balance_Due]
-        FROM [Truckwin_TDPD_Access]...[ArAging] [A]
+        FROM [dbo].[ArAging] [A]
       )
     ";
 

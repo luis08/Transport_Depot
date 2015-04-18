@@ -313,10 +313,10 @@ namespace TransportDepot.Data.Factoring
                , [R].[cuTotalRevenue]    AS [Amount]
                , [S].[ID] AS [ScheduleID]
                , [BH].[bPosted] AS [Is_Posted]
-          FROM [Truckwin_TDPD_Access]...[BillingHistory] [BH] 
-            INNER JOIN [Truckwin_TDPD_Access]...[Customer] [C]
+          FROM [dbo].[BillingHistory] [BH] 
+            INNER JOIN [dbo].[Customer] [C]
               ON ( [BH].[cCustomerID] = [C].[cID] )
-            INNER JOIN [Truckwin_TDPD_Access]...[Revenue] [R]
+            INNER JOIN [dbo].[Revenue] [R]
               ON ( [BH].[cPronumber] = [R].[cProNumber] )
             INNER JOIN [dbo].[Factoring_Schedule] [S]
               ON ( [BH].[nlSNImportOrder] = [S].[ID] )
@@ -339,19 +339,19 @@ namespace TransportDepot.Data.Factoring
           (
             SELECT [BH].[cProNumber] 
                  , [SI].[Invoice_Number] AS [Source_cProNumber]
-            FROM [Truckwin_TDPD_Access]...[BillingHistory] [BH]
+            FROM [dbo].[BillingHistory] [BH]
               LEFT JOIN [Schedule_Invoices] [SI]
                 ON ( [BH].[cProNumber] = [SI].[Invoice_Number] )
             WHERE ( [BH].[nlSNImportOrder] = @ScheduleId )
                OR ( [SI].[Invoice_Number] IS NOT NULL )
           )
 
-          UPDATE [Truckwin_TDPD_Access]...[BillingHistory] 
+          UPDATE [dbo].[BillingHistory] 
             SET [nlSNImportOrder] = CASE
 						                          WHEN ( [Source_cProNumber] IS NOT NULL ) THEN @ScheduleId
 						                          ELSE 0      	
                                     END
-          FROM [Truckwin_TDPD_Access]...[BillingHistory] [Target]
+          FROM [dbo].[BillingHistory] [Target]
           INNER JOIN [Target_Invoices] [Source]
             ON ( [Target].[cProNumber] = [Source].[cProNumber] )
 
@@ -363,8 +363,8 @@ namespace TransportDepot.Data.Factoring
             SELECT [BH].[cProNumber] AS [Invoice_Number] 
                  , [BH].[nlSNImportOrder] AS [ScheduleID]
                  , SUM( [R].[cuTotalRevenue] ) AS [Amount]
-            FROM [Truckwin_TDPD_Access]...[BillingHistory] AS [BH]
-              INNER JOIN [Truckwin_TDPD_Access]...[Revenue] [R]
+            FROM [dbo].[BillingHistory] AS [BH]
+              INNER JOIN [dbo].[Revenue] [R]
                 ON  ( [BH].[cProNumber] = [R].[cProNumber] )
             GROUP BY [BH].[cProNumber]
                     ,[BH].[nlSNImportOrder]
@@ -392,7 +392,7 @@ namespace TransportDepot.Data.Factoring
     ;WITH [LessBillingHistory] AS 
     (
       SELECT [nlOrderNumber], [bPosted], [cProNumber], [dBillDate], [nlSNImportOrder], [cCustomerID]
-      FROM [Truckwin_TDPD_Access]...[BillingHistory] [BH]
+      FROM [dbo].[BillingHistory] [BH]
       WHERE ( [BH].[bPosted] != 0 ) 
         AND ( [BH].[cProNumber] >= @FromInvoice )
         AND ( [BH].[cProNumber] <= @ToInvoice )
@@ -407,7 +407,7 @@ namespace TransportDepot.Data.Factoring
       SELECT [BH].[nlOrderNumber], [BH].[cProNumber], [dBillDate], [nlSNImportOrder], [cCustomerID]
       , SUM( [R].[cuTotalRevenue] ) AS [Amount]
       FROM [LessBillingHistory] [BH]
-      INNER JOIN [Truckwin_TDPD_Access]...[Revenue] [R]
+      INNER JOIN [dbo].[Revenue] [R]
         ON ( [BH].[nlOrderNumber] = [R].[nlOrderNumber] )
       GROUP BY [BH].[nlOrderNumber]
               ,[BH].[cProNumber]
@@ -424,7 +424,7 @@ namespace TransportDepot.Data.Factoring
           ,[C].[niCreditLimitDays]
           ,[R].[Amount]
           FROM [LessRevenue] [R]
-          INNER JOIN [Truckwin_TDPD_Access]...[Customer] [C]
+          INNER JOIN [dbo].[Customer] [C]
             ON ( [R].[cCustomerID] = [C].[cID] )
         ";
 
@@ -469,9 +469,9 @@ namespace TransportDepot.Data.Factoring
             FROM @Invoices.nodes('//invoice') AS T(invoice)
           )
           
-          UPDATE [Truckwin_TDPD_Access]...[BillingHistory] 
+          UPDATE [dbo].[BillingHistory] 
               SET [nlSNImportOrder] = 0
-          FROM [Truckwin_TDPD_Access]...[BillingHistory] [Target]
+          FROM [dbo].[BillingHistory] [Target]
             INNER JOIN [Schedule_Invoices] [Source]
               ON ( [Target].[cProNumber] = [Source].[Invoice_Number] )
       ";

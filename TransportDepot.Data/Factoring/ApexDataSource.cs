@@ -139,13 +139,13 @@ namespace TransportDepot.Data.Factoring
 
                         
             SELECT [P].[InvoiceNumber] /* (object) */
-            FROM [Payments] AS [P] LEFT JOIN [Truckwin_TDPD_Access]...[ArAging]  AS [G] 
+            FROM [Payments] AS [P] LEFT JOIN [dbo].[ArAging]  AS [G] 
               ON ( [P].[InvoiceNumber] = G.cPronumber )
             WHERE ( ( [G].[cProNumber] IS NULL ) OR ( [P].[Amount] != [G].[cuBalanceDue] ) )
               OR EXISTS
               (
                 SELECT * 
-                FROM [Truckwin_TDPD_Access]...[ArPayment] [A]
+                FROM [dbo].[ArPayment] [A]
                 WHERE ( [A].[cProNumber] = [P].[InvoiceNumber] )
               )
             ";
@@ -167,7 +167,7 @@ namespace TransportDepot.Data.Factoring
               FROM @ApexPayments.nodes('//payment') AS T(C)
             )
 
-            INSERT INTO [Truckwin_TDPD_Access]...[ArPayment] 
+            INSERT INTO [dbo].[ArPayment] 
             ( 
                   [cPronumber]       
                 , [niNumber]         
@@ -203,13 +203,13 @@ namespace TransportDepot.Data.Factoring
                 , 'P'                      AS [cPayAdj]
                 , 0                        AS [nlOrderNumber] 
                 , 0                        AS bACHTransfer  
-            FROM [Payments] AS [P] INNER JOIN [Truckwin_TDPD_Access]...[ArAging]  AS [G] 
+            FROM [Payments] AS [P] INNER JOIN [dbo].[ArAging]  AS [G] 
               ON ( [P].[InvoiceNumber] = G.cPronumber )
             WHERE ( [P].[Amount] = [G].[cuBalanceDue] ) 
               AND NOT EXISTS
               (
                 SELECT * 
-                FROM [Truckwin_TDPD_Access]...[ArPayment] [A]
+                FROM [dbo].[ArPayment] [A]
                 WHERE ( [A].[cProNumber] = [P].[InvoiceNumber] )
               )            
     ";

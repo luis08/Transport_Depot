@@ -356,8 +356,8 @@ namespace Transport_Depot_AutomaticDeductions
             (
 	            SELECT [E].[cTripNumber] AS [Trip_Number]
 		             , [E].[cLessorID] AS [Lessor_ID]
-	            FROM [Truckwin_TDPD_Access]...[RsEntry] [E] 
-	              LEFT JOIN [Truckwin_TDPD_Access]...[RsDeduction] [D]
+	            FROM [dbo].[RsEntry] [E] 
+	              LEFT JOIN [dbo].[RsDeduction] [D]
 		            ON  ( [E].[cTripNumber] = [D].[cTripNumber]  )
 		            AND ( [E].[cLessorID] = [D].[cLessorID] )
 	            WHERE ( [E].[cTripNumber] IS NOT NULL ) 
@@ -402,8 +402,8 @@ namespace Transport_Depot_AutomaticDeductions
 	            SELECT  [E].[cTripNumber] AS [Trip_Number]
 		              , [E].[cLessorID] AS [Lessor_ID]
                       , [E].[cuSettlement] AS [Revenue]
-	            FROM [Truckwin_TDPD_Access]...[RsEntry] [E] 
-	              LEFT JOIN [Truckwin_TDPD_Access]...[RsDeduction] [D]
+	            FROM [dbo].[RsEntry] [E] 
+	              LEFT JOIN [dbo].[RsDeduction] [D]
 		            ON  ( [E].[cTripNumber] = [D].[cTripNumber]  )
 		            AND ( [E].[cLessorID] = [D].[cLessorID] )
 	            WHERE ( [E].[cTripNumber] IS NOT NULL ) 
@@ -415,7 +415,7 @@ namespace Transport_Depot_AutomaticDeductions
             )
 
 
-            INSERT INTO [Truckwin_TDPD_Access]...[RsDeduction]
+            INSERT INTO [dbo].[RsDeduction]
                        ([cLessorId]
                        ,[cTripnumber]
                        ,[cDescription]

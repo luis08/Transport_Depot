@@ -50,7 +50,7 @@ namespace TransportDepot.Data.DB
          ,  [cPhone] AS [Phone]
          ,  [cFax] AS [Fax]
          ,  [cFHWANo] AS [MC_Number]
-      FROM [Truckwin_TDPD_Access]...[MasterInfo] 
+      FROM [dbo].[MasterInfo] 
     ";
   }
 }

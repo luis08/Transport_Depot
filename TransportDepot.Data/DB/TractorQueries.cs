@@ -8,7 +8,7 @@ namespace TransportDepot.Data.DB
   static class TractorQueries
   {
     public static string UpdateTractors = @"
-      UPDATE [Truckwin_TDPD_Access]...[Tractor] 
+      UPDATE [dbo].[Tractor] 
         SET
            [bActive] = @Active
          , [cComment] = @Comments
@@ -55,16 +55,16 @@ namespace TransportDepot.Data.DB
          , [T].[cTitle] AS [Unit]
          , [T].[cSerial] AS [VIN]
          , [T].[cYear] AS [Year]
-      FROM [Truckwin_TDPD_Access]...[Tractor] AS [T]
+      FROM [dbo].[Tractor] AS [T]
        INNER JOIN [dbo].[Tractor_Qualification] AS [Q]
          ON ( [T].[cTractorID] = [Q].[ID] )
-       LEFT JOIN [Truckwin_TDPD_Access]...[RsLessor] [L]
+       LEFT JOIN [dbo].[RsLessor] [L]
          ON ( [T].[cLessorOwner] = [L].[cName] )
        LEFT JOIN 
        ( 
           SELECT [cTractorID] AS [ID]
                , MAX( COALESCE( [dDateDone], '20010101' ) )AS [Last_Maintenance]
-          FROM [Truckwin_TDPD_Access]...[MaintenanceTractorLog] 
+          FROM [dbo].[MaintenanceTractorLog] 
           GROUP BY [cTractorID] 
        ) AS [M] ON ( [M].[ID] = [T].[cTractorID] )
     ";
@@ -72,7 +72,7 @@ namespace TransportDepot.Data.DB
     public static string TractorSanityQuery = @"
       INSERT INTO [TDPD].[dbo].[Tractor_Qualification] ( [ID] )
       SELECT [cTractorID] AS [ID]
-      FROM [Truckwin_TDPD_Access]...[Tractor] AS [T]
+      FROM [dbo].[Tractor] AS [T]
       WHERE NOT EXISTS
       (
         SELECT * 

@@ -255,7 +255,7 @@ namespace TransportDepot.Data.DB
           return @"
               DECLARE @LastBillDate DATETIME
               SELECT @LastBillDate = MAX( [dBillDate] ) 
-              FROM [Truckwin_TDPD_Access]...[BillingHistory] [BH]
+              FROM [dbo].[BillingHistory] [BH]
                 INNER JOIN [dbo].[Paid_Invoice_Commission] [C]
                   ON ( [BH].[cProNumber] = [C].[ArInvoiceNumber] )
               SELECT         [ATH].[cLessorId1]     AS [LessorID]
@@ -268,10 +268,10 @@ namespace TransportDepot.Data.DB
                            , [R].[cuSubMainRevenue] AS [InvoiceAmount]
                            , [ATH].[cuLessor1Rate]  AS [LessorRevenue]
                            , [DA].[VendorID]        AS [DispatcherID]
-              FROM [Truckwin_TDPD_Access]...[Revenue] [R]
-                INNER JOIN [Truckwin_TDPD_Access]...[BillingHistory] [BH]
+              FROM [dbo].[Revenue] [R]
+                INNER JOIN [dbo].[BillingHistory] [BH]
                   ON ( [R].[cProNumber] = [BH].[cProNumber] )
-                INNER JOIN [Truckwin_TDPD_Access]...[AssignedToHist] [ATH]
+                INNER JOIN [dbo].[AssignedToHist] [ATH]
                   ON ( [BH].[cTripNumber] = [ATH].[cTripNumber] )      
                 INNER JOIN [DispatcherAgent] [DA] 
                   ON ([DA].[Initials] = [BH].[cDispatcherInit] )
@@ -304,8 +304,8 @@ namespace TransportDepot.Data.DB
                    , [BH].[dTripFinishDate] AS [EndDate]
                    , [BH].[cOrigState]      AS [StartState]
                    , [BH].[cDestState]      AS [EndState]
-              FROM  [Truckwin_TDPD_Access]...[BillingHistory] [BH]
-              INNER JOIN [Truckwin_TDPD_Access]...[AssignedToHist] [AH]
+              FROM  [dbo].[BillingHistory] [BH]
+              INNER JOIN [dbo].[AssignedToHist] [AH]
                 ON [BH].[cTripNumber] = [AH].[cTripNumber]
             ), [Originals] AS
             (
@@ -373,7 +373,7 @@ namespace TransportDepot.Data.DB
             FROM @commissions.nodes('//commission') AS T(c)
           )
 
-          INSERT INTO [Truckwin_TDPD_Access]...[ApInvoiceDetail]
+          INSERT INTO [dbo].[ApInvoiceDetail]
           (
                 [cVendorId] 
               , [cInvoiceNumber] 
@@ -421,7 +421,7 @@ namespace TransportDepot.Data.DB
             FROM @commissions.nodes('//commission') AS T(c)
           )
           
-          INSERT INTO [Truckwin_TDPD_Access]...[ApInvoice]
+          INSERT INTO [dbo].[ApInvoice]
           (
                 [cInvoiceNo] 
               , [cVendorId] 
@@ -475,7 +475,7 @@ namespace TransportDepot.Data.DB
             SELECT [cTripNumber] AS [TripNumber]
                  , [cProNumber] AS [InvoiceNumber]
                  , MAX( [dBillDate] ) AS [BillDate]
-            FROM [Truckwin_TDPD_Access]...[BillingHistory] [BH]
+            FROM [dbo].[BillingHistory] [BH]
               INNER JOIN [Invoices] [I]
                 ON ( [I].[InvoiceNumber] = [BH].[cProNumber] )
             GROUP BY [cTripNumber]
@@ -527,10 +527,10 @@ namespace TransportDepot.Data.DB
                         WHEN ( [L].[cState]   IS NOT NULL ) THEN [L].[cState]
                         ELSE ''
                      END AS [State]
-              FROM [Truckwin_TDPD_Access]...[AssignedToHist] [ATH]
+              FROM [dbo].[AssignedToHist] [ATH]
                 LEFT JOIN [dbo].[Lessor] [SqlL]
                   ON [ATH].[cLessorId1] = [SqlL].[LessorID]
-                LEFT JOIN [Truckwin_TDPD_Access]...[RsLessor] [L]
+                LEFT JOIN [dbo].[RsLessor] [L]
                   ON [ATH].[cLessorId1] = [L].[cId]
               WHERE EXISTS
               (

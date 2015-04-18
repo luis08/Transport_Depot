@@ -12,7 +12,7 @@ namespace TransportDepot.Data.Dispatch
               SELECT [DA].[Initials]
                    , [DA].[VendorID]
                    , [V].[cName] AS [Name]
-              FROM [Truckwin_TDPD_Access]...[ApVendor] [V]  
+              FROM [dbo].[ApVendor] [V]  
                 INNER JOIN [dbo].[DispatcherAgent] [DA]
                   ON ( [DA].[VendorID] = [V].[cId] )
               ";
@@ -39,11 +39,11 @@ namespace TransportDepot.Data.Dispatch
                   , [BH].[cDestState]      AS [UnloadState]
                   , [C].[cName]            AS [CustomerName]
                   , [R].[cuSubMainRevenue] AS [InvoiceAmount]
-                FROM [Truckwin_TDPD_Access]...[BillingHistory]           [BH]  
-                  INNER JOIN [Truckwin_TDPD_Access]...[Customer]         [C]   ON ( [BH].[cCustomerID] = [C].[cID] )
-                  LEFT JOIN  [Truckwin_TDPD_Access]...[AssignedToHist]   [ATH] ON ( [BH].[cTripnumber] = [ATH].[cTripnumber] )
-                  INNER JOIN [Truckwin_TDPD_Access]...[ApPayableHistory] [PH]  ON ( [PH].[cInvoiceNo]  = [BH].[cTripNumber] )
-                  INNER JOIN [Truckwin_TDPD_Access]...[Revenue]          [R]   ON ( [R].[cProNumber] = [BH].[cProNumber] )
+                FROM [dbo].[BillingHistory]           [BH]  
+                  INNER JOIN [dbo].[Customer]         [C]   ON ( [BH].[cCustomerID] = [C].[cID] )
+                  LEFT JOIN  [dbo].[AssignedToHist]   [ATH] ON ( [BH].[cTripnumber] = [ATH].[cTripnumber] )
+                  INNER JOIN [dbo].[ApPayableHistory] [PH]  ON ( [PH].[cInvoiceNo]  = [BH].[cTripNumber] )
+                  INNER JOIN [dbo].[Revenue]          [R]   ON ( [R].[cProNumber] = [BH].[cProNumber] )
                 WHERE ([PH].[bReverse]  = 0 )  
               ), [UnpaidCommissions] AS
               (
@@ -61,11 +61,11 @@ namespace TransportDepot.Data.Dispatch
                   , [BH].[cDestState]      AS [UnloadState]
                   , [C].[cName]            AS [CustomerName]
                   , [R].[cuSubMainRevenue] AS [InvoiceAmount]
-                FROM [Truckwin_TDPD_Access]...[BillingHistory]           [BH]  
-                  INNER JOIN [Truckwin_TDPD_Access]...[Customer]         [C]   ON ( [BH].[cCustomerID] = [C].[cID] )
-                  LEFT JOIN  [Truckwin_TDPD_Access]...[AssignedToHist]   [ATH] ON ( [BH].[cTripnumber] = [ATH].[cTripnumber] )
-                  INNER JOIN [Truckwin_TDPD_Access]...[ApInvoice]        [PH]  ON ( [PH].[cInvoiceNo]  = [BH].[cTripNumber] )
-                  INNER JOIN [Truckwin_TDPD_Access]...[Revenue]          [R]   ON ( [R].[cProNumber] = [BH].[cProNumber] )
+                FROM [dbo].[BillingHistory]           [BH]  
+                  INNER JOIN [dbo].[Customer]         [C]   ON ( [BH].[cCustomerID] = [C].[cID] )
+                  LEFT JOIN  [dbo].[AssignedToHist]   [ATH] ON ( [BH].[cTripnumber] = [ATH].[cTripnumber] )
+                  INNER JOIN [dbo].[ApInvoice]        [PH]  ON ( [PH].[cInvoiceNo]  = [BH].[cTripNumber] )
+                  INNER JOIN [dbo].[Revenue]          [R]   ON ( [R].[cProNumber] = [BH].[cProNumber] )
               ), [AllCommissions] AS
               (
                   SELECT * 
@@ -112,11 +112,11 @@ namespace TransportDepot.Data.Dispatch
                  , [TN].[cCustomerID] AS [CustomerID]
                  ,  [E].[cEmployeeId] AS [Driver1ID]
 
-          FROM [Truckwin_TDPD_Access]...[AssignedTo] [AT]
-            LEFT JOIN  [Truckwin_TDPD_Access]...[PrEmployee] AS [E]  ON [AT].[cDriver1Id] = [E].[cEmployeeId]
-            LEFT JOIN  [Truckwin_TDPD_Access]...[PrEmployee] AS [E2] ON [AT].[cDriver2Id] = [E2].[cEmployeeId]
-            LEFT JOIN  [Truckwin_TDPD_Access]...[Tractor]    AS [T]  ON [AT].[cTractorId] = [T].[cTractorId]
-            INNER JOIN [Truckwin_TDPD_Access]...[TripNumber] AS [TN] ON [AT].[cTripnumber] = SUBSTRING( [TN].[cTripnumber], 1, 9 )
+          FROM [dbo].[AssignedTo] [AT]
+            LEFT JOIN  [dbo].[PrEmployee] AS [E]  ON [AT].[cDriver1Id] = [E].[cEmployeeId]
+            LEFT JOIN  [dbo].[PrEmployee] AS [E2] ON [AT].[cDriver2Id] = [E2].[cEmployeeId]
+            LEFT JOIN  [dbo].[Tractor]    AS [T]  ON [AT].[cTractorId] = [T].[cTractorId]
+            INNER JOIN [dbo].[TripNumber] AS [TN] ON [AT].[cTripnumber] = SUBSTRING( [TN].[cTripnumber], 1, 9 )
         )
 
 
@@ -141,8 +141,8 @@ namespace TransportDepot.Data.Dispatch
                , [M].[Driver2_Phone]
                , [DI].[cFuelCardNumber1] [Driver1_Card]
         FROM [MovingFreight] AS [M]
-            INNER JOIN [Truckwin_TDPD_Access]...[Customer]   AS [C]  ON [M].[CustomerID] = [C].[cID]
-            INNER JOIN [Truckwin_TDPD_Access]...[DriverInfo] AS [DI] ON [M].[Driver1_EmployeeID] = [DI].[cDriverID] 
+            INNER JOIN [dbo].[Customer]   AS [C]  ON [M].[CustomerID] = [C].[cID]
+            INNER JOIN [dbo].[DriverInfo] AS [DI] ON [M].[Driver1_EmployeeID] = [DI].[cDriverID] 
 
         ";
       }

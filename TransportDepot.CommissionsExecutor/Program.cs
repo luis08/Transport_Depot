@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using TransportDepot.CommissionsExecutor.CommissionsReference;
+using System.ServiceModel;
 
 namespace TransportDepot.CommissionsExecutor
 {
@@ -12,12 +13,38 @@ namespace TransportDepot.CommissionsExecutor
     static void Main(string[] args)
     {
       var timeStamp = DateTime.Now;
+      var errors = string.Empty;
       using (var svc = new CommissionsReference.CommissionServiceClient())
       {
-        Console.WriteLine("Saving new commissions");
-        svc.SaveNewCommisions();
-        Console.WriteLine("Done Saving new commissions");
+        try
+        {
+          Console.WriteLine("Saving new commissions");
+          svc.SaveNewCommisions();
+          Console.WriteLine("Done Saving new commissions");
+        }
+        catch (TimeoutException t)
+        {
+          errors = "Timeout Exception: " + t.Message;
+        }
+        catch (FaultException f)
+        {
+          errors = "Fault Exception:  " + f.Message;
+        }
+        catch (CommunicationException c)
+        {
+          errors = "Communication Exception: " + c.Message;
+        }
+        catch (Exception e)
+        {
+          errors = "Exception: " + e.Message;
+        }
+
+        
       }
+      Console.WriteLine("===========================================================================================");
+      Console.WriteLine(string.Format("Errors: '{0}'", errors));
+      Console.ReadKey();
+
     }
 
     private static void Test()

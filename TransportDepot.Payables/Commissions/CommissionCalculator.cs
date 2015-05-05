@@ -40,7 +40,7 @@ namespace TransportDepot.Payables.Commissions
     {
       var tripSpan = GetTripSpan(span);
       var commission = CreateInvoiceCommission(tripSpan);
-
+      
       if (span.PreviousSpan == null)
       {
         commission = GetHomeCommission(span, tripSpan, commission);
@@ -48,7 +48,8 @@ namespace TransportDepot.Payables.Commissions
       }
 
       var timeSpan = span.StartDate - span.PreviousSpan.EndDate;
-
+      
+        
       if (timeSpan.TotalDays < 1)
       {
         commission.Percent = 1.0m;
@@ -76,10 +77,29 @@ namespace TransportDepot.Payables.Commissions
         InvoiceNumber = tripSpan.InvoiceNumber,
         InvoiceAmount = tripSpan.InvoiceAmout,
         TripNumber = tripSpan.TripNumber,
-        Description = string.Format("A/R Invoice: {0}  Tractor: {1} ",
-          tripSpan.InvoiceNumber, this.TractorId)
+        Description = GetDescription(tripSpan)
       };
       return commission;
+    }
+
+    private string GetDescription(TripSpan tripSpan)
+    {
+      var locationDescription = string.Empty;
+      if (tripSpan.StartLocation == null)
+      {
+        locationDescription = "Not Specified";
+      }
+      else if (string.IsNullOrEmpty(tripSpan.StartLocation.State))
+      {
+        locationDescription = "Blank";
+      }
+      else
+      {
+        locationDescription = tripSpan.StartLocation.State;
+      }
+      return string.Format("A/R Invoice: {0}  Tractor: {1}  Start Location: {2}",
+                tripSpan.InvoiceNumber, this.TractorId,
+                locationDescription);
     }
 
     private TripSpan GetTripSpan(Span span)

@@ -281,7 +281,7 @@ namespace TransportDepot.Data.DB
                   FROM [dbo].[Paid_Invoice_Commission] [C]
                   WHERE ( [C].[ArInvoiceNumber] = [BH].[cProNumber] )
                 )
-                AND ( [dBillDate] > @LastBillDate )
+                AND ( [dBillDate] > COALESCE( @LastBillDate, '1-1-2001' ) )
                 
           ";
         }
@@ -494,10 +494,11 @@ namespace TransportDepot.Data.DB
           SET @Commissions = CAST( @CommissionsXmlString AS XML )
 
 
-          INSERT INTO [TDPD].[dbo].[Paid_Invoice_Commission]
+          INSERT INTO [dbo].[Paid_Invoice_Commission]
                    ([ApInvoiceNumber]
                    ,[ArInvoiceNumber]
                    ,[DueDate])
+
           SELECT [T].[C].value('./@apInvoiceNumber', 'varchar(20)') AS [ApInvoiceNumber]
               ,  [T].[C].value('./@arInvoiceNumber', 'varchar(20)') AS [ArInvoiceNumber]
               ,  [T].[C].value('./@dueDate', 'varchar(20)')         AS [DueDate]

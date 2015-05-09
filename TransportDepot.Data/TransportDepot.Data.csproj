@@ -52,6 +52,7 @@
     <Compile Include="DB\DBDataSource.cs" />
     <Compile Include="DB\TractorQueries.cs" />
     <Compile Include="DB\TrailerQueries.cs" />
+    <Compile Include="Debugger.cs" />
     <Compile Include="Dispatch\DispatchDataSource.cs" />
     <Compile Include="Dispatch\Queries.cs" />
     <Compile Include="Factoring\ApexDataSource.cs" />

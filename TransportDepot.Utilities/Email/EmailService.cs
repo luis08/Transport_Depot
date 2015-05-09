@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Net.Mail;
 using System.ComponentModel;
+using System.Net;
 
 namespace TransportDepot.Utilities.Email
 {
@@ -21,47 +22,62 @@ namespace TransportDepot.Utilities.Email
     {
       //http://customer.comcast.com/help-and-support/internet/email-client-programs-with-xfinity-email/
       if(this.HasNoRecipients(email)) return -1;
+      SmtpClient client = GetSMTPClient();
+      client.Credentials = this.GetClientCredentials(client);
 
-      // Command line argument must the the SMTP host.
-      SmtpClient client = new SmtpClient(this.Host, 587);
-      client.Credentials = new System.Net.NetworkCredential("jantran@transportdepot.comcastbiz.net", "jantran1963");
-      // Specify the e-mail sender. 
-      // Create a mailing address that includes a UTF8 character 
-      // in the display name.
-      MailAddress from = new MailAddress("mail@transportdepot.net", 
-         "Postman",
-      System.Text.Encoding.UTF8);
+      var postMan = GetPostman();
 
-      // Set destinations for the e-mail message.
-      // Specify the message content.
-      MailMessage message = new MailMessage();
+      MailMessage message = new MailMessage
+        {
+          From = postMan,
+          Subject = email.Subject,
+          Body = email.Body,
+          IsBodyHtml = email.IsHtml,
+          BodyEncoding = System.Text.Encoding.UTF8,
+          SubjectEncoding = System.Text.Encoding.UTF8
+        };
       email.To.ToList().ForEach(e => message.To.Add(e));
-      message.From = from;
-      message.Body = email.Body;
-      // Include some non-ASCII characters in body and subject. 
-      message.IsBodyHtml = email.IsHtml;
-      message.BodyEncoding = System.Text.Encoding.UTF8;
-      message.Subject = email.Subject;
-      message.SubjectEncoding = System.Text.Encoding.UTF8;
-      // Set the method that is called back when the send operation ends.
-      //client.SendCompleted += new
-      //SendCompletedEventHandler(SendCompletedCallback);
+      client.SendCompleted += SendCompletedCallback;
 
-      // The userState can be any object that allows your callback  
-      // method to identify this send operation. 
-      // For this example, the userToken is a string constant. 
-      string userState = "test message1";
-      //client.SendAsync(message, userState);
-      client.Send(message);
-      Console.WriteLine("Sending message... press c to cancel mail. Press any other key to exit.");
+      client.SendAsync(message, "no token required" );
       
-      // If the user canceled the send, and mail hasn't been sent yet, 
-      // then cancel the pending operation. 
-      
-      // Clean up.
       message.Dispose();
-      Console.WriteLine("Goodbye.");
+      
       return 1; 
+    }
+
+    private static MailAddress GetPostman()
+    {
+      var postMan = new MailAddress(
+        Utilities.GetConfigSetting("SMTP.Postman.Email"),
+        Utilities.GetConfigSetting("SMTP.Postman.DisplayName"),
+        System.Text.Encoding.UTF8);
+      return postMan;
+    }
+
+    private NetworkCredential GetClientCredentials(SmtpClient client)
+    {
+      var credentials = new System.Net.NetworkCredential(
+        Utilities.GetConfigSetting("SMTP.UserName"),
+        Utilities.GetConfigSetting("SMTP.Password"));
+      return credentials;
+    }
+
+    private SmtpClient GetSMTPClient()
+    {
+      var portNumber = Utilities.GetConfigSetting("SMTP.Port");
+      var intPortNumber = 0;
+      
+      if(string.IsNullOrEmpty(portNumber) || (! int.TryParse(portNumber, out intPortNumber)))
+      {
+        throw new InvalidOperationException("Must specify smtp.port in the Config file");
+      }
+
+      var host = Utilities.GetConfigSetting("SMTP.Host");
+      if( string.IsNullOrEmpty(host) ) throw new InvalidOperationException("Must specify smtp.host in config file");
+
+      var client = new SmtpClient(host, intPortNumber);
+      return client;
     }
 
   
@@ -82,6 +98,6 @@ namespace TransportDepot.Utilities.Email
 
 
 
-    private string Host { get { return "smtp.w14d.comcast.net"; } }
+    
   }
 }

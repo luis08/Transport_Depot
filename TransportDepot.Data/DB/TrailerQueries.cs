@@ -61,13 +61,13 @@ namespace TransportDepot.Data.DB
 
 
     public static string TrailerSanityQuery = @"
-      INSERT INTO [TDPD].[dbo].[Trailer_Qualification] ( [ID] )
+      INSERT INTO [dbo].[Trailer_Qualification] ( [ID] )
       SELECT [cTrailerID] AS [ID]
       FROM [dbo].[Trailer] AS [T]
       WHERE NOT EXISTS
       (
         SELECT * 
-        FROM [TDPD].[dbo].[Trailer_Qualification] [T1]
+        FROM [dbo].[Trailer_Qualification] [T1]
         WHERE [T1].[ID] = [T].[cTrailerID]
       )
     ";

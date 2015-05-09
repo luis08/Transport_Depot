@@ -70,13 +70,13 @@ namespace TransportDepot.Data.DB
     ";
 
     public static string TractorSanityQuery = @"
-      INSERT INTO [TDPD].[dbo].[Tractor_Qualification] ( [ID] )
+      INSERT INTO [dbo].[Tractor_Qualification] ( [ID] )
       SELECT [cTractorID] AS [ID]
       FROM [dbo].[Tractor] AS [T]
       WHERE NOT EXISTS
       (
         SELECT * 
-        FROM [TDPD].[dbo].[Tractor_Qualification] [T1]
+        FROM [dbo].[Tractor_Qualification] [T1]
         WHERE [T1].[ID] = [T].[cTractorID]
       )
     ";

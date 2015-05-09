@@ -71,7 +71,6 @@ namespace Transport_Depot_WCF.Settlements
             return lessor_settlement;    
         }
 
-        //TODO: add exception
         public Lessor GetLessor(string lessor_id)
         { 
             using( var cn = this.Connection )

@@ -24,6 +24,7 @@ namespace TransportDepot.AccountsReceivable
     public FactoringPayment GetPayment()
     {
       this.CleanStrings();
+      FactoringPayment payment = null;
       if (!this.IsUsable())
       {
         return null;
@@ -34,12 +35,14 @@ namespace TransportDepot.AccountsReceivable
       }
       else if (this.IsNonFactoredType())
       {
-        return this.GetNonFactoredPayment();
+        payment = this.GetNonFactoredPayment();
       }
       else
       {
-        return this.GetFactoredPayement();
+        payment = this.GetFactoredPayement();
       }
+      payment.InvoiceNumber = this.PadInvoiceNumber(payment.InvoiceNumber);
+      return payment;
     }
 
     private bool IsNonFactoredType()
@@ -132,8 +135,7 @@ namespace TransportDepot.AccountsReceivable
       {
         return string.Empty;
       }
-      var invoiceNumber = this.PadInvoiceNumber(this.InvoiceNumber);
-      return invoiceNumber;
+      return this.InvoiceNumber.Trim();
     }
 
 

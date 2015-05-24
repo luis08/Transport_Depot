@@ -65,6 +65,9 @@
     <Compile Include="AccountsReceivable\InvoiceRowCell.cs" />
     <Compile Include="AccountsReceivable\InvoiceTableMaker.cs" />
     <Compile Include="DataFormats.cs" />
+    <Compile Include="Dispatch\DispatchReportsService.cs" />
+    <Compile Include="Dispatch\MovingFreightReport.cs" />
+    <Compile Include="IDispatchReports.cs" />
     <Compile Include="Generic\Formats.cs" />
     <Compile Include="Generic\GenericReport.cs" />
     <Compile Include="IARReportService.cs" />
@@ -91,6 +94,10 @@
     <ProjectReference Include="..\TransportDepot.Data\TransportDepot.Data.csproj">
       <Project>{424AC8B0-D26C-4DF3-8FD9-54B5F32B2313}</Project>
       <Name>TransportDepot.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TransportDepot.Dispatch\TransportDepot.Dispatch.csproj">
+      <Project>{BCFC18A1-6AAE-49DE-AD84-075A81BBCF6A}</Project>
+      <Name>TransportDepot.Dispatch</Name>
     </ProjectReference>
     <ProjectReference Include="..\TransportDepot.Models\TransportDepot.Models.csproj">
       <Project>{3FA6F134-A16F-45CC-A1EF-3CE8EBA36104}</Project>

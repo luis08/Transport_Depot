@@ -1,20 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using PdfSharp.Pdf;
-using MigraDoc.DocumentObjectModel;
-using MigraDoc.Rendering;
 using System.IO;
+using System.Linq;
+using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
+using MigraDoc.Rendering;
 
 namespace TransportDepot.Reports.Generic
 {
   public class GenericReport
   {
-    private const int RowsPerPage = 30;
-    private const string RowHeight = "0.5cm";
     
+    private const int RowsPerPage = 30;
+    private string RowHeightString
+    {
+      get { return string.Format("{0:0.0#}cm", this.RowHeight); }
+    }
+
+    public GenericReport()
+    { this.RowHeight = 0.5;  }
+
+    public double RowHeight { get; set; }
+
     public enum CellHorizontalAlignment
     {
       Left, Center, Right
@@ -171,7 +177,7 @@ namespace TransportDepot.Reports.Generic
       for (int rwIdx = 1; rwIdx < totalRows; rwIdx++)
       {
         var rw = tbl.AddRow();
-        rw.Height = RowHeight;
+        rw.Height = RowHeightString;
         if (rwIdx % 2 == 0)
         {
           rw.Shading.Color = new Color(240, 240, 240);

@@ -67,6 +67,7 @@
     <Content Include="Business.svc" />
     <Content Include="ARReports.svc" />
     <Content Include="Apex.svc" />
+    <Content Include="DispatchReports.svc" />
     <Content Include="Email.svc" />
     <Content Include="Dispatch.svc" />
     <Content Include="Factoring.svc" />

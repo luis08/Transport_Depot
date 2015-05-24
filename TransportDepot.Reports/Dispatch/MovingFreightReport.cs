@@ -12,7 +12,7 @@ namespace TransportDepot.Reports.Dispatch
     private string[,] _reportData = null;
     private MovingFreightTrip[] _trips;
     private Company _company;
-    private readonly double[] ColumnWidths = { 3.0, 3.0, 3.0, 3.0, 3.0, 5.0, 7.0 };
+    private readonly double[] ColumnWidths = { 2.0, 2.7, 3.0, 2.0, 2.8, 6.4, 8.1 };
 
     private static class ColumnIndexes
     {
@@ -40,12 +40,15 @@ namespace TransportDepot.Reports.Dispatch
       var report = new GenericReport
       {
         ReportTitle = string.Format("{0} Moving Freight", this._company.Name),
+        DetailFontSize = 7.2,
         ColumnWidths = ColumnWidths,
         HeaderRight = new string[] {"", ""},
         FooterCenter = "",
         FooterLeft = DateTime.Now.ToString("MM/dd/yyyy H:mm"),
         HorizontalAlignment = horizontalAlignment,
         VerticalAlignment = verticalAlingment,
+        RowHeight = 1.51,
+        RowsPerPage = 10,
         ReportData = this._reportData
       };
       var pdfStream = report.GetDocumentStream();
@@ -63,7 +66,7 @@ namespace TransportDepot.Reports.Dispatch
 
       if (this._trips.Count() == 0) return;
 
-      for (int tripIdx = 1; tripIdx < this._trips.Length; tripIdx++)
+      for (int tripIdx = 0; tripIdx < this._trips.Length; tripIdx++)
       {
         PopulateTrip(tripIdx, this._trips[tripIdx]);
       }
@@ -80,23 +83,24 @@ namespace TransportDepot.Reports.Dispatch
       this._reportData[0, ColumnIndexes.Notes] = "Notes";
     }
 
-    private void PopulateTrip(int tripRowIndex, MovingFreightTrip trip)
+    private void PopulateTrip(int tripIdx, MovingFreightTrip trip)
     {
       var driver = trip.Drivers.FirstOrDefault();
-      this._reportData[0, ColumnIndexes.TruckTrip] =
+      var rowNumber = tripIdx + 1;
+      this._reportData[rowNumber, ColumnIndexes.TruckTrip] =
         this.GetInSeparateLines(trip.Tractor, trip.TripNumber);
-      this._reportData[tripRowIndex, ColumnIndexes.TrailerDriverPhone] =
+      this._reportData[rowNumber, ColumnIndexes.TrailerDriverPhone] =
         this.GetInSeparateLines(trip.Trailer, driver.CellPhone);
-      this._reportData[tripRowIndex, ColumnIndexes.DriverNameCard] =
+      this._reportData[rowNumber, ColumnIndexes.DriverNameCard] =
         this.GetInSeparateLines(driver.Name, driver.Card);
-      this._reportData[tripRowIndex, ColumnIndexes.LineHaulPickup] =
+      this._reportData[rowNumber, ColumnIndexes.LineHaulPickup] =
         this.GetInSeparateLines(string.Format("{0} - {1}", trip.From.State, trip.To.State),
           this.GetDate(trip.From.DateTime));
-      this._reportData[tripRowIndex, ColumnIndexes.Arrival] =
+      this._reportData[rowNumber, ColumnIndexes.Arrival] =
         this.GetInSeparateLines(this.GetDate(trip.To.DateTime), trip.To.City);
-      this._reportData[tripRowIndex, ColumnIndexes.Customer] =
+      this._reportData[rowNumber, ColumnIndexes.Customer] =
         this.GetInSeparateLines(trip.Customer.Name, trip.Customer.Phone);
-      this._reportData[tripRowIndex, ColumnIndexes.Notes] = string.Empty;
+      this._reportData[rowNumber, ColumnIndexes.Notes] = string.Empty;
     }
 
     private string GetDate(DateTime dateTime)
@@ -119,10 +123,12 @@ namespace TransportDepot.Reports.Dispatch
       var hAl = new GenericReport.CellHorizontalAlignment[]
       {
         GenericReport.CellHorizontalAlignment.Left,
-        GenericReport.CellHorizontalAlignment.Center,
-        GenericReport.CellHorizontalAlignment.Center,
-        GenericReport.CellHorizontalAlignment.Center,
-        GenericReport.CellHorizontalAlignment.Center
+        GenericReport.CellHorizontalAlignment.Left,
+        GenericReport.CellHorizontalAlignment.Left,
+        GenericReport.CellHorizontalAlignment.Left,
+        GenericReport.CellHorizontalAlignment.Left,
+        GenericReport.CellHorizontalAlignment.Left,
+        GenericReport.CellHorizontalAlignment.Left
       };
       return hAl;
     }
@@ -131,11 +137,13 @@ namespace TransportDepot.Reports.Dispatch
     {
       var vAl = new GenericReport.CellVerticalAlignment[]
       {
-        GenericReport.CellVerticalAlignment.Top,
-        GenericReport.CellVerticalAlignment.Top,
-        GenericReport.CellVerticalAlignment.Top,
-        GenericReport.CellVerticalAlignment.Top,
-        GenericReport.CellVerticalAlignment.Top
+        GenericReport.CellVerticalAlignment.Middle,
+        GenericReport.CellVerticalAlignment.Middle,
+        GenericReport.CellVerticalAlignment.Middle,
+        GenericReport.CellVerticalAlignment.Middle,
+        GenericReport.CellVerticalAlignment.Middle,
+        GenericReport.CellVerticalAlignment.Middle,
+        GenericReport.CellVerticalAlignment.Middle
       };
       return vAl;
     }

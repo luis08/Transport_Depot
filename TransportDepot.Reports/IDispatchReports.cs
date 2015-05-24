@@ -4,10 +4,11 @@ using System.ServiceModel.Web;
 using System.IO;
 namespace TransportDepot.Reports.Dispatch
 {
+  [ServiceContract]
   public interface IDispatchReports
   {
     [OperationContract]
-    [WebGet(UriTemplate = "/movingFreight")]
+    [WebGet(UriTemplate="moving-freight")]
     Stream GetMovingFreight();
   }
 }

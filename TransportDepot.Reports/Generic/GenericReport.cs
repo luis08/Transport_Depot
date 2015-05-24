@@ -10,16 +10,23 @@ namespace TransportDepot.Reports.Generic
   public class GenericReport
   {
     
-    private const int RowsPerPage = 30;
+    
     private string RowHeightString
     {
       get { return string.Format("{0:0.0#}cm", this.RowHeight); }
     }
 
     public GenericReport()
-    { this.RowHeight = 0.5;  }
+    { 
+      this.RowHeight = 0.5; 
+      this.DetailFontSize = 9; 
+      this.RowsPerPage = 30; 
+    }
 
     public double RowHeight { get; set; }
+    public int RowsPerPage { get; set; }
+
+    public double DetailFontSize { get; set; }
 
     public enum CellHorizontalAlignment
     {
@@ -107,7 +114,9 @@ namespace TransportDepot.Reports.Generic
       }
       if (this.HorizontalAlignment.Length != cols)
       {
-        throw new InvalidOperationException("Data Columns do not match the Horizontal Alignment columns");
+        throw new InvalidOperationException(
+          string.Format("Data Columns do not match the Horizontal Alignment columns.  Data Columns: {0}     Horizontal Aligment Columns {1}",
+          cols, this.HorizontalAlignment.Length));
       }
       else if (this.VerticalAlignment.Length != cols)
       {
@@ -184,7 +193,10 @@ namespace TransportDepot.Reports.Generic
         }
         for (int colIdx = 0; colIdx < this.ReportData.GetLength(1); colIdx++)
         {
-          rw.Cells[colIdx].AddParagraph(this.ReportData[rwIdx, colIdx]);
+          var textContent = string.IsNullOrEmpty(this.ReportData[rwIdx, colIdx]) ?
+            string.Empty:
+            this.ReportData[rwIdx, colIdx];
+          rw.Cells[colIdx].AddParagraph(textContent);
           rw.Cells[colIdx].Format.Alignment = this.GetHorizontalAlignment(colIdx);
           rw.Cells[colIdx].VerticalAlignment = this.GetVerticalAlignment(colIdx);
           if (this.HighlightSpecified() && this.HighLightFields[rwIdx, colIdx])
@@ -239,6 +251,7 @@ namespace TransportDepot.Reports.Generic
       tableFrame.Top = "3cm";
       tableFrame.RelativeVertical = MigraDoc.DocumentObjectModel.Shapes.RelativeVertical.Page;
       var tbl = tableFrame.AddTable();
+      tbl.Style = "Table";
       tbl.Borders.Width = 0;
       for (int i = 0; i < this.ColumnWidths.Length; i++)
       {
@@ -340,7 +353,7 @@ namespace TransportDepot.Reports.Generic
       // Create a new style called Table based on style Normal
       style = document.Styles.AddStyle("Table", "Normal");
       style.Font.Name = "Verdana";
-      style.Font.Size = 9;
+      style.Font.Size = this.DetailFontSize;
 
       // Create a new style called Reference based on style Normal
       style = document.Styles.AddStyle("Reference", "Normal");

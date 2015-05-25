@@ -19,6 +19,7 @@
       margin-left:auto; 
       margin-right:auto;
     }
+    #trips-container { height:30em; overflow:auto;}
   </style>
   <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>  
@@ -52,7 +53,10 @@
   </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" Runat="Server">
-  <div ng-app='freightApp'>
+  <div>
+    <a href='http://192.168.1.200/ft-svc/Dispatchreports.svc/ajax/moving-freight' target='_blank'>Moving Freight Pdf</a>
+  </div>
+  <div id='trips-container' ng-app='freightApp'>
    
     <table class='center'>
       <thead>

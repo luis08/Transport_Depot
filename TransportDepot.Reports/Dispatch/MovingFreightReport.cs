@@ -80,7 +80,7 @@ namespace TransportDepot.Reports.Dispatch
       this._reportData[0, ColumnIndexes.LineHaulPickup] = "Line/Pickup";
       this._reportData[0, ColumnIndexes.Arrival] = "Arrival";
       this._reportData[0, ColumnIndexes.Customer] = "Customer";
-      this._reportData[0, ColumnIndexes.Notes] = "Notes";
+      this._reportData[0, ColumnIndexes.Notes] = "Location, Date & Time";
     }
 
     private void PopulateTrip(int tripIdx, MovingFreightTrip trip)

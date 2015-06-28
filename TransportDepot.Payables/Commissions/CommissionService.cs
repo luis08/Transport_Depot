@@ -143,13 +143,23 @@ namespace TransportDepot.Payables.Commissions
         .Select(t=>t.First())
         .ToDictionary(t => t.TripNumber, t => t.PreviuosSpan);
 
-      var tractorHomes = this._dataSource.GetLessorHomes( candidates.Select(c=>c.TripNumber) );
-      var requests = candidates.GroupBy(c => c.AgentId  )
+      
+      var requests = GetRequests(candidates, nonCommissionSpans);
+
+      var commissions = this.GetCommissions(requests);
+      return commissions;
+    }
+
+    private IEnumerable<CommissionRequest> GetRequests(IEnumerable<CommissionCandidate> candidates, Dictionary<string, Span> nonCommissionSpans)
+    {
+      var tractorHomes = this._dataSource.GetLessorHomes(candidates.Select(c => c.TripNumber));
+      var requests = candidates.GroupBy(c => c.AgentId)
         .Select(r => new CommissionRequest
         {
           NonCommissionSpans = new List<Span>(),
           AgentId = r.Key,
-          Trips = r.Select(t=> new TripSpan{
+          Trips = r.Select(t => new TripSpan
+          {
             LessorId = t.LessorId,
             StartDate = t.StartDate,
             EndDate = t.EndDate,
@@ -157,18 +167,16 @@ namespace TransportDepot.Payables.Commissions
             EndLocation = t.EndLocatioin,
             InvoiceNumber = t.InvoiceNumber,
             InvoiceAmout = t.InvoiceAmount,
-            TripNumber = t.TripNumber, 
-            TractorHome = tractorHomes.ContainsKey(t.LessorId ) ? 
+            TripNumber = t.TripNumber,
+            TractorHome = tractorHomes.ContainsKey(t.LessorId) ?
                             tractorHomes[t.LessorId] : null,
-            PreviousSpan = nonCommissionSpans.ContainsKey(t.TripNumber)? 
+            PreviousSpan = nonCommissionSpans.ContainsKey(t.TripNumber) ?
                             nonCommissionSpans[t.TripNumber] : null,
             LessorRevenue = t.LessorRevenue
 
           })
         });
-
-      var commissions = this.GetCommissions(requests);
-      return commissions;
+      return requests;
     }
 
 

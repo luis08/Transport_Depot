@@ -29,5 +29,11 @@ namespace TransportDepot.Business
         });
       return customers;
     }
+
+
+    public IEnumerable<MenuLink> GetMainLinks()
+    {
+      return this._dataSource.GetMenuLinks();
+    }
   }
 }

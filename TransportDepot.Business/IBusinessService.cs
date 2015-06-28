@@ -14,6 +14,10 @@ namespace TransportDepot.Business
 
     [OperationContract]
     [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json)]
-    IEnumerable<CustomerMenuItem> GetCustomerMenuItems(); 
+    IEnumerable<CustomerMenuItem> GetCustomerMenuItems();
+
+    [OperationContract]
+    [WebGet]
+    IEnumerable<MenuLink> GetMainLinks();
   }
 }

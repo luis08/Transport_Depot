@@ -281,7 +281,9 @@ namespace TransportDepot.Data.DB
                   FROM [dbo].[Paid_Invoice_Commission] [C]
                   WHERE ( [C].[ArInvoiceNumber] = [BH].[cProNumber] )
                 )
-                AND ( [dBillDate] > COALESCE( @LastBillDate, '1-1-2001' ) )
+                AND ( [dBillDate] > '5-27-2015'  )
+              --  AND ( [dBillDate] > COALESCE( @LastBillDate, '1-1-2001' ) )
+              
                 
           ";
         }

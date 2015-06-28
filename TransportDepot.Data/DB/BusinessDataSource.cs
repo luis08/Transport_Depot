@@ -38,6 +38,34 @@ namespace TransportDepot.Data.DB
       return companies.First();
     }
 
+    public IEnumerable<MenuLink> GetMenuLinks()
+    {
+      var query = "SELECT * FROM [dbo].[ShortCut]";
+      var linksTable = new DataTable();
+      using (var cmd = new SqlCommand(query))
+      {
+        try
+        {
+          linksTable = this._dataSource.FetchCommand(cmd);
+        }
+        catch (Exception e)
+        {
+          return new List<MenuLink>();
+        }
+      }
+      if (linksTable.Rows.Count == 0)
+      {
+        return new List<MenuLink>();
+      }
+      var links = linksTable.AsEnumerable().Select(l => new MenuLink
+      {
+        Id = l.Field<int>("Id"),
+        Text = l.Field<string>("Text"),
+        Link = l.Field<string>("Link")
+      }).ToList();
+      return links;
+    }
+
     private const string CompanyQuery = @"
       SELECT
             [cFederalId] AS [TaxID]

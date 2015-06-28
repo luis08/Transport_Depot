@@ -63,5 +63,8 @@
   <div class="footer">
   </div>
   </form>
+  
+  <asp:ContentPlaceHolder ID="JavaScriptPlaceHolder" runat="server">
+  </asp:ContentPlaceHolder>
 </body>
 </html>

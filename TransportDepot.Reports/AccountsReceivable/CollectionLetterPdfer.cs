@@ -23,7 +23,7 @@ namespace TransportDepot.Reports.AccountsReceivable
         new InvoiceRowCell
         {
           HeaderText = "Invoice",
-          Width = 2.0,
+          Width = 2.25,
           HorizontalAlignment = ParagraphAlignment.Left,
           VerticalAllingment = VerticalAlignment.Center
         },
@@ -72,7 +72,7 @@ namespace TransportDepot.Reports.AccountsReceivable
         new InvoiceRowCell
         {
           HeaderText = "Comments",
-          Width = 4.5,
+          Width = 4.25,
           HorizontalAlignment = ParagraphAlignment.Left,
           VerticalAllingment = VerticalAlignment.Center
         }

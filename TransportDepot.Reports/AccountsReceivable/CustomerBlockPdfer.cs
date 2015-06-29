@@ -13,13 +13,13 @@ namespace TransportDepot.Reports.AccountsReceivable
     {
       public static string Dummy { get { return "5cm"; } }
 
-      public static string InvoiceNumber { get { return "2cm"; } }
+      public static string InvoiceNumber { get { return "2.25cm"; } }
 
       public static string Date { get { return "2cm"; } }
 
       public static string Age { get { return "1.25cm"; } }
 
-      public static string Reference { get { return "6cm"; } }
+      public static string Reference { get { return "5.75cm"; } }
 
       public static string Current { get { return "2.25cm"; } }
 

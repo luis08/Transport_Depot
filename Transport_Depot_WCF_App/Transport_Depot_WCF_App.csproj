@@ -108,7 +108,7 @@
     <ProjectReference Include="..\TransportDepot.Dispatch\TransportDepot.Dispatch.csproj">
       <Project>{BCFC18A1-6AAE-49DE-AD84-075A81BBCF6A}</Project>
       <Name>TransportDepot.Dispatch</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\TransportDepot.Factoring\TransportDepot.Factoring.csproj">
       <Project>{96B80933-33F8-4106-A6ED-4C613D9FC7B5}</Project>

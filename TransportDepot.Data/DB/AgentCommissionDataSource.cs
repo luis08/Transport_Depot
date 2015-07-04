@@ -61,7 +61,7 @@ namespace TransportDepot.Data.DB
       
     }
 
-    public Dictionary<string, Location> GetLessorHomes(IEnumerable<string> tripIds)
+    public IEnumerable<LessorHome> GetLessorHomes(IEnumerable<string> tripIds)
     {
       var xml = new XDocument(new XElement("trips",
         tripIds.Select(t => new XElement("trip", t))));
@@ -79,7 +79,7 @@ namespace TransportDepot.Data.DB
 
       if (tractorHomes.Rows.Count == 0)
       {
-        return new Dictionary<string, Location>();
+        return new List<LessorHome>();
       }
       var homes = tractorHomes.AsEnumerable()
         .ToDictionary(l => l.Field<string>("TractorID"), l =>
@@ -91,7 +91,10 @@ namespace TransportDepot.Data.DB
           }
           return new Location { State = location };
         });
-      return homes;
+      return homes.Select(h=> new LessorHome{
+        LessorId = h.Key,
+        Location = h.Value
+      }).ToList();
     }
 
     public IEnumerable<PreviousTrip> GetPreviousTrips(IEnumerable<CommissionCandidate> candidates)

@@ -58,6 +58,7 @@
     <ProjectReference Include="..\TransportDepot.Models\TransportDepot.Models.csproj">
       <Project>{3FA6F134-A16F-45CC-A1EF-3CE8EBA36104}</Project>
       <Name>TransportDepot.Models</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\TransportDepot.Utilities\TransportDepot.Utilities.csproj">
       <Project>{7B5A2726-523E-43B6-9FEB-252A90A2AA54}</Project>

@@ -132,50 +132,62 @@ namespace TransportDepot.Payables.Commissions
     public IEnumerable<InvoiceCommission> GetAllCommissions()
     {
       var candidates = this.GetCandidates();
-      var mappings = candidates
-        .Select(c => new TripInvoiceMapping
-        {
-          InvoiceNumber = c.InvoiceNumber,
-          TripNumber = c.TripNumber
-        });
-      var nonCommissionSpans = this._dataSource.GetPreviousTrips(candidates)
-        .GroupBy(t=>t.TripNumber).Where(t=>t.Count().Equals(1))
-        .Select(t=>t.First())
-        .ToDictionary(t => t.TripNumber, t => t.PreviuosSpan);
 
-      
-      var requests = GetRequests(candidates, nonCommissionSpans);
+      var previousSpans = GetPreviousSpans(candidates);
+
+
+      var requests = GetRequests(new RequestBuilderBucket { 
+        Candidates = candidates,
+        LessorHomes = this._dataSource.GetLessorHomes(candidates.Select(c=>c.TripNumber)),
+        PreviousTrips = previousSpans
+      });
 
       var commissions = this.GetCommissions(requests);
       return commissions;
     }
 
-    private IEnumerable<CommissionRequest> GetRequests(IEnumerable<CommissionCandidate> candidates, Dictionary<string, Span> nonCommissionSpans)
+    private IEnumerable<PreviousTrip> GetPreviousSpans(IEnumerable<CommissionCandidate> candidates)
     {
-      var tractorHomes = this._dataSource.GetLessorHomes(candidates.Select(c => c.TripNumber));
-      var requests = candidates.GroupBy(c => c.AgentId)
-        .Select(r => new CommissionRequest
-        {
-          NonCommissionSpans = new List<Span>(),
-          AgentId = r.Key,
-          Trips = r.Select(t => new TripSpan
-          {
-            LessorId = t.LessorId,
-            StartDate = t.StartDate,
-            EndDate = t.EndDate,
-            StartLocation = t.StartLocation,
-            EndLocation = t.EndLocatioin,
-            InvoiceNumber = t.InvoiceNumber,
-            InvoiceAmout = t.InvoiceAmount,
-            TripNumber = t.TripNumber,
-            TractorHome = tractorHomes.ContainsKey(t.LessorId) ?
-                            tractorHomes[t.LessorId] : null,
-            PreviousSpan = nonCommissionSpans.ContainsKey(t.TripNumber) ?
-                            nonCommissionSpans[t.TripNumber] : null,
-            LessorRevenue = t.LessorRevenue
+      var previousSpans = this._dataSource.GetPreviousTrips(candidates);
+        //.GroupBy(t => t.TripNumber).Where(t => t.Count().Equals(1))
+        //.Select(t => t.First())
+        //.ToDictionary(t => t.TripNumber, t => t.PreviuosSpan);
+      return previousSpans;
+    }
 
-          })
-        });
+    public IEnumerable<CommissionRequest> GetRequests(RequestBuilderBucket bucket )
+    {
+      var tractorHomes = bucket.LessorHomes.ToDictionary(h=>h.LessorId, h=>h);
+      var nonCommissionSpans = bucket.PreviousTrips.ToDictionary(s => s.TripNumber, s => s);
+      var requests = GetRequests(bucket, tractorHomes, nonCommissionSpans);
+      return requests;
+    }
+
+    private static IEnumerable<CommissionRequest> GetRequests(RequestBuilderBucket bucket, Dictionary<string, LessorHome> tractorHomes, Dictionary<string, PreviousTrip> nonCommissionSpans)
+    {
+      var requests = bucket.Candidates.GroupBy(c => c.AgentId)
+      .Select(r => new CommissionRequest
+      {
+        NonCommissionSpans = new List<Span>(),
+        AgentId = r.Key,
+        Trips = r.Select(t => new TripSpan
+        {
+          LessorId = t.LessorId,
+          StartDate = t.StartDate,
+          EndDate = t.EndDate,
+          StartLocation = t.StartLocation,
+          EndLocation = t.EndLocatioin,
+          InvoiceNumber = t.InvoiceNumber,
+          InvoiceAmout = t.InvoiceAmount,
+          TripNumber = t.TripNumber,
+          TractorHome = tractorHomes.ContainsKey(t.LessorId) ?
+                          tractorHomes[t.LessorId].Location : null,
+          PreviousSpan = nonCommissionSpans.ContainsKey(t.TripNumber) ?
+                          nonCommissionSpans[t.TripNumber].PreviuosSpan : null,
+          LessorRevenue = t.LessorRevenue
+
+        }).ToArray()
+      });
       return requests;
     }
 
@@ -199,5 +211,17 @@ namespace TransportDepot.Payables.Commissions
 
       this._dataSource.Save(commissions);
     }
-  }
+
+
+    public IEnumerable<PreviousTrip> GetPreviousTrips(IEnumerable<CommissionCandidate> candidates)
+    {
+      return this._dataSource.GetPreviousTrips(candidates);
+    }
+  
+
+    public IEnumerable<LessorHome>  GetLessorHomes(IEnumerable<string> tripIds)
+    {
+      return this._dataSource.GetLessorHomes(tripIds);
+    }
+}
 }

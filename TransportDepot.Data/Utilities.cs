@@ -73,6 +73,14 @@ namespace TransportDepot.Data
       return input;
     }
 
+    public static void WriteAppend(string path, string[] data)
+    {
+      using (var writer = new System.IO.StreamWriter(path, true))
+      {
+        writer.WriteLine(string.Join(Environment.NewLine, data));
+      }
+    }
+
     public static void Write(string path, string[] data)
     {
       using (var writer = new System.IO.StreamWriter(path))

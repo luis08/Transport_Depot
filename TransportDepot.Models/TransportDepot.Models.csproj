@@ -72,12 +72,14 @@
     <Compile Include="Dispatch\MovingFreightTrip.cs" />
     <Compile Include="Factoring\ApexPaymentBatch.cs" />
     <Compile Include="Factoring\FactoringPayment.cs" />
+    <Compile Include="Payables\Commissions\RequestBuilderBucket.cs" />
     <Compile Include="Payables\Commissions\CommissionCandidate.cs" />
     <Compile Include="Payables\Commissions\CommissionRequest.cs" />
     <Compile Include="Payables\Commissions\InvoiceCommission.cs" />
     <Compile Include="Payables\Commissions\Location.cs" />
     <Compile Include="Payables\Commissions\PreviousTrip.cs" />
     <Compile Include="Payables\Commissions\Span.cs" />
+    <Compile Include="Payables\Commissions\LessorHome.cs" />
     <Compile Include="Payables\Commissions\TripSpan.cs" />
     <Compile Include="Payables\Commissions\TripInvoiceMapping.cs" />
     <Compile Include="Safety\Trailer.cs" />

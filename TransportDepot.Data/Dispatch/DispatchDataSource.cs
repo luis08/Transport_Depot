@@ -279,7 +279,7 @@ namespace TransportDepot.Data.Dispatch
     {
       return string.Concat(c.Field<string>("ShipState").Trim(),
         " - ",
-        c.Field<string>("ShipState").Trim());
+        c.Field<string>("UnloadState").Trim());
     }
 
 

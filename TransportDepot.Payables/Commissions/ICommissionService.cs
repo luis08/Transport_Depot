@@ -5,6 +5,7 @@ using System.ServiceModel;
 namespace TransportDepot.Payables.Commissions
 {
   [ServiceContract(Namespace="http://www.transportdepot.net/Payables")]
+  [ServiceKnownType(typeof(TripSpan))]
   public interface ICommissionService
   {
     [OperationContract]
@@ -15,6 +16,13 @@ namespace TransportDepot.Payables.Commissions
     IEnumerable<InvoiceCommission> GetCommissions(IEnumerable<CommissionRequest> request);
     [OperationContract]
     IEnumerable<CommissionCandidate> GetCandidates();
+
+    [OperationContract]
+    IEnumerable<PreviousTrip> GetPreviousTrips(IEnumerable<CommissionCandidate> candidates);
+    [OperationContract]
+    IEnumerable<LessorHome> GetLessorHomes(IEnumerable<string> tripIds);
+    [OperationContract]
+    IEnumerable<CommissionRequest> GetRequests(RequestBuilderBucket bucket);
     [OperationContract]
     void SaveNewCommisions();
   }

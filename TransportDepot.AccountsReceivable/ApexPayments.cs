@@ -47,15 +47,14 @@ namespace TransportDepot.AccountsReceivable
     private void ReadPayments(IEnumerable<string[]> parsedCsv)
     {
       var headers = parsedCsv.First();
-      var data = parsedCsv.Skip(1);
+      var csvStringArray = parsedCsv.Skip(1);
       this.FindFields(headers);
       payments = new Dictionary<string, FactoringPayment>();
       doubleEntries = new Dictionary<string, List<FactoringPayment>>();
-
-      data.ToList().ForEach(csvRow =>
+      
+      csvStringArray.ToList().ForEach(csvRow =>
       {
         var payment = GetApexPayment(csvRow);
-
         if (payment != null)
         {
           if (payments.ContainsKey(payment.InvoiceNumber))
@@ -94,6 +93,7 @@ namespace TransportDepot.AccountsReceivable
 
     private FactoringPayment GetApexPayment(string[] csvRow)
     {
+      if (csvRow == null) return null;
       var builder = new ApexPaymentBuilder
       {
         Amount = csvRow[this._fieldIndexes["Amount"]].Replace("$", ""),

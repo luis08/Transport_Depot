@@ -8,10 +8,11 @@ namespace TransportDepot.Utilities
     private const int DebugDelimiterTextWidth = 100;
     public static void WriteDebugHeader(string headerText)
     {
+      headerText = string.IsNullOrEmpty(headerText) ? "headerText was null or empty" : headerText;
       Write(new string('*', DebugDelimiterTextWidth));
       var fullHeaderText = string.Format("** {0: yyyy-MM-dd hh:mm:ss.fff} Debug Section Start: {1} *******", DateTime.Now, headerText);
       fullHeaderText = string.Concat(fullHeaderText,
-        new string('*', DebugDelimiterTextWidth - fullHeaderText.Length));
+        new string('*', Math.Abs( DebugDelimiterTextWidth - fullHeaderText.Length)));
       Write(fullHeaderText);
       Write(new string('*', DebugDelimiterTextWidth));
       Write(Environment.NewLine);

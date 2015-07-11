@@ -41,7 +41,11 @@ namespace TransportDepot.AccountsReceivable
       {
         payment = this.GetFactoredPayement();
       }
-      payment.InvoiceNumber = this.PadInvoiceNumber(payment.InvoiceNumber);
+      if (payment != null)
+      {
+        payment.InvoiceNumber = this.PadInvoiceNumber(payment.InvoiceNumber);
+      }
+      
       return payment;
     }
 

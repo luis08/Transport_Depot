@@ -15,6 +15,7 @@ namespace TransportDepot.Dispatch.CompanySetup
     {
       this._request = request;
       this._company = company;
+      this._customer = customer;
     }
 
     public EmailModel GetEmailModel()
@@ -31,18 +32,16 @@ namespace TransportDepot.Dispatch.CompanySetup
     }
     private string GetEmailHtml()
     {
-      this._customer = new Customer
-      {
-        CustomerName = "El bravo trucking", 
-        Phone = "333.333.3333",
-        Fax = "444.444.4444"
-      };
-      this._company = new Company
-      {
-        Name = "Fast Transport"
-      };
+      
       var html = this.GetTemplate();
       html = html.Replace("{{Date}}", this._request.Date.ToShortDateString())
+        .Replace("{{CompanyName}}", _company.Name)
+        .Replace("{{McNumber}}", _company.MCNumber)
+        .Replace("{{CompanyAddress}}", _company.Address)
+        .Replace("{{CompanyCity}}", _company.City.Trim())
+        .Replace("{{CompanyState}}", _company.State.Trim())
+        .Replace("{{CompanyZip}}", _company.ZipCode)
+        .Replace("{{TaxId}}", _company.TaxId)
         .Replace("{{To}}", _customer.CustomerName)
         .Replace("{{Attn}}", _request.ContactName)
         .Replace("{{Email}}", _request.Email)
@@ -51,8 +50,6 @@ namespace TransportDepot.Dispatch.CompanySetup
         .Replace("{{Comments}}", _request.Comments)
         .Replace("{{From}}", _request.EmployeeName)
         .Replace("{{FromEmail}}", _request.EmployeeEmail);
-        
-
       return html;
     }
 

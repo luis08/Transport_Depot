@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -184,11 +184,11 @@ img {
                         <td>
                           <div class='contentEditableContainer contentTextEditable'>
                             <div class='contentEditable' style='text-align: center;'>
-                              <h2 style="font-size: 20px;">Fast Transport</h2>
+                              <h2 style="font-size: 20px;">{{CompanyName}}</h2>
                               <br>
-                              <span >Contract Carrier ICC MC 856436</span><br/>
+                              <span >Contract Carrier ICC MC {{McNumber}}</span><br/>
                               <span class="">FIN:</span>
-                              <span >46-4820396</span>
+                              <span >{{TaxId}}</span>
                               <br/>
                             </div>
                           </div>
@@ -200,11 +200,11 @@ img {
                 </tr>
                 <tr><td>&nbsp;</td></tr>
                 <tr>
-                  <td height='40'>
+                  <td height='40' style="text-align:left;">
                     <strong style="font-size:95%">From the desk of {{From}} ({{FromEmail}})</strong><br/><br/>
                     <p>Dear {{Attn}},</p><br/>
                     <p>Thank you for your interest in our services.  You will find attached:</p>
-                    <ul>
+                    <ul style="padding-left:1em;">
                       <li>Carrier Authority</li>
                       <li>Insurance Certificate</li>
                       <li>W9</li>
@@ -470,9 +470,9 @@ img {
                           <div class='contentEditableContainer contentTextEditable'>
                             <div class='contentEditable' style='text-align: center;color:#AAAAAA;'>
                               <p>
-                              Sent by Fast Transport <br/>
-                              3146 Virginia Pine Ct. <br/>
-                              Wake Forest, NC 27587<br/>
+                              Sent by {{CompanyName}} <br/>
+                              {{CompanyAddress}} <br/>
+                              {{CompanyCity}}, {{CompanyState}} {{CompanyZip}}<br/>
 
                               </p>
                             </div>

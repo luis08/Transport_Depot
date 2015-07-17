@@ -194,6 +194,7 @@ namespace TransportDepot.Data.Dispatch
     {
       return new MovingFreightStop
       {
+        Address = t.Field<string>("FromAddress"),
         City = t.Field<string>("FromCity"),
         State = t.Field<string>("FromState"),
         DateTime = t.Field<DateTime>("Pickup")
@@ -204,6 +205,7 @@ namespace TransportDepot.Data.Dispatch
     {
       return new MovingFreightStop
       {
+        Address = t.Field<string>("ToAddress"),
         City = t.Field<string>("ToCity"),
         State = t.Field<string>("ToState"),
         DateTime = t.Field<DateTime>("Delivery")

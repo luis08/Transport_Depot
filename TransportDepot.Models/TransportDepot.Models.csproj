@@ -68,6 +68,7 @@
     <Compile Include="Dispatch\DispatcherCommission.cs" />
     <Compile Include="Dispatch\DispatcherCommissionDate.cs" />
     <Compile Include="Dispatch\DriverContact.cs" />
+    <Compile Include="Dispatch\GoogleMapLocation.cs" />
     <Compile Include="Dispatch\MovingFreightStop.cs" />
     <Compile Include="Dispatch\MovingFreightTrip.cs" />
     <Compile Include="Factoring\ApexPaymentBatch.cs" />

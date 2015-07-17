@@ -16,5 +16,8 @@ namespace TransportDepot.Models.Dispatch
     public MovingFreightStop To { get; set; }
     public Company Customer { get; set; }
     public string CustomerId { get; set; }
+    public string Comments { get; set; }
+    public int UserOrder { get; set; }
+    public int AlertLevel { get; set; }
   }
 }

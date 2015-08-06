@@ -24,10 +24,8 @@ namespace TransportDepot.Dispatch
     [OperationContract]
     [WebInvoke(Method = "POST")]
     IEnumerable<Dispatcher> GetDispatchers();
-
-    [WebInvoke(Method = "GET", ResponseFormat= WebMessageFormat.Json)]
+    [WebInvoke(Method = "GET", ResponseFormat= WebMessageFormat.Json, BodyStyle=WebMessageBodyStyle.Bare)]
     IEnumerable<MovingFreightTrip> GetMovingFreight();
-
     [WebInvoke(Method = "POST")]
     void SendCompanySetup(CompanySetupRequest request);
   }

@@ -83,6 +83,10 @@
     <Compile Include="Payables\Commissions\LessorHome.cs" />
     <Compile Include="Payables\Commissions\TripSpan.cs" />
     <Compile Include="Payables\Commissions\TripInvoiceMapping.cs" />
+    <Compile Include="Reports\Field.cs" />
+    <Compile Include="Reports\JsonReport.cs" />
+    <Compile Include="Reports\JsonReportData.cs" />
+    <Compile Include="Reports\JsonReportRequest.cs" />
     <Compile Include="Safety\Trailer.cs" />
     <Compile Include="UI\OptionModel.cs" />
     <Compile Include="Factoring\InvoiceFilter.cs" />

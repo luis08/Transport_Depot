@@ -71,6 +71,8 @@
     <Compile Include="Generic\Formats.cs" />
     <Compile Include="Generic\GenericReport.cs" />
     <Compile Include="IARReportService.cs" />
+    <Compile Include="Json\IJsonReportService.cs" />
+    <Compile Include="Json\JsonReportService.cs" />
     <Compile Include="PdfReportUtilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Safety\TrailerSafetyReport.cs" />

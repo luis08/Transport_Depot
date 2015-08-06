@@ -73,6 +73,7 @@
     <Content Include="Factoring.svc" />
     <Content Include="FactoringPdf.svc" />
     <Content Include="index.html" />
+    <Content Include="JsonReports.svc" />
     <Content Include="Payables.svc" />
     <Content Include="Posting.svc" />
     <Content Include="Safety.svc" />

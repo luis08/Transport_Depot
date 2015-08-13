@@ -308,6 +308,7 @@ namespace TransportDepot.Data.Dispatch
         SELECT * 
         FROM [Drivers] 
         ORDER BY [Name]
+               , [Lessor_Name]
     ";
 
 

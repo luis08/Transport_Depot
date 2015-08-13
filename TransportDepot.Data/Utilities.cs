@@ -129,6 +129,12 @@ namespace TransportDepot.Data
       return str;
     }
 
+    public static DateTime? ParseDateTime(object o)
+    {
+      if (DBNull.Value.Equals(o)) return null;
+      return ParseDateTime(o.ToString());
+    }
+
     public static DateTime? ParseDateTime(string dateTime)
     {
       if (string.IsNullOrEmpty(dateTime))

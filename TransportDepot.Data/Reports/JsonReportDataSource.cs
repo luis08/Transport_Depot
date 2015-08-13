@@ -102,7 +102,8 @@ namespace TransportDepot.Data.Reports
         case "int":
           return fieldValue.ToString();
         case "datetime":
-          return DateTime.Parse(fieldValue.ToString()).ToShortDateString();
+          if( DBNull.Value.Equals(fieldValue) ) return "[NULL]";
+          return Utilities.ParseDateTime(fieldValue).Value.ToShortDateString();
         default:
           throw new InvalidOperationException("Unaccounted type: " + fieldTypeName);
       }

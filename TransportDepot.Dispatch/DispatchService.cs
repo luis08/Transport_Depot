@@ -69,5 +69,10 @@ namespace TransportDepot.Dispatch
       emailService.Send(model);
       
     }
+
+    public System.Collections.Generic.IEnumerable<DriverContact> GetDriverContacts()
+    {
+      return this._datasource.GetDriverContacts(false);
+    }
   }
 }

@@ -28,5 +28,7 @@ namespace TransportDepot.Dispatch
     IEnumerable<MovingFreightTrip> GetMovingFreight();
     [WebInvoke(Method = "POST")]
     void SendCompanySetup(CompanySetupRequest request);
+    [WebGet(UriTemplate = "driver-contacts")]
+    IEnumerable<DriverContact> GetDriverContacts();
   }
 }

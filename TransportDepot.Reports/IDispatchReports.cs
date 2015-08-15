@@ -10,5 +10,9 @@ namespace TransportDepot.Reports.Dispatch
     [OperationContract]
     [WebGet(UriTemplate="moving-freight")]
     Stream GetMovingFreight();
+
+    [OperationContract]
+    [WebGet(UriTemplate = "driver-contacts")]
+    Stream GetDriverContacts();
   }
 }

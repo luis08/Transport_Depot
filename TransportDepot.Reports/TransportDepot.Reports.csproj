@@ -66,6 +66,7 @@
     <Compile Include="AccountsReceivable\InvoiceTableMaker.cs" />
     <Compile Include="DataFormats.cs" />
     <Compile Include="Dispatch\DispatchReportsService.cs" />
+    <Compile Include="Dispatch\DriverContactsReport.cs" />
     <Compile Include="Dispatch\MovingFreightReport.cs" />
     <Compile Include="IDispatchReports.cs" />
     <Compile Include="Generic\Formats.cs" />

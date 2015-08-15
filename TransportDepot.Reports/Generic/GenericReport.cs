@@ -20,7 +20,8 @@ namespace TransportDepot.Reports.Generic
     { 
       this.RowHeight = 0.5; 
       this.DetailFontSize = 9; 
-      this.RowsPerPage = 30; 
+      this.RowsPerPage = 30;
+      this.Orientation = MigraDoc.DocumentObjectModel.Orientation.Portrait;
     }
 
     public double RowHeight { get; set; }
@@ -51,6 +52,7 @@ namespace TransportDepot.Reports.Generic
     public bool[,] HighLightFields { get; set; }
     public CellHorizontalAlignment[] HorizontalAlignment { get; set; }
     public CellVerticalAlignment[] VerticalAlignment { get; set; }
+    public MigraDoc.DocumentObjectModel.Orientation Orientation { get; set; }
 
     public int ColumnCount
     {
@@ -134,7 +136,8 @@ namespace TransportDepot.Reports.Generic
 
       currentSection.PageSetup.LeftMargin = "1.5cm";
       currentSection.PageSetup.RightMargin = "1.5cm";
-      currentSection.PageSetup.Orientation = Orientation.Landscape;
+      currentSection.PageSetup.Orientation = this.Orientation;
+      
       this.AddHeader(currentSection);
       this.AddFooter(currentSection);
       this.AddBody(currentSection);

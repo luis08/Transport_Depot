@@ -29,7 +29,8 @@ namespace TransportDepot.Reports.Safety
         HorizontalAlignment = hAl,
         VerticalAlignment = vAl,
         ReportData = this._reportData,
-        HighLightFields = this._hightlightFields
+        HighLightFields = this._hightlightFields,
+        Orientation = MigraDoc.DocumentObjectModel.Orientation.Landscape
       };
       var pdfStream = rpt.GetDocumentStream();
       pdfStream.Position = 0;

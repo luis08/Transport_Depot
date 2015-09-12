@@ -49,6 +49,7 @@ namespace TransportDepot.Reports.Dispatch
         VerticalAlignment = verticalAlingment,
         RowHeight = 1.51,
         RowsPerPage = 10,
+        Orientation = MigraDoc.DocumentObjectModel.Orientation.Landscape,
         ReportData = this._reportData
       };
       var pdfStream = report.GetDocumentStream();

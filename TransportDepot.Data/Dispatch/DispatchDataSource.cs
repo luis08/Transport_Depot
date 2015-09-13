@@ -149,6 +149,7 @@ namespace TransportDepot.Data.Dispatch
       {
         tbl = ds.FetchDataTable(cmd);
       }
+      
       try
       {
         var movingFreight = tbl.AsEnumerable()
@@ -161,8 +162,14 @@ namespace TransportDepot.Data.Dispatch
             Tractor = t.Field<string>("TractorID"),
             Trailer = t.Field<string>("TrailerID"),
             From = this.GetFrom(t),
-            To = this.GetTo(t)
-          });
+            To = this.GetTo(t),
+            Comments = string.Empty,
+            Dispatcher = new Dispatcher
+            {
+              Initials = t.Field<string>("DispatcherInitials")
+            }
+          }).ToList();
+        this.PopulateDispatchers(movingFreight);
         return movingFreight;
       }
       catch (Exception e)
@@ -170,6 +177,23 @@ namespace TransportDepot.Data.Dispatch
         return new MovingFreightTrip[] { new MovingFreightTrip { Customer = new Models.Business.Company { Name = "Luis " + tbl.Rows.Count.ToString(), Address = e.Message } } };
       }
       
+    }
+
+    private void PopulateDispatchers(IEnumerable<MovingFreightTrip> movingFreight)
+    {
+      var dispatchers = new Dispatchers(this.GetDispatchers());
+
+      movingFreight.ToList().ForEach(f =>
+      {
+        var dispatcherInitials = f.Dispatcher == null ? null : f.Dispatcher.Initials;
+        var dispatcher = dispatchers.GetDispatcher(dispatcherInitials);
+        f.Dispatcher = new Dispatcher
+        {
+          Initials = dispatcher.Initials,
+          Name = dispatcher.Name,
+          VendorId = dispatcher.VendorId
+        };
+      });
     }
 
     private DriverContact[] GetDrivers(DataRow t)
@@ -197,6 +221,7 @@ namespace TransportDepot.Data.Dispatch
         Address = t.Field<string>("FromAddress"),
         City = t.Field<string>("FromCity"),
         State = t.Field<string>("FromState"),
+        Zip = t.Field<string>("FromZip"),
         DateTime = t.Field<DateTime>("Pickup")
       };
     }
@@ -208,6 +233,7 @@ namespace TransportDepot.Data.Dispatch
         Address = t.Field<string>("ToAddress"),
         City = t.Field<string>("ToCity"),
         State = t.Field<string>("ToState"),
+        Zip = t.Field<string>("ToZip"),
         DateTime = t.Field<DateTime>("Delivery")
       };
     }

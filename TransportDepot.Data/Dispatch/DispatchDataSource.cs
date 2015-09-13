@@ -150,33 +150,27 @@ namespace TransportDepot.Data.Dispatch
         tbl = ds.FetchDataTable(cmd);
       }
       
-      try
-      {
-        var movingFreight = tbl.AsEnumerable()
-          .Select(t => new MovingFreightTrip
+      var movingFreight = tbl.AsEnumerable()
+        .Select(t => new MovingFreightTrip
+        {
+          Customer = GetCustomer(t),
+          CustomerId = t.Field<string>("CustomerID"),
+          Drivers = GetDrivers(t),
+          TripNumber = t.Field<string>("TripNumber"),
+          Tractor = t.Field<string>("TractorID"),
+          Trailer = t.Field<string>("TrailerID"),
+          From = this.GetFrom(t),
+          To = this.GetTo(t),
+          Comments = string.Empty,
+          Dispatcher = new Dispatcher
           {
-            Customer = GetCustomer(t),
-            CustomerId = t.Field<string>("CustomerID"),
-            Drivers = GetDrivers(t),
-            TripNumber = t.Field<string>("TripNumber"),
-            Tractor = t.Field<string>("TractorID"),
-            Trailer = t.Field<string>("TrailerID"),
-            From = this.GetFrom(t),
-            To = this.GetTo(t),
-            Comments = string.Empty,
-            Dispatcher = new Dispatcher
-            {
-              Initials = t.Field<string>("DispatcherInitials")
-            }
-          }).ToList();
-        this.PopulateDispatchers(movingFreight);
-        return movingFreight;
-      }
-      catch (Exception e)
-      {
-        return new MovingFreightTrip[] { new MovingFreightTrip { Customer = new Models.Business.Company { Name = "Luis " + tbl.Rows.Count.ToString(), Address = e.Message } } };
-      }
+            Initials = t.Field<string>("DispatcherInitials")
+          }
+        }).ToList();
       
+      this.PopulateDispatchers(movingFreight);
+      
+      return movingFreight;
     }
 
     private void PopulateDispatchers(IEnumerable<MovingFreightTrip> movingFreight)

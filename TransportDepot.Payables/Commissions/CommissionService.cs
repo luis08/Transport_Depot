@@ -158,7 +158,9 @@ namespace TransportDepot.Payables.Commissions
     public IEnumerable<CommissionRequest> GetRequests(RequestBuilderBucket bucket )
     {
       var tractorHomes = bucket.LessorHomes.ToDictionary(h=>h.LessorId, h=>h);
-      var nonCommissionSpans = bucket.PreviousTrips.ToDictionary(s => s.TripNumber, s => s);
+      var nonCommissionSpans = bucket.PreviousTrips
+        .GroupBy(t=>t.TripNumber, (k,g)=>g.OrderBy(e=>e.TripNumber).First())
+        .ToDictionary(s => s.TripNumber, s => s);
       var requests = GetRequests(bucket, tractorHomes, nonCommissionSpans);
       return requests;
     }

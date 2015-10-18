@@ -1,4 +1,5 @@
 ﻿
+using System;
 namespace TransportDepot.Data.Dispatch
 {
   static class Queries
@@ -153,6 +154,17 @@ namespace TransportDepot.Data.Dispatch
             INNER JOIN [dbo].[Customer]   AS [C]  ON [M].[CustomerID] = [C].[cID]
             INNER JOIN [dbo].[DriverInfo] AS [DI] ON [M].[Driver1_EmployeeID] = [DI].[cDriverID] 
 
+        ";
+      }
+    }
+
+    public static string LastDispatcher
+    {
+      get
+      {
+        throw new NotImplementedException();
+        return @"
+          
         ";
       }
     }

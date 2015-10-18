@@ -28,7 +28,7 @@ namespace TransportDepot.Data.Factoring
 
     public IEnumerable<InvoiceViewModel> GetUnPostedInvoices(InvoiceFilter filter)
     {
-      
+      var u = new Utilities();  
       var invoicesTable = new DataTable();
       using (var cmd = new SqlCommand(Queries.InvoicesFiltered))
       {
@@ -38,6 +38,7 @@ namespace TransportDepot.Data.Factoring
         cmd.Parameters.AddWithValue("@ToInvoice", filter.ToInvoiceNumber);
         cmd.Parameters.AddWithValue("@OnlyWithoutSchedule", filter.OnlyWithoutSchedule ? 1 : 0);
         invoicesTable = this.Fetch(cmd);
+        Utilities.Write(@"C:\sites\factoringDs.log", u.CmdToString(cmd));
       }
       var invoices = invoicesTable.AsEnumerable()
         .Select(i => new InvoiceViewModel

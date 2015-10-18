@@ -67,10 +67,12 @@
     <Compile Include="Dispatch\Dispatcher.cs" />
     <Compile Include="Dispatch\DispatcherCommission.cs" />
     <Compile Include="Dispatch\DispatcherCommissionDate.cs" />
+    <Compile Include="Dispatch\DispatchQueue.cs" />
     <Compile Include="Dispatch\DriverContact.cs" />
-    <Compile Include="Dispatch\GoogleMapLocation.cs" />
+    <Compile Include="DB\GeoLocation.cs" />
     <Compile Include="Dispatch\MovingFreightStop.cs" />
     <Compile Include="Dispatch\MovingFreightTrip.cs" />
+    <Compile Include="Dispatch\QueuedTractor.cs" />
     <Compile Include="Factoring\ApexPaymentBatch.cs" />
     <Compile Include="Factoring\FactoringPayment.cs" />
     <Compile Include="Payables\Commissions\RequestBuilderBucket.cs" />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Linq;
+using System.Text;
 
 namespace TransportDepot.Data
 {
@@ -9,6 +10,17 @@ namespace TransportDepot.Data
     private DateTime DefaultDate = DateTime.Today;
     private bool DefaultBool = false;
     public static readonly string DateTimeMaskMilliseconds = "hh_mm_ss_fff";
+    private string _errorPath = string.Empty;
+
+    public Utilities()
+    {
+      var appSetting = System.Configuration.ConfigurationManager.AppSettings["ErrorLogPath"];
+      _errorPath =  string.IsNullOrEmpty(appSetting) ? string.Empty : appSetting;
+      if (!System.IO.File.Exists(_errorPath))
+      {
+        _errorPath = @"C:\sites\errors.log";
+      }
+    }
 
     public string ConnectionString
     {
@@ -17,6 +29,55 @@ namespace TransportDepot.Data
         var conStr = System.Configuration.ConfigurationManager.ConnectionStrings["AccessReplacementConnectionString"].ConnectionString;
         return conStr;
       }
+    }
+
+    public string CmdToString(System.Data.SqlClient.SqlCommand cmd)
+    {
+      if (cmd == null) return "NULL";
+      var parameters = string.Empty;
+
+      var builder = new StringBuilder("Sql Command")
+        .AppendLine()
+        .AppendLine(string.Format("  Type: {0}" , cmd.CommandType.ToString()))
+        .AppendLine()
+        .AppendLine(this.GetParametersString(cmd.Parameters))
+        .AppendLine();
+
+      return builder.ToString();
+    }
+
+    private string GetParametersString(System.Data.SqlClient.SqlParameterCollection parms)
+    {
+      
+      var noParameters ="    No Parameters";
+      if (parms == null) return noParameters;
+      if (parms.Count.Equals(0)) return noParameters;
+
+      var builder = new StringBuilder("    Parameters");
+        for (var i = 0; i < parms.Count; i++)
+        {
+          var val = string.Empty;
+
+          if (parms[i].Value == null) val = "NULL";
+          else if (parms[i].Value == DBNull.Value) val = "DBNull";
+          else val = parms[i].Value.ToString();
+          builder.AppendLine(string.Format("    {0} = [{1}]   Type: {2}",
+            parms[i].ParameterName,
+            val,
+            parms[i].TypeName));
+        }
+        return builder.ToString();
+    }
+
+    public void LogError(object o, string[] data)
+    {
+      data = data.Union(new string[] 
+      { 
+        string.Empty, 
+        string.Empty, 
+        new string('*', 100),
+        "Error in: " + (o == null ? "NULL" : o.GetType().ToString())}).ToArray();
+      WriteAppend(this._errorPath, data);
     }
 
     public string CoalesceString(DataRow row, string fieldName)
@@ -162,6 +223,20 @@ namespace TransportDepot.Data
         return decimal.Zero;
       }
       return decimalAmount;
+    }
+
+
+    const int NullGeoLocationId = -1;
+
+    public int ParseGeoLocationId(object geoLocationIdObj)
+    {
+      if (geoLocationIdObj == null) return NullGeoLocationId;
+
+      var locationString = geoLocationIdObj.ToString();
+      var geoLocationId = NullGeoLocationId;
+      if (!int.TryParse(locationString, out geoLocationId)) return NullGeoLocationId;
+      if (geoLocationId < 1) return NullGeoLocationId;
+      return geoLocationId;
     }
   }
 }

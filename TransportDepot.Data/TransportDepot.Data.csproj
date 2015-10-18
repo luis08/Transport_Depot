@@ -56,6 +56,8 @@
     <Compile Include="Dispatch\DispatchDataSource.cs" />
     <Compile Include="Dispatch\Dispatchers.cs" />
     <Compile Include="Dispatch\Queries.cs" />
+    <Compile Include="Dispatch\QueuedTractorDataSource.cs" />
+    <Compile Include="Dispatch\QueuingDataSource.cs" />
     <Compile Include="Factoring\ApexDataSource.cs" />
     <Compile Include="Factoring\FactoringDataSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

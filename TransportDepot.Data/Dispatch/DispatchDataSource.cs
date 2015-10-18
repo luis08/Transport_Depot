@@ -172,6 +172,27 @@ namespace TransportDepot.Data.Dispatch
       
       return movingFreight;
     }
+    
+    public IEnumerable<QueuedTractor> GetQueuedTractors()
+    {
+      throw new NotImplementedException();
+    }
+
+
+    /// <summary>
+    /// The last dispatcher either currently assigned or last assigned.
+    /// </summary>
+    /// <returns></returns>
+    public Dictionary<string, string> GetLastTractorDispatcher()
+    {
+      throw new NotImplementedException();
+    }
+
+
+    public DispatchQueue GetUnassignedQueue()
+    {
+      throw new NotImplementedException();
+    }
 
     private void PopulateDispatchers(IEnumerable<MovingFreightTrip> movingFreight)
     {
@@ -330,9 +351,5 @@ namespace TransportDepot.Data.Dispatch
         ORDER BY [Name]
                , [Lessor_Name]
     ";
-
-
   }
-
-
 }

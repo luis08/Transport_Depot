@@ -8,7 +8,7 @@ using System.Data;
 
 namespace TransportDepot.Data.DB
 {
-  class DBDataSource:IDataSource
+  public class DBDataSource:IDataSource
   {
     private Utilities _utilities = new Utilities();
     

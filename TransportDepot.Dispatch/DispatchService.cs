@@ -5,6 +5,7 @@ using TransportDepot.Models.Dispatch;
 using TransportDepot.Models.Utilities;
 using TransportDepot.Dispatch.CompanySetup;
 using TransportDepot.Utilities.Email;
+using System.Collections.Generic;
 namespace TransportDepot.Dispatch
 {
   public class DispatchService: IDispatchService
@@ -73,6 +74,86 @@ namespace TransportDepot.Dispatch
     public System.Collections.Generic.IEnumerable<DriverContact> GetDriverContacts()
     {
       return this._datasource.GetDriverContacts(false);
+    }
+
+    public System.Collections.Generic.IEnumerable<QueuedTractor> GetQueuedTractors()
+    {
+      return new List<QueuedTractor>();
+      var dbDataSource = new DBDataSource();
+      var queuedTractors = this._datasource.GetQueuedTractors();
+      var allTractors = dbDataSource.GetTractors();
+      var dispatchers = this.GetDispatchers().ToDictionary(d => d.Initials, d => d);
+      Dictionary<string, string> lastDispatcher = this._datasource.GetLastTractorDispatcher();
+      var missingTractors = allTractors.Select(t=>t.Id).Except(queuedTractors.Select(t=>t.TractorId));
+      DispatchQueue unassignedQ = this._datasource.GetUnassignedQueue();
+      var tractorsMissingQueue = missingTractors.Select(t => new QueuedTractor
+      {
+        TractorId = t,
+        DispatcherInitials = lastDispatcher.ContainsKey(t) ? 
+          dispatchers[t].Initials 
+          : dispatchers.First().Value.Initials,
+        KeepWhenLoaded = false,
+        QueueId = unassignedQ.Id,
+        Trailer = string.Empty
+      });
+
+      var allQueuedTractors = queuedTractors.Union(tractorsMissingQueue);
+      return allQueuedTractors;
+    }
+
+
+    public void Queue(int queueId, IEnumerable<string> tractorIds)
+    {
+      var qtDataSource = new QueuedTractorDataSource();
+      qtDataSource.Queue(queueId, tractorIds);
+    }
+
+    public void DeQueue(IEnumerable<int> queuedTractorIds)
+    {
+      var qtDataSource = new QueuedTractorDataSource();
+      qtDataSource.DeQueue(queuedTractorIds);
+    }
+
+    public void UpdateQueuedTractor(QueuedTractor queuedTractor)
+    {
+      var qtDataSource = new QueuedTractorDataSource();
+      qtDataSource.Update(queuedTractor);
+    }
+
+    public void Book( string tractorId, string customerId)
+    {
+      throw new System.NotImplementedException();
+    }
+
+    public void DeleteBooking(IEnumerable<int> bookingIds)
+    {
+      throw new System.NotImplementedException();
+    }
+
+
+    public IEnumerable<DispatchQueue> GetQueues()
+    {
+      var queueDataSource = new TransportDepot.Data.Dispatch.QueuingDataSource();
+      var queues = queueDataSource.GetQueues().ToList();
+      return queues;
+    }
+
+    public void CreateQueue(DispatchQueue queue)
+    {
+      var queueDataSource = new TransportDepot.Data.Dispatch.QueuingDataSource();
+      queueDataSource.Create(queue);
+    }
+
+    public void UpdateQueue(DispatchQueue queue)
+    {
+      var queueDataSource = new TransportDepot.Data.Dispatch.QueuingDataSource();
+      queueDataSource.Update(queue);
+    }
+
+    public void DeleteQueue(int id)
+    {
+      var queueDataSource = new TransportDepot.Data.Dispatch.QueuingDataSource();
+      queueDataSource.Delete(id);
     }
   }
 }

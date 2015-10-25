@@ -28,7 +28,6 @@ namespace TransportDepot.Data.Factoring
 
     public IEnumerable<InvoiceViewModel> GetUnPostedInvoices(InvoiceFilter filter)
     {
-      var u = new Utilities();  
       var invoicesTable = new DataTable();
       using (var cmd = new SqlCommand(Queries.InvoicesFiltered))
       {
@@ -38,7 +37,6 @@ namespace TransportDepot.Data.Factoring
         cmd.Parameters.AddWithValue("@ToInvoice", filter.ToInvoiceNumber);
         cmd.Parameters.AddWithValue("@OnlyWithoutSchedule", filter.OnlyWithoutSchedule ? 1 : 0);
         invoicesTable = this.Fetch(cmd);
-        Utilities.Write(@"C:\sites\factoringDs.log", u.CmdToString(cmd));
       }
       var invoices = invoicesTable.AsEnumerable()
         .Select(i => new InvoiceViewModel
@@ -403,6 +401,12 @@ namespace TransportDepot.Data.Factoring
               ( ( @OnlyWithoutSchedule = 1 ) AND ( [BH].[nlSNImportOrder] = 0 ) )  
               OR ( COALESCE( @OnlyWithoutSchedule, 0 ) = 0  ) 
             ) 
+    ), [InvoicesPaid] AS 
+    ( 
+      SELECT [cPronumber] AS [InvoiceNumber]
+           , SUM([cuAmount]) AS [TotalPaid] 
+      FROM [dbo].[ArPayment]
+      GROUP BY [cPronumber]
     ), [LessRevenue] AS
     (
       SELECT [BH].[nlOrderNumber], [BH].[cProNumber], [dBillDate], [nlSNImportOrder], [cCustomerID]
@@ -427,6 +431,14 @@ namespace TransportDepot.Data.Factoring
           FROM [LessRevenue] [R]
           INNER JOIN [dbo].[Customer] [C]
             ON ( [R].[cCustomerID] = [C].[cID] )
+          WHERE ( [C].[niCreditLimitDays] = 31 )
+          AND NOT EXISTS
+          (
+            SELECT * 
+            FROM [InvoicesPaid] [I]
+            WHERE ( [I].[InvoiceNumber] = [R].[cProNumber] )
+              AND ( [I].[TotalPaid] > 0 )
+          )
         ";
 
 

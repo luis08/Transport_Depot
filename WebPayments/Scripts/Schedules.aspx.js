@@ -9,7 +9,7 @@ ScheduleConstants.HideDelay = 300;
 ScheduleConstants.updateLabel = "Update Schedule";
 ScheduleConstants.saveNewScheduleLabel = "Save New Schedule";
 ScheduleConstants.getUri = function (method) {
-  var uri = "http://" + window.location.host + "/settlements/Factoring.svc/ajax/" + method;
+  var uri = "http://" + window.location.host + "/ft-svc/Factoring.svc/ajax/" + method;
   return uri;
 };
 
@@ -93,8 +93,8 @@ ScheduleData.getInvoices = function (successCallback) {
       defaultFromDate = new Date(),
       defaultToDate = new Date();
 
-  defaultFromDate.setDate(today.getDate() - 90);
-  defaultToDate.setDate(today.getDate() + 1);
+  defaultFromDate.setDate(today.getDate() - 3650);
+  defaultToDate.setDate(today.getDate() + 3650);
 
   var useInvoiceDate = $('#use-invoice-date-filter').prop('checked');
   var useInvoiceNumber = $('#use-invoice-number-filter').prop('checked');
@@ -358,7 +358,7 @@ SchedulePopup.renderSchedule = function (startRowIndex, updateChecked) {
   $('#schedule-date-textbox').datepicker();
   $('#schedule-number-textbox').val(actualData.id);
   $('#schedule-total-textbox').val(Utilities.formatCurrency(actualData.total));
-  $('#view-schedule-pdf-link').attr('href', 'http://netgateway/settlements/FactoringPdf.svc/pdf?id=' + actualData.id)
+  $('#view-schedule-pdf-link').attr('href', 'http://192.168.1.200/ft-svc/FactoringPdf.svc/pdf?id=' + actualData.id)
     .attr('target', '_blank')
     .attr('type', 'application/pdf');
 };

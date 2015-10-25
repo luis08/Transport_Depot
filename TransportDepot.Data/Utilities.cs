@@ -41,7 +41,8 @@ namespace TransportDepot.Data
         .AppendLine(string.Format("  Type: {0}" , cmd.CommandType.ToString()))
         .AppendLine()
         .AppendLine(this.GetParametersString(cmd.Parameters))
-        .AppendLine();
+        .AppendLine()
+        .AppendLine(cmd.CommandText);
 
       return builder.ToString();
     }

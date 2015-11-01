@@ -243,6 +243,7 @@ SchedulePopup.setEditMode = function () {
 };
 
 SchedulePopup.setNewMode = function () {
+  ScheduleData.setData(null);
   $('#schedule-date-textbox').val(Utilities.formatDate(new Date()));
   $('#schedule-number-textbox').val('[New]');
   $('#update-schedule-menu-item').text(ScheduleConstants.saveNewScheduleLabel);

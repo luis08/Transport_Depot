@@ -65,7 +65,10 @@ namespace TransportDepot.Payables.Commissions
       {
         commission.Percent = 0.5m;
       }
-      
+      if (decimal.Subtract( tripSpan.InvoiceAmout, tripSpan.LessorRevenue) < decimal.Zero)
+      {
+        commission.Percent = 0.5m;
+      }
       return commission;
     }
 

@@ -122,6 +122,7 @@ namespace TransportDepot.Data.Dispatch
             LEFT JOIN  [dbo].[PrEmployee] AS [E2] ON [AT].[cDriver2Id] = [E2].[cEmployeeId]
             LEFT JOIN  [dbo].[Tractor]    AS [T]  ON [AT].[cTractorId] = [T].[cTractorId]
             INNER JOIN [dbo].[TripNumber] AS [TN] ON [AT].[cTripnumber] = SUBSTRING( [TN].[cTripnumber], 1, 9 )
+          WHERE ( [AT].[bFinishTrip] = 0 )
         )
 
 

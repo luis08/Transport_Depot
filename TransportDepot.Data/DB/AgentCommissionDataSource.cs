@@ -527,7 +527,7 @@ namespace TransportDepot.Data.DB
               FROM @Trips.nodes('//trip') AS T(C)
             ), [Tractors] AS
             (
-              SELECT [ATH].[cTractorID] AS [TractorID]
+              SELECT [ATH].[cLessorId1] AS [TractorID]
                    , CASE 
                         WHEN ( [SqlL].[Home_State] IS NOT NULL ) THEN [SqlL].[Home_State]
                         WHEN ( [L].[cState]   IS NOT NULL ) THEN [L].[cState]

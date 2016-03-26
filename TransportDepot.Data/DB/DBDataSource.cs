@@ -16,8 +16,7 @@ namespace TransportDepot.Data.DB
     {
       get
       {
-        var connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["AccessReplacementConnectionString"].ConnectionString;
-        return connectionString;
+        return this._utilities.ConnectionString;
       }
     }
 
@@ -36,7 +35,7 @@ namespace TransportDepot.Data.DB
       {
         return new List<Tractor>();
       }
-      var tractors = new List<Tractor>();// tractorsTable.AsEnumerable().Select(t => this.GetTractor(t));
+      var tractors = new List<Tractor>();
       foreach (DataRow rw in tractorsTable.Rows)
       {
         tractors.Add(this.GetTractor(rw));

@@ -62,6 +62,7 @@
     <Compile Include="Factoring\FactoringDataSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reports\JsonReportDataSource.cs" />
+    <Compile Include="Safety\Queries.cs" />
     <Compile Include="Safety\SafetyDataSource.cs" />
     <Compile Include="Safety\SafetyEntityFactory.cs" />
     <Compile Include="SqlPage.cs" />

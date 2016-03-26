@@ -12,6 +12,11 @@ namespace TransportDepot.CommissionsExecutor
   {
     static void Main(string[] args)
     {
+      CreateCommissions();
+    }
+
+    private static string CreateCommissions()
+    {
       var timeStamp = DateTime.Now;
       var errors = string.Empty;
       using (var svc = new CommissionsReference.CommissionServiceClient())
@@ -39,12 +44,9 @@ namespace TransportDepot.CommissionsExecutor
           errors = "Exception: " + e.Message;
         }
 
-        
-      }
-      Console.WriteLine("===========================================================================================");
-      Console.WriteLine(string.Format("Errors: '{0}'", errors));
-      Console.ReadKey();
 
+      }
+      return errors;
     }
 
     private static void Test()
@@ -79,7 +81,7 @@ namespace TransportDepot.CommissionsExecutor
           new XAttribute("invoiceAmount", c.InvoiceAmount),
           new XAttribute("startLocationState", c.StartLocation.State),
           new XAttribute("endLocationState", c.EndLocatioin.State),
-          new XAttribute("tractorId", c.TractorId)
+          new XAttribute("tractorId", string.IsNullOrEmpty( c.TractorId ) ? "NULL" : c.TractorId )
           ))));
       var fileName = GetFullFilePath("Commission_Candidates", timeStamp);
       doc.Save(fileName);
@@ -99,7 +101,7 @@ namespace TransportDepot.CommissionsExecutor
           new XAttribute("arInvoiceAmount", c.InvoiceAmount.ToString()),
           new XAttribute("commissionTotal", decimal.Multiply(
             decimal.Multiply(c.Percent, 0.01m), c.InvoiceAmount).ToString()),
-          new XAttribute("tractorId", c.TractorId),
+          new XAttribute("tractorId", string.IsNullOrEmpty( c.TractorId) ? "NULL" : c.TractorId),
           new XAttribute("mInvoiceDescription", GetInvoiceDescription(c)),
           new XAttribute("dueDate", c.DueDate.ToShortDateString()),
           new XAttribute("glDepartment", glDeparment),
@@ -109,7 +111,7 @@ namespace TransportDepot.CommissionsExecutor
 
     private static string GetInvoiceDescription(InvoiceCommission c)
     {
-      return string.Format("Pro: {0}  Truck: {1}", c.InvoiceNumber, c.TractorId);
+      return string.Format("Pro: {0}  Truck: {1}", c.InvoiceNumber, string.IsNullOrEmpty(c.TractorId) ? "NULL" : c.TractorId );
     }
 
     private static string GetFullFilePath(string fileName, DateTime timeStamp)

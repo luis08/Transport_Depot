@@ -11,7 +11,7 @@ namespace TransportDepot.Data
     private bool DefaultBool = false;
     public static readonly string DateTimeMaskMilliseconds = "hh_mm_ss_fff";
     private string _errorPath = string.Empty;
-
+    private static string _debugPath = System.Configuration.ConfigurationManager.AppSettings["TransportDepot.DebugPath"];
     public Utilities()
     {
       var appSetting = System.Configuration.ConfigurationManager.AppSettings["ErrorLogPath"];
@@ -164,6 +164,14 @@ namespace TransportDepot.Data
         writer.WriteLine(data);
       }
     }
+
+    public static void WriteAppend( string data)
+    {
+      using (var writer = new System.IO.StreamWriter(_debugPath, true))
+      {
+        writer.WriteLine(data);
+      }
+    } 
 
     internal bool IsEmpty(DataTable dataTable)
     {

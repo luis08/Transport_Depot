@@ -12,7 +12,7 @@ namespace TransportDepot.Payables.Commissions
     private AgentCommissionDataSource _dataSource = new AgentCommissionDataSource();
 
     private const string CycleStartDayKey = "TransportDepot.Payables.Commissions.NewCommission.CycleStartDay";
-    
+
     public IEnumerable<InvoiceCommission> GetCommissions(IEnumerable<CommissionRequest> requests)
     {
       if (requests == null)
@@ -31,7 +31,7 @@ namespace TransportDepot.Payables.Commissions
         commissions.Select(t => t.InvoiceNumber));
 
       this.IgnoreDupes(commissions, tripInvoiceMappings);
-      this.SetDueDates(commissions, tripInvoiceMappings);  
+      this.SetDueDates(commissions, tripInvoiceMappings);
 
       return commissions;
     }
@@ -59,10 +59,10 @@ namespace TransportDepot.Payables.Commissions
     private void SetDueDates(IEnumerable<InvoiceCommission> commissions, IEnumerable<TripInvoiceMapping> map)
     {
       var periodStart = GetPeriodStart();
-      
-      commissions.Join( map, c=>c.InvoiceNumber, m=> m.InvoiceNumber, 
-        (c,m)=> new { Map = m, Commission = c }).ToList()
-        .ForEach(mc=>
+
+      commissions.Join(map, c => c.InvoiceNumber, m => m.InvoiceNumber,
+        (c, m) => new { Map = m, Commission = c }).ToList()
+        .ForEach(mc =>
         {
           var billDate = mc.Map.BillDate;
           if (billDate.Day < periodStart)
@@ -80,6 +80,7 @@ namespace TransportDepot.Payables.Commissions
     private static int GetPeriodStart()
     {
       var periodStartString = System.Configuration.ConfigurationManager.AppSettings[CycleStartDayKey];
+
       var periodStart = 1;
       if (!int.TryParse(periodStartString, out periodStart))
       {
@@ -109,7 +110,7 @@ namespace TransportDepot.Payables.Commissions
         .SelectMany(g => g)
         .ToList().ForEach(i => zeroOutComission(i));
       /* One invoice with more than one trip */
-      commissions.GroupBy(t=>t.TripNumber)
+      commissions.GroupBy(t => t.TripNumber)
         .Where(g => g.Count() > 1)
         .SelectMany(g => g)
         .ToList().ForEach(i => zeroOutComission(i));
@@ -118,8 +119,8 @@ namespace TransportDepot.Payables.Commissions
 
     private Dictionary<string, IEnumerable<Span>> GroupAndSort(CommissionRequest request)
     {
-      var allSpans = request.NonCommissionSpans.Union(request.Trips).GroupBy(s=>s.LessorId).ToDictionary(s=>s.Key, s=>s.AsEnumerable<Span>());
-      return allSpans;  
+      var allSpans = request.NonCommissionSpans.Union(request.Trips).GroupBy(s => s.LessorId).ToDictionary(s => s.Key, s => s.AsEnumerable<Span>());
+      return allSpans;
     }
 
 
@@ -136,9 +137,10 @@ namespace TransportDepot.Payables.Commissions
       var previousSpans = GetPreviousSpans(candidates);
 
 
-      var requests = GetRequests(new RequestBuilderBucket { 
+      var requests = GetRequests(new RequestBuilderBucket
+      {
         Candidates = candidates,
-        LessorHomes = this._dataSource.GetLessorHomes(candidates.Select(c=>c.TripNumber)),
+        LessorHomes = this._dataSource.GetLessorHomes(candidates.Select(c => c.TripNumber)),
         PreviousTrips = previousSpans
       });
 
@@ -149,17 +151,14 @@ namespace TransportDepot.Payables.Commissions
     private IEnumerable<PreviousTrip> GetPreviousSpans(IEnumerable<CommissionCandidate> candidates)
     {
       var previousSpans = this._dataSource.GetPreviousTrips(candidates);
-        //.GroupBy(t => t.TripNumber).Where(t => t.Count().Equals(1))
-        //.Select(t => t.First())
-        //.ToDictionary(t => t.TripNumber, t => t.PreviuosSpan);
       return previousSpans;
     }
 
-    public IEnumerable<CommissionRequest> GetRequests(RequestBuilderBucket bucket )
+    public IEnumerable<CommissionRequest> GetRequests(RequestBuilderBucket bucket)
     {
-      var tractorHomes = bucket.LessorHomes.ToDictionary(h=>h.LessorId, h=>h);
+      var tractorHomes = bucket.LessorHomes.ToDictionary(h => h.LessorId, h => h);
       var nonCommissionSpans = bucket.PreviousTrips
-        .GroupBy(t=>t.TripNumber, (k,g)=>g.OrderBy(e=>e.TripNumber).First())
+        .GroupBy(t => t.TripNumber, (k, g) => g.OrderBy(e => e.TripNumber).First())
         .ToDictionary(s => s.TripNumber, s => s);
       var requests = GetRequests(bucket, tractorHomes, nonCommissionSpans);
       return requests;
@@ -202,6 +201,7 @@ namespace TransportDepot.Payables.Commissions
 
     public void SaveCommissions(IEnumerable<InvoiceCommission> commissions)
     {
+
       if (commissions == null)
       {
         return;
@@ -210,8 +210,15 @@ namespace TransportDepot.Payables.Commissions
       {
         return;
       }
-
-      this._dataSource.Save(commissions);
+      try
+      {
+        this._dataSource.Save(commissions);
+      }
+      catch (Exception e)
+      {
+        TransportDepot.Data.Utilities.WriteAppend("Error in CommissionService \n-------------------------------\n" + 
+          e.Message + "\n---------------------\n" + e.StackTrace);
+      }
     }
 
 
@@ -219,11 +226,11 @@ namespace TransportDepot.Payables.Commissions
     {
       return this._dataSource.GetPreviousTrips(candidates);
     }
-  
 
-    public IEnumerable<LessorHome>  GetLessorHomes(IEnumerable<string> tripIds)
+
+    public IEnumerable<LessorHome> GetLessorHomes(IEnumerable<string> tripIds)
     {
       return this._dataSource.GetLessorHomes(tripIds);
     }
-}
+  }
 }

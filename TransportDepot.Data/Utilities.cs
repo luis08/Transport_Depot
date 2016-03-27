@@ -9,6 +9,10 @@ namespace TransportDepot.Data
   {
     private DateTime DefaultDate = DateTime.Today;
     private bool DefaultBool = false;
+    public static readonly string DateTimePathStringFormat = "yyyyMMdd";
+    public static readonly string DateTimeWithSecPathStringFormat = "yyyyMMdd_hhmmss";
+    public static readonly string DateTimeWithSecFormat = "yyyy-MM-dd hh:mm:ss fff";
+    public static readonly string DateTimeWithMsPathStringFormat = "yyyyMMdd_hh_mm_ss_ffff";
     public static readonly string DateTimeMaskMilliseconds = "hh_mm_ss_fff";
     private string _errorPath = string.Empty;
     private static string _debugPath = System.Configuration.ConfigurationManager.AppSettings["TransportDepot.DebugPath"];
@@ -79,6 +83,39 @@ namespace TransportDepot.Data
         new string('*', 100),
         "Error in: " + (o == null ? "NULL" : o.GetType().ToString())}).ToArray();
       WriteAppend(this._errorPath, data);
+    }
+
+
+    public decimal CoalesceDecimal(DataRow row, string fieldName)
+    {
+      var defaultValue = decimal.Zero;
+      var parsedValue = decimal.Zero;
+      if (row == null) return defaultValue;
+      if (row[fieldName] == null) return defaultValue;
+
+      if (!decimal.TryParse(row[fieldName].ToString(), out parsedValue)) return defaultValue;
+      return parsedValue;
+    }
+
+    public int CoalesceInt(DataRow row, string fieldName)
+    {
+      var defaultValue = 0;
+      var parsedValue = 0;
+      if (row == null) return defaultValue;
+      if( row[fieldName] == null ) return defaultValue;
+
+      if (!int.TryParse(row[fieldName].ToString(), out parsedValue)) return defaultValue;
+      return parsedValue;
+    }
+    
+    public bool CoalesceBool(DataRow row, string fieldName)
+    {
+      if (row == null) return false;
+      if (row[fieldName] == null) return false;
+
+      var boolValue = false;
+      if (!bool.TryParse(row[fieldName].ToString(), out boolValue)) return false;
+      return boolValue;
     }
 
     public string CoalesceString(DataRow row, string fieldName)
@@ -171,8 +208,31 @@ namespace TransportDepot.Data
       {
         writer.WriteLine(data);
       }
-    } 
+    }
+    public static void WriteAppend(Exception e, string customMessage)
+    {
+      var message = string.Format(string.Concat(
+          
+          "{0} - {1}",
+          Environment.NewLine,
+          new string('=', Clean(customMessage).Length + 2),
+          Environment.NewLine,
+          "Error:  {2}",
+          Environment.NewLine,
+          Environment.NewLine,
+          "Stack Trace:",
+          Environment.NewLine,
+          "------------------------------",
+          Environment.NewLine,
+          "{3}"),
+          DateTimeWithSecFormat,
+          customMessage,
+          e.Message,
+          e.StackTrace);
+      WriteAppend(message);
+    }
 
+    
     internal bool IsEmpty(DataTable dataTable)
     {
       if (dataTable == null)

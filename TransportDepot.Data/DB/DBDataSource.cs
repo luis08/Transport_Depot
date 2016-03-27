@@ -5,13 +5,14 @@ using System.Text;
 using TransportDepot.Models.DB;
 using System.Data.SqlClient;
 using System.Data;
+using TransportDepot.Models.Business;
 
 namespace TransportDepot.Data.DB
 {
   public class DBDataSource:IDataSource
   {
     private Utilities _utilities = new Utilities();
-    
+    DataSource _ds = new DataSource();
     public string ConnectionString
     {
       get
@@ -20,6 +21,86 @@ namespace TransportDepot.Data.DB
       }
     }
 
+    public IEnumerable<TractorQualification> GetTractorQualifications()
+    {
+      DataTable tractorQualTable = new DataTable();
+      using (var cmd = new SqlCommand(TractorQualificationQueries.Select))
+      {
+        tractorQualTable = this._ds.FetchCommand(cmd);
+      }
+      if (this._utilities.IsEmpty(tractorQualTable))
+      {
+        return new List<TractorQualification>();
+      }
+      return tractorQualTable.AsEnumerable()
+        .Select(rw => new TractorQualification
+        {
+          Id = this._utilities.CoalesceString(rw, "Id"),
+          HasW9 = this._utilities.CoalesceBool(rw, "HasW9"),
+          LeaseAgreementDue = this._utilities.CoalesceDateTime(rw, "LeaseAgreementDue"),
+          RegistrationExpiration = this._utilities.CoalesceDateTime(rw, "RegistrationExpiration"),
+          DotInspectionExpiration = this._utilities.CoalesceDateTime(rw, "DotInspectionExpiration"),
+          SafetyComments = this._utilities.CoalesceString(rw, "SafetyComments"),
+          UnitNumber = this._utilities.CoalesceString(rw, "UnitNumber"),
+          Vin = this._utilities.CoalesceString(rw, "Vin"),
+          LessorId = this._utilities.CoalesceString(rw, "LessorId"),
+          IsActive = this._utilities.CoalesceBool(rw, "IsActive")
+        });
+    }
+
+    public IEnumerable<Lessor> GetAllLessors() 
+    {
+      DataTable lessorsTable = new DataTable();
+      using (var cmd = new SqlCommand(LessorQueries.Select))
+      {
+        lessorsTable = this._ds.FetchCommand(cmd);
+      }
+      if (this._utilities.IsEmpty(lessorsTable))
+      {
+        return new List<Lessor>();
+      }
+      return lessorsTable.AsEnumerable()
+        .Select(rw => new Lessor
+        {
+          VendorType = this._utilities.CoalesceString( rw, "VendorType"),
+          Id = this._utilities.CoalesceString(rw, "Id"),
+          Name = this._utilities.CoalesceString(rw, "Name"),
+          Address = this._utilities.CoalesceString(rw, "Address"),
+          City = this._utilities.CoalesceString(rw, "City"),
+          State = this._utilities.CoalesceString(rw, "State"),
+          Zip = this._utilities.CoalesceString(rw, "Zip"),
+          Country = this._utilities.CoalesceString(rw, "Country"),
+          Phone = this._utilities.CoalesceString(rw, "Phone"),
+          Fax = this._utilities.CoalesceString(rw, "Fax"),
+          ContactPerson = this._utilities.CoalesceString(rw, "ContactPerson"),
+          OfficeHours = this._utilities.CoalesceString(rw, "OfficeHours"),
+          Comment = this._utilities.CoalesceString(rw, "Comment"),
+          Has1099 = this._utilities.CoalesceBool(rw, "Has1099"),
+          BoxNumberFor1099 = this._utilities.CoalesceInt(rw, "BoxNumberFor1099"),
+          TaxId = this._utilities.CoalesceString(rw, "TaxId"),
+          GlRsAccount = this._utilities.CoalesceString(rw, "GlRsAccount"),
+          GlRsExpenseDepartment = this._utilities.CoalesceString(rw, "GlRsExpenseDepartment"),
+          GlRsExpenseAccount = this._utilities.CoalesceString(rw, "GlRsExpenseAccount"),
+          Method = this._utilities.CoalesceString(rw, "Method"),
+          Rate = this._utilities.CoalesceDecimal(rw, "Rate"),
+          Adjustments1099 = this._utilities.CoalesceDecimal(rw, "Adjustments1099"),
+          HasDifferentAddress = this._utilities.CoalesceBool(rw, "HasDifferentAddress"),
+          PaymentName = this._utilities.CoalesceString(rw, "PaymentName"),
+          PaymentAddress = this._utilities.CoalesceString(rw, "PaymentAddress"),
+          PaymentCity = this._utilities.CoalesceString(rw, "PaymentCity"),
+          PaymentState = this._utilities.CoalesceString(rw, "PaymentState"),
+          PaymentZip = this._utilities.CoalesceString(rw, "PaymentZip"),
+          PaymentCountry = this._utilities.CoalesceString(rw, "PaymentCountry"),
+          UsesCanadianFunds = this._utilities.CoalesceBool(rw, "UsesCanadianFunds"),
+          InsuranceExpiration = this._utilities.CoalesceDateTime(rw, "InsuranceExpiration"),
+          IsCarrier = this._utilities.CoalesceBool(rw, "IsCarrier"),
+          McNumber = this._utilities.CoalesceString(rw, "McNumber"),
+          DueDays = this._utilities.CoalesceInt(rw, "DueDays"),
+          DeadheadRate = this._utilities.CoalesceDecimal(rw, "DeadheadRate"), 
+
+        }).ToList<Lessor>();
+
+    }
     public IEnumerable<Tractor> GetTractors()
     {
       var tractorsTable = new DataTable();

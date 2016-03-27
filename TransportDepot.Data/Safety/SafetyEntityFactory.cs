@@ -8,21 +8,22 @@ namespace TransportDepot.Data.Safety
 {
   class SafetyEntityFactory
   {
-    internal Tractor MakeTractor(Models.DB.Tractor t)
+    //TODO: DateTime
+    internal Tractor MakeTractor(Models.Business.Lessor l, Models.DB.TractorQualification tq)
     {
       return new Tractor
       {
-        Id = t.Id,
-        Unit = t.Unit,
-        LessorOwnerName = t.LessorOwnerName,
-        Comments = t.Comments,
-        InspectionDue = t.InspectionDue,
-        LeaseAgreementDue = t.LeaseAgreementDue,
-        LastMaintenance = t.LastMaintenance,
-        RegistrationExpiration = t.RegistrationExpiration,
-        HasW9 = t.HasW9, 
-        InsuranceExpiration = t.InsuranceExpiration,
-        VIN = t.VIN
+        Id = l.Id,
+        Unit = tq.UnitNumber,
+        LessorOwnerName = l.Name,
+        Comments = tq.SafetyComments,
+        InspectionDue = tq.DotInspectionExpiration,
+        LeaseAgreementDue = tq.LeaseAgreementDue,
+        LastMaintenance = DateTime.Now,
+        RegistrationExpiration = tq.RegistrationExpiration,
+        HasW9 = tq.HasW9, 
+        InsuranceExpiration = l.InsuranceExpiration,
+        VIN = tq.Vin
       };
     }
 

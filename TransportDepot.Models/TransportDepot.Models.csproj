@@ -50,7 +50,9 @@
     <Compile Include="AR\AgingInvoice.cs" />
     <Compile Include="Business\Company.cs" />
     <Compile Include="Business\CustomerMenuItem.cs" />
+    <Compile Include="Business\Lessor.cs" />
     <Compile Include="Business\MenuLink.cs" />
+    <Compile Include="DB\TractorQualification.cs" />
     <Compile Include="DataValidation\ValidationRequest.cs" />
     <Compile Include="DataValidation\ValidationResponse.cs" />
     <Compile Include="DB\Customer.cs">

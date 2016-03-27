@@ -50,6 +50,8 @@
     <Compile Include="DB\CustomerQueries.cs" />
     <Compile Include="DB\DataSource.cs" />
     <Compile Include="DB\DBDataSource.cs" />
+    <Compile Include="DB\LessorQueries.cs" />
+    <Compile Include="DB\TractorQualificationQueries.cs" />
     <Compile Include="DB\TractorQueries.cs" />
     <Compile Include="DB\TrailerQueries.cs" />
     <Compile Include="Debugger.cs" />

@@ -87,7 +87,6 @@
         <a href='#' class='save-tractor-button' >Save</a>&nbsp;
         <a href='#' class='reset-tractor-button'>Reset</a>
         <br/>
-        <br/>
         <span class='last-saved-message'>&nbsp;</span>
       </td>
       <td>
@@ -100,9 +99,18 @@
           <br/>
           <label>Ins Exp</label>
           <input type='text' class='insurance-expiration' value='{{InsuranceExpiration}}' />
-          <br/>
+          <br/> 
           <label>Registration</label>
           <input type='text' class='registration-expiration' value='{{RegistrationExpiration}}' />
+          <br/>
+          <label>Make</label>
+          <input type='text' value='{{Make}}' />
+          <br/>
+          <label>Model</label>
+          <input type='text' value='{{Model}}' />
+          <br/>
+          <label>Year</label>
+          <input type='text' value='{{Year}}' />
         </fieldset>
       </td>
       <td>
@@ -122,6 +130,15 @@
             <option value='{{Name}}' {{Selected}}>{{Name}}</option>
             {{/Lessors}}
           </select>
+          <br/>
+          <label>Self Insured</label>
+          <input type='text' value='{{IsSelfInsured}}' />
+          <br/>
+          <label>Insurance</label>
+          <input type='text' value='{{InsuranceCompany}}' />
+          <br/>
+          <label>Tag</label>
+          <input type='text' value='{{LicensePlate}}' />
         </fieldset>
       </td>
       <td>

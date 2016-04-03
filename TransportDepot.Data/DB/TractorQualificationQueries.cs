@@ -15,8 +15,13 @@ namespace TransportDepot.Data.DB
             ,  [TQ].[VIN]                           AS [Vin]
             ,  [TQ].[LessorId]                      AS [LessorId]
             ,  [TQ].[Active]                        AS [IsActive]
+            ,  [TQ].[Make]                          AS [Make]
+            ,  [TQ].[Model]                         AS [Model]
+            ,  [TQ].[Year]                          AS [Year]
+            ,  [TQ].[License_Plate]                 AS [LicensePlate]
+            ,  [TQ].[Insurance_Company]             AS [InsuranceCompany]
+            ,  [TQ].[Self_Insured]                  AS [IsSelfInsured]
         FROM [dbo].[Tractor_Qualification] [TQ]
-
     ";
   }
 }

@@ -16,6 +16,13 @@ namespace TransportDepot.Models.DB
     public string UnitNumber { get; set; }
     public string Vin { get; set; }
     public string LessorId { get; set; }
+    public string Make { get; set; }
+    public string Model { get; set; }
+    public string Year { get; set; }
+    public string LicensePlate { get; set; }
+    public string InsuranceCompany { get; set; }
+    public bool IsSelfInsured { get; set; }
     public bool IsActive { get; set; }
+
   }
 }

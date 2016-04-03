@@ -23,7 +23,13 @@ namespace TransportDepot.Data.Safety
         RegistrationExpiration = tq.RegistrationExpiration,
         HasW9 = tq.HasW9, 
         InsuranceExpiration = l.InsuranceExpiration,
-        VIN = tq.Vin
+        VIN = tq.Vin,
+        Make = tq.Make,
+        Model = tq.Model, 
+        Year = tq.Year,
+        LicensePlate = tq.LicensePlate,
+        InsuranceCompany = tq.InsuranceCompany,
+        IsSelfInsured = tq.IsSelfInsured
       };
     }
 

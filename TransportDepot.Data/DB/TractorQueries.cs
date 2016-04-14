@@ -76,5 +76,52 @@ namespace TransportDepot.Data.DB
         WHERE [T1].[ID] = [T].[cTractorID]
       )
     ";
+
+    public static string LessorUpdate = @"
+  
+      DECLARE @lessorsXml XML
+      SET @lessorsXml = @lessorsXmlString
+
+      UPDATE [L]
+      SET
+            [cVendorType]           = [R].[C].value('./@VendorType', 'nvarchar(20)') 
+          , [cName]                 = [R].[C].value('./@Name', 'nvarchar(40)') 
+          , [cAddress]              = [R].[C].value('./@Address', 'nvarchar(160)') 
+          , [cCity]                 = [R].[C].value('./@City', 'nvarchar(22)') 
+          , [cState]                = [R].[C].value('./@State', 'nvarchar(2)') 
+          , [cZip]                  = [R].[C].value('./@Zip', 'nvarchar(10)') 
+          , [cCountry]              = [R].[C].value('./@Country', 'nvarchar(6)') 
+          , [cPhone]                = [R].[C].value('./@Phone', 'nvarchar(40)') 
+          , [cFax]                  = [R].[C].value('./@Fax', 'nvarchar(20)') 
+          , [mContactPerson]        = [R].[C].value('./@ContactPerson', 'nvarchar(100)') 
+          , [mOfficeHour]           = [R].[C].value('./@OfficeHours', 'ntext') 
+          , [mComment]              = [R].[C].value('./@Comment', 'ntext') 
+          , [b1099]                 = [R].[C].value('./@Has1099', 'bit') 
+          , [ni1099Box]             = [R].[C].value('./@BoxNumberFor1099', 'smallint') 
+          , [cFederalID]            = [R].[C].value('./@TaxId', 'nvarchar(11)') 
+          , [cRsAcct]               = [R].[C].value('./@GlRsAccount', 'nvarchar(5)') 
+          , [cExpDept]              = [R].[C].value('./@GlRsExpenseDepartment', 'nvarchar(3)') 
+          , [cExpAcct]              = [R].[C].value('./@GlRsExpenseAccount', 'nvarchar(5)') 
+          , [cMethod]               = [R].[C].value('./@Method', 'nvarchar(2)') 
+          , [cuRate]                = [R].[C].value('./@Rate', 'money') 
+          , [cu1099adj]             = [R].[C].value('./@Adjustments1099', 'money') 
+          , [bDifferentAddress]     = [R].[C].value('./@HasDifferentAddress', 'bit') 
+          , [cPaymentName]          = [R].[C].value('./@PaymentName', 'nvarchar(40)') 
+          , [cPaymentAddress]       = [R].[C].value('./@PaymentAddress', 'nvarchar(160)') 
+          , [cPaymentCity]          = [R].[C].value('./@PaymentCity', 'nvarchar(22)') 
+          , [cPaymentState]         = [R].[C].value('./@PaymentState', 'nvarchar(2)') 
+          , [cPaymentZip]           = [R].[C].value('./@PaymentZip', 'nvarchar(10)') 
+          , [cPaymentCountry]       = [R].[C].value('./@PaymentCountry', 'nvarchar(6)') 
+          , [bCanadianFunds]        = [R].[C].value('./@UsesCanadianFunds', 'bit') 
+          , [dInsuranceExpiration]  = [R].[C].value('./@InsuranceExpiration', 'datetime') 
+          , [bCarrier]              = [R].[C].value('./@IsCarrier', 'bit') 
+          , [cFHWANo]               = [R].[C].value('./@McNumber', 'nvarchar(20)') 
+          , [niDueDays]             = [R].[C].value('./@DueDays', 'smallint') 
+          , [cuDeadheadRate]        = [R].[C].value('./@DeadheadRate', 'money') 
+
+      FROM [dbo].[RsLessor] [L]
+        INNER JOIN @lessorsXml.nodes('//lessor') AS [R]([C])
+          ON [L].[cId] = [R].[C].value('./@id', 'varchar(12)')
+    ";
   }
 }

@@ -6,6 +6,7 @@ using TransportDepot.Models.DB;
 using System.Data.SqlClient;
 using System.Data;
 using TransportDepot.Models.Business;
+using System.Xml.Linq;
 
 namespace TransportDepot.Data.DB
 {
@@ -44,7 +45,13 @@ namespace TransportDepot.Data.DB
           UnitNumber = this._utilities.CoalesceString(rw, "UnitNumber"),
           Vin = this._utilities.CoalesceString(rw, "Vin"),
           LessorId = this._utilities.CoalesceString(rw, "LessorId"),
-          IsActive = this._utilities.CoalesceBool(rw, "IsActive")
+          IsActive = this._utilities.CoalesceBool(rw, "IsActive"),
+          InsuranceCompany = this._utilities.CoalesceString(rw, "InsuranceCompany"),
+          IsSelfInsured = this._utilities.CoalesceBool(rw, "IsSelfInsured"),
+          Make = this._utilities.CoalesceString(rw, "Make"),
+          Model = this._utilities.CoalesceString(rw, "Model"),
+          Year = this._utilities.CoalesceString(rw, "Year"),
+          LicensePlate = this._utilities.CoalesceString(rw, "LicensePlate")
         });
     }
 
@@ -248,7 +255,78 @@ namespace TransportDepot.Data.DB
 
       return trailers;
     }
+    internal void UpdateLessors(IEnumerable<Lessor> lessors)
+    {
+      var lessorsXml = GetLessorsXml(lessors);
+      lessorsXml.ToString();
 
+      var recordsAffected = 0;
+
+      using (var cn = new SqlConnection(this.ConnectionString))
+      using (var cmd = new SqlCommand(TractorQueries.LessorUpdate, cn))
+      {
+        cmd.Parameters.AddWithValue("lessorsString", lessorsXml.ToString());
+        cn.Open();
+
+        recordsAffected = cmd.ExecuteNonQuery();
+      }
+      throw new NotImplementedException();
+    }
+
+    internal void UpdateTractorQualifications(IEnumerable<TractorQualification> tqs)
+    {
+      var recordsAffected = 0;
+      
+      using (var cn = new SqlConnection(this.ConnectionString))
+      using(var cmd = new SqlCommand(TractorQueries.LessorUpdate, cn))
+      {
+        cn.Open();
+        recordsAffected = cmd.ExecuteNonQuery();
+      }
+
+      throw new NotImplementedException();
+    }
+    private XDocument GetLessorsXml(IEnumerable<Lessor> lessors)
+    {
+      var lessorXml = new XDocument(new XElement("lessors",
+        lessors.Select(lessor => new XElement("lessor",
+          new XAttribute("VendorType", lessor.VendorType),
+          new XAttribute("Id", lessor.Id),
+          new XAttribute("Name", lessor.Name),
+          new XAttribute("Address", lessor.Address),
+          new XAttribute("City", lessor.City),
+          new XAttribute("State", lessor.State),
+          new XAttribute("Zip", lessor.Zip),
+          new XAttribute("Country", lessor.Country),
+          new XAttribute("Phone", lessor.Phone),
+          new XAttribute("Fax", lessor.Fax),
+          new XAttribute("ContactPerson", lessor.ContactPerson),
+          new XAttribute("OfficeHours", lessor.OfficeHours),
+          new XAttribute("Comment", lessor.Comment),
+          new XAttribute("Has1099", lessor.Has1099),
+          new XAttribute("BoxNumberFor1099", lessor.BoxNumberFor1099),
+          new XAttribute("TaxId", lessor.TaxId),
+          new XAttribute("GlRsAccount", lessor.GlRsAccount),
+          new XAttribute("GlRsExpenseDepartment", lessor.GlRsExpenseDepartment),
+          new XAttribute("GlRsExpenseAccount", lessor.GlRsExpenseAccount),
+          new XAttribute("Method", lessor.Method),
+          new XAttribute("Rate", lessor.Rate),
+          new XAttribute("Adjustments1099", lessor.Adjustments1099),
+          new XAttribute("HasDifferentAddress", lessor.HasDifferentAddress),
+          new XAttribute("PaymentName", lessor.PaymentName),
+          new XAttribute("PaymentAddress", lessor.PaymentAddress),
+          new XAttribute("PaymentCity", lessor.PaymentCity),
+          new XAttribute("PaymentState", lessor.PaymentState),
+          new XAttribute("PaymentZip", lessor.PaymentZip),
+          new XAttribute("PaymentCountry", lessor.PaymentCountry),
+          new XAttribute("UsesCanadianFunds", lessor.UsesCanadianFunds),
+          new XAttribute("InsuranceExpiration", lessor.InsuranceExpiration),
+          new XAttribute("IsCarrier", lessor.IsCarrier),
+          new XAttribute("McNumber", lessor.McNumber),
+          new XAttribute("DueDays", lessor.DueDays),
+          new XAttribute("DeadheadRate", lessor.DeadheadRate)))));
+      return lessorXml;
+    }
     private Trailer GetTrailer(DataRow t)
     {
       var trailer = new Trailer();

@@ -21,5 +21,6 @@ namespace TransportDepot.Models.Safety
     public string InsuranceCompany { get; set; }
     public bool IsSelfInsured { get; set; }
     public string Comments { get; set; }
+    public bool IsActive { get; set; }
   }
 }

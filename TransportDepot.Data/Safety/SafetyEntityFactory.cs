@@ -3,11 +3,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TransportDepot.Models.Safety;
+using TransportDepot.Models.Business;
 
 namespace TransportDepot.Data.Safety
 {
   class SafetyEntityFactory
   {
+    
+    
+    internal TransportDepot.Models.DB.TractorQualification MakeQualificationTractor(Tractor t, string lessorId)
+    {
+      var tq = new TransportDepot.Models.DB.TractorQualification 
+      {
+        Id = t.Id,
+        UnitNumber = t.Unit,
+        LessorId = lessorId,
+        DotInspectionExpiration = t.InspectionDue,
+        SafetyComments = t.Comments,
+        LeaseAgreementDue = t.LeaseAgreementDue,
+        RegistrationExpiration = t.RegistrationExpiration,
+        Vin = t.VIN,
+        Make = t.Make,
+        Model = t.Model,
+        LicensePlate = t.LicensePlate,
+        HasW9 = t.HasW9,
+        InsuranceCompany = t.InsuranceCompany,
+        IsSelfInsured = t.IsSelfInsured,
+        IsActive = t.IsActive
+      };
+      return tq;
+    }
+
     //TODO: DateTime
     internal Tractor MakeTractor(Models.Business.Lessor l, Models.DB.TractorQualification tq)
     {

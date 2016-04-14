@@ -8,12 +8,14 @@ using System.Data.SqlClient;
 using System.Data;
 using TransportDepot.Data.DB;
 using TransportDepot.Data;
+using TransportDepot.Models.Business;
 
 namespace TransportDepot.Data.Safety
 {
   public class SafetyDataSource : IDataSource
   {
     private Utilities _utilities = new Utilities();
+    private DBDataSource _truckwinDb = new DBDataSource();
     private SafetyEntityFactory _factory = new SafetyEntityFactory();
     public string ConnectionString
     {
@@ -125,10 +127,9 @@ namespace TransportDepot.Data.Safety
     {
       try
       {
-        var generalDataSource = new DBDataSource();
-        var lessors = generalDataSource.GetAllLessors();
-        var qualifications = generalDataSource.GetTractorQualifications();
-
+        var lessors = _truckwinDb.GetAllLessors();
+        var qualifications = _truckwinDb.GetTractorQualifications();
+ 
         if (activeOnly)
         {
           qualifications = qualifications.Where(tq => tq.IsActive);
@@ -149,24 +150,33 @@ namespace TransportDepot.Data.Safety
 
     public void UpdateTractor(Tractor tractor)
     {
-      var generalDataSource = new DBDataSource();
-      var existingTractors = generalDataSource.GetTractors()
-          .Where(t => t.Id.Equals(tractor.Id, StringComparison.OrdinalIgnoreCase));
-      if (existingTractors.Count().Equals(0))
+      UpdateLessor(tractor);
+      UpdateTractorQualification(tractor);
+    }
+
+    private void UpdateTractorQualification(Tractor tractor)
+    {
+      var tqs = _truckwinDb.GetTractorQualifications()
+        .Where(t=>t.Id.Equals(tractor.Id, StringComparison.OrdinalIgnoreCase));
+      if (tqs.Count().Equals(0))
       {
         throw new InvalidOperationException(string.Format("Invalid Truck ID: {0}", tractor.Id));
       }
+      var tq = tqs.First();
+      this._truckwinDb.UpdateTractorQualifications(tqs);
 
-      var tractorToUpdate = existingTractors.First();
-      tractorToUpdate.Comments = tractor.Comments;
-      tractorToUpdate.InspectionDue = tractor.InspectionDue;
-      tractorToUpdate.InsuranceExpiration = tractor.InsuranceExpiration;
-      tractorToUpdate.LeaseAgreementDue = tractor.LeaseAgreementDue;
-      tractorToUpdate.RegistrationExpiration = tractor.RegistrationExpiration;
-      tractorToUpdate.Unit = tractor.Unit;
-      tractorToUpdate.HasW9 = tractor.HasW9;
-      tractorToUpdate.LessorOwnerName = tractor.LessorOwnerName;
-      generalDataSource.UpdateTractor(tractorToUpdate);
+    }
+
+    private void UpdateLessor(Tractor tractor)
+    {
+      var lessors = this._truckwinDb.GetAllLessors().Where(l=>l.Id.Equals(tractor.Id));
+            if (lessors.Count().Equals(0))
+      {
+        throw new InvalidOperationException(string.Format("Invalid Truck ID: {0}", tractor.Id));
+      }
+      var lessor = lessors.First();
+      lessor.InsuranceExpiration = tractor.InsuranceExpiration;
+      this._truckwinDb.UpdateLessors(lessors);
     }
 
     public IEnumerable<Trailer> GetTrailers(bool activeOnly)

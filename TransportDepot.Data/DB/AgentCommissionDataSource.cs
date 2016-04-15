@@ -150,7 +150,8 @@ namespace TransportDepot.Data.DB
       using(var cmd = new SqlCommand
       {
         CommandText = Queries.TrackCommissionPaid,
-        CommandType = CommandType.Text
+        CommandType = CommandType.Text,
+        CommandTimeout = Utilities.DefaultCommandTimeout
       })
       {
         cmd.Parameters.AddWithValue("@CommissionsXmlString", commissionsXml.ToString());
@@ -168,6 +169,7 @@ namespace TransportDepot.Data.DB
       })
       {
         cmd.Parameters.AddWithValue("@CommissionsXmlString", commissionsXml.ToString());
+        cmd.CommandTimeout = Utilities.DefaultCommandTimeout;
         dataSource.ExecuteNonQuery(cmd);
       }
     }
@@ -229,7 +231,8 @@ namespace TransportDepot.Data.DB
       var cmd = new SqlCommand
       {
         CommandText = Queries.InvoiceMappings,
-        CommandType = CommandType.Text
+        CommandType = CommandType.Text,
+        CommandTimeout = Utilities.DefaultCommandTimeout
       };
       cmd.Parameters.AddWithValue("@InvoicesString", invoicesXml.ToString());
       var mapTable = dataSource.FetchCommand(cmd);

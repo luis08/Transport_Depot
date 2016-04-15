@@ -31,6 +31,7 @@ namespace TransportDepot.Data
       using (var adapter = new SqlDataAdapter(cmd))
       {
         cmd.Connection = cn;
+        cmd.CommandTimeout = 240;
         adapter.Fill(tbl);
         return tbl;
       }

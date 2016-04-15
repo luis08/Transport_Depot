@@ -21,7 +21,7 @@ namespace TransportDepot.Data
         _errorPath = @"C:\sites\errors.log";
       }
     }
-
+    public static int DefaultCommandTimeout = 240;
     public string ConnectionString
     {
       get

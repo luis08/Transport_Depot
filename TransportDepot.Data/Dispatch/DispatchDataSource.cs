@@ -119,6 +119,7 @@ namespace TransportDepot.Data.Dispatch
       using (var cmd = new SqlCommand(DriverContactsQuery, cn))
       using(var adapter = new SqlDataAdapter(cmd))
       {
+        cmd.CommandTimeout = 240;
         adapter.Fill(contactsTable);
       }
       if (this._utilities.IsEmpty(contactsTable))

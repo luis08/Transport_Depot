@@ -25,12 +25,12 @@ namespace TransportDepot.Data
 
     public DataTable FetchDataTable(SqlCommand cmd)
     {
-      cmd.CommandTimeout = 180;
       var tbl = new DataTable();
       using(var cn = new SqlConnection(this.ConnectionString))
       using (var adapter = new SqlDataAdapter(cmd))
       {
         cmd.Connection = cn;
+        cmd.CommandTimeout = Utilities.DefaultCommandTimeout;
         adapter.Fill(tbl);
         return tbl;
       }

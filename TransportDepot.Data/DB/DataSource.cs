@@ -24,6 +24,7 @@ namespace TransportDepot.Data.DB
       using (var cn = new SqlConnection(this.ConnectionString))
       {
         cmd.Connection = cn;
+        cmd.CommandTimeout = Utilities.DefaultCommandTimeout;
         if (cn.State != ConnectionState.Open)
           cn.Open();
         return cmd.ExecuteNonQuery();
@@ -37,6 +38,7 @@ namespace TransportDepot.Data.DB
       using(var adapter = new SqlDataAdapter(cmd))
       {
         cmd.Connection = cn;
+        cmd.CommandTimeout = Utilities.DefaultCommandTimeout;
         adapter.Fill(dataTable);
       }
       return dataTable;

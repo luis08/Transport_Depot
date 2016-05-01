@@ -270,7 +270,10 @@ namespace TransportDepot.Data.DB
 
         recordsAffected = cmd.ExecuteNonQuery();
       }
-      throw new NotImplementedException();
+      if (recordsAffected == 0)
+      {
+        throw new KeyNotFoundException("Tractor not found");
+      }
     }
 
     internal void UpdateTractorQualifications(IEnumerable<TractorQualification> tqs)
@@ -283,8 +286,10 @@ namespace TransportDepot.Data.DB
         cn.Open();
         recordsAffected = cmd.ExecuteNonQuery();
       }
-
-      throw new NotImplementedException();
+      if (recordsAffected == 0)
+      {
+        throw new KeyNotFoundException("Tractor not found");
+      }
     }
     private XDocument GetLessorsXml(IEnumerable<Lessor> lessors)
     {

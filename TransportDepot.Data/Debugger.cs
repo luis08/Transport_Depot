@@ -8,7 +8,7 @@ namespace TransportDepot.Data
 {
   static class Debugger
   {
-    private const string path = @"C:\Sites\debug_wcf.txt";
+    private static string path = System.Configuration.ConfigurationManager.AppSettings["TransportDepot.DebugPath"];
     private const int DebugDelimiterTextWidth = 200;
     public static void WriteDebugHeader(string headerText)
     {

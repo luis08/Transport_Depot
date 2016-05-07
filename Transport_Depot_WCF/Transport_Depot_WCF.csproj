@@ -59,8 +59,6 @@
   <ItemGroup>
     <Compile Include="AccessPaymentPostingService.cs" />
     <Compile Include="GLAccountModel.cs" />
-    <Compile Include="Helpers\TransportDepotWcfAuditEvent.cs" />
-    <Compile Include="Helpers\WCFDebugger.cs" />
     <Compile Include="IPaymentPostingService.cs" />
     <Compile Include="ISettlementService.cs" />
     <Compile Include="PaymentPosting\ACHFileIdentifierModel.cs" />

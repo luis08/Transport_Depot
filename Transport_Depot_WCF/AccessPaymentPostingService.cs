@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using Transport_Depot_WCF.PaymentPosting;
 using System.ServiceModel.Activation;
-using Transport_Depot_WCF.Helpers;
 
 namespace Transport_Depot_WCF
 {

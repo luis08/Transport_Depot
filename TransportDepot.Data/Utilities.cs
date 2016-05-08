@@ -20,10 +20,6 @@ namespace TransportDepot.Data
     {
       var appSetting = System.Configuration.ConfigurationManager.AppSettings["ErrorLogPath"];
       _errorPath =  string.IsNullOrEmpty(appSetting) ? string.Empty : appSetting;
-      if (!System.IO.File.Exists(_errorPath))
-      {
-        _errorPath = @"C:\sites\errors.log";
-      }
     }
     public static int DefaultCommandTimeout = 240;
     public string ConnectionString

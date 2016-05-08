@@ -158,9 +158,6 @@ namespace TransportDepot.AccountsReceivable
           new XAttribute("invoiceAmount", p.Amount),
           new XAttribute("description", string.Format("Schedule {0} - {1}", p.Schedule, description)
             )))));
-
-      xmlDoc.Save(@"C:\Projects\WCF_Tests\WCF.Test.Upload\0_Test_Files\t.xml");
-
     }
   }
 }

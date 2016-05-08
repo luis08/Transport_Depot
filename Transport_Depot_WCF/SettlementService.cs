@@ -89,14 +89,9 @@ namespace Transport_Depot_WCF
               //    new NoSettlementsAvailable());
             }
 
-            catch (UnpostedSettlementsPendingException)
+            catch (Exception)
             {
               throw new FaultException<UnpostedSettlementsPending>(new UnpostedSettlementsPending());
-            }
-            catch (Exception ex)
-            {
-              var lessorMessage = string.Format(" Lessor '{0}'", lessor_id);
-              this.Debug(lessorMessage + Environment.NewLine + "Error In Settlement Service:" + Environment.NewLine + ex.Message);
             }
             
             return settlement;
@@ -192,17 +187,5 @@ namespace Transport_Depot_WCF
             }
             return paid_settlements;
         }
-
-
-        private void Debug(string text)
-        {
-            //using (System.IO.StreamWriter w = new System.IO.StreamWriter(@"C:\Transport_Depot\output.txt", true))
-            //{
-            //    w.WriteLine(
-            //        string.Format("{0}-{1}  {2}", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"), debug_num++, text)
-            //    );
-            //}
-        }
-        private static int debug_num = 0;
     }
 }

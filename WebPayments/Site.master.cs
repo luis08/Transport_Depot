@@ -29,4 +29,10 @@ public partial class SiteMaster : System.Web.UI.MasterPage
         Text = "Payees"
       });
     }
+    public String WebsitePath {
+      get { return Request.ApplicationPath + "/" + System.Configuration.ConfigurationManager.AppSettings["TransportDepot.Paths.Website"]; } 
+    }
+    public String ServicePath {
+      get { return Request.ApplicationPath + "/" + System.Configuration.ConfigurationManager.AppSettings["TransportDepot.Paths.Service"]; } 
+    }
 }

@@ -243,6 +243,12 @@ namespace TransportDepot.Data
       if (geoLocationId < 1) return NullGeoLocationId;
       return geoLocationId;
     }
+
+    internal static bool IsEmpty(System.Collections.Generic.IEnumerable<string> ids)
+    {
+      if (ids == null) return true;
+      return ids.Count() > 0;
+    }
   }
 }
  

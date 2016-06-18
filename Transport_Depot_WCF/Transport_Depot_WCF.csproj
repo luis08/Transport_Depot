@@ -96,6 +96,16 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TransportDepot.Data\TransportDepot.Data.csproj">
+      <Project>{424AC8B0-D26C-4DF3-8FD9-54B5F32B2313}</Project>
+      <Name>TransportDepot.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TransportDepot.Models\TransportDepot.Models.csproj">
+      <Project>{3FA6F134-A16F-45CC-A1EF-3CE8EBA36104}</Project>
+      <Name>TransportDepot.Models</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>

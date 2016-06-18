@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TransportDepot.Models.DB;
+using TransportDepot.Models.Business;
 using System.Data.SqlClient;
 using System.Data;
+using System.Xml.Linq;
 
 namespace TransportDepot.Data.DB
 {
@@ -19,6 +21,77 @@ namespace TransportDepot.Data.DB
         var connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["AccessReplacementConnectionString"].ConnectionString;
         return connectionString;
       }
+    }
+
+    public IEnumerable<Lessor> GetLessors(IEnumerable<string> ids)
+    {
+      if( Utilities.IsEmpty(ids) )
+      {
+        return this.GetAllLessors();
+      }
+      var xml = new XDocument("lessors", ids.Select(l => new XElement("lessor", new XAttribute("id", l))));
+      var dataTable = new DataTable();
+      var qry = @"
+        DECLARE @IdsXml xml
+        SET @IdsXml = @IdsXmlString
+        ;WITH [LessorIds] AS
+        (
+              SELECT [T].[C].value('./@lessorId', 'varchar(20)' ) AS [LessorID]
+              FROM @IdsXml.nodes('//lessors') AS [T](C)
+        )
+        SELECT L.cId AS Lessor_ID, 
+               L.cName AS Lessor_Name, 
+               L.cAddress AS Street_Address, 
+               L.cCity AS City, 
+               L.cState AS State, 
+               L.cZip AS Zip_Code, 
+               L.cPhone AS Phone 
+        FROM RsLessor AS L
+          INNER JOIN [LessorIds] I ON ( [I].[LessorID] = [L].[cId] )
+        ";
+      using (var cmd = new SqlCommand(qry))
+      {
+        cmd.Parameters.AddWithValue("@IdsXmlString", xml);
+        var db = new DataSource();
+        dataTable = db.FetchCommand(cmd);
+      }
+      return this.GetLessors(dataTable);
+    }
+
+    private IEnumerable<Lessor> GetAllLessors()
+    {
+      var query = "SELECT L.cId AS Lessor_ID, L.cName AS Lessor_Name, L.cAddress AS Street_Address, L.cCity AS City, L.cState AS State, L.cZip AS Zip_Code, L.cPhone AS Phone FROM RsLessor AS L ";
+      var db = new DataSource();
+      var dataTable = new DataTable();
+      
+      using (var cmd = new SqlCommand(query))
+      {
+        dataTable = db.FetchCommand(cmd);
+      }
+
+      return this.GetLessors(dataTable);
+    }
+
+    private IEnumerable<Lessor> GetLessors(DataTable dataTable)
+    {
+      if (this._utilities.IsEmpty(dataTable))
+      {
+        return new List<Lessor>();
+      }
+      var lessors = dataTable.AsEnumerable().Select(l => new Lessor
+      {
+        Name = l.Field<string>("Lessor_Name"),
+        LessorId = l.Field<string>("Lessor_ID"),
+        Address = new Address
+        {
+          StreetAddress = this._utilities.CoalesceString(l,"Street_Address"),
+          City = this._utilities.CoalesceString(l, "City"),
+          State = this._utilities.CoalesceString(l, "State"),
+          ZipCode = this._utilities.CoalesceString(l, "Zip_Code"),
+          Phone = this._utilities.CoalesceString(l, "Phone")
+        }
+      });
+      return lessors;
     }
 
     public IEnumerable<Tractor> GetTractors()

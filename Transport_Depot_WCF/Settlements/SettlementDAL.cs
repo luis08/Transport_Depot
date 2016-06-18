@@ -11,7 +11,7 @@ namespace Transport_Depot_WCF.Settlements
 {
     class SettlementDAL
     {
-
+      //TODO: remove all uses of C:\Data\Web_App_TDPD.mdb for SettlementsConnectionString
         public SettlementDAL()
         { 
         
@@ -19,7 +19,7 @@ namespace Transport_Depot_WCF.Settlements
 
         public LessorSettlement GetLessorSettlement(string lessor_id)
         {
-          
+          throw new NotImplementedException();
             var lessor_settlement = new LessorSettlement();
             var trips_stored_procedure = "sp_RS_Get_Lessor_Trips_With_Revenue";
             var adapter = new OleDbDataAdapter();
@@ -70,13 +70,6 @@ namespace Transport_Depot_WCF.Settlements
             return lessor_settlement;    
         }
 
-        public Lessor GetLessor(string lessor_id)
-        { 
-            using( var cn = this.Connection )
-            { return this.GetLessor(cn, lessor_id); }
-        }
-
-
         /// <summary>
         /// UnpostedSettlementsPendingException -- Can't schedule more until payment posts.
         /// InvalidLessorIDException
@@ -86,6 +79,7 @@ namespace Transport_Depot_WCF.Settlements
         /// <returns></returns>
         public PaidLessorSettlement SchedulePayment(string lessor_id, string ip_address)
         {
+          throw new NotImplementedException();
             var settlement = new PaidLessorSettlement();
             
             using (var cn = this.Connection)
@@ -124,125 +118,6 @@ namespace Transport_Depot_WCF.Settlements
             return this.GetPaidLessorSettlement(settlement.ScheduledPaymentID, true);
         }
 
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="lessor_ids"></param>
-        /// <returns></returns>
-        public IEnumerable<Lessor> GetLessors(string [] lessor_ids)
-        {
-            if( ( lessor_ids == null ) || (lessor_ids.Length == 0 ))
-            {return  new List<Lessor>();   }
-            var lessors = new List<Lessor>();
-            var adapter = new OleDbDataAdapter();
-
-            var lessors_query = string.Empty;
-            var all_lessors = new StringBuilder();
-            
-            foreach( string this_lessor_id in lessor_ids )
-            {
-                
-                all_lessors.Append("'");
-                all_lessors.Append(this_lessor_id);
-                all_lessors.Append("',");
-            }
-
-            var lessor_set = all_lessors.ToString();
-            lessors_query = "SELECT L.cId AS Lessor_ID, L.cName AS Lessor_Name, L.cAddress AS Street_Address, L.cCity AS City, L.cState AS State, L.cZip AS Zip_Code, L.cPhone AS Phone FROM RsLessor AS L WHERE L.cId IN ( " + lessor_set.Substring(0, lessor_set.Length - 1) + ")  ORDER BY L.cId ";
-
-            var data_set = new DataSet();
-
-            using (var cn = this.Connection)
-            {
-                using (var cmd = cn.CreateCommand())
-                {
-                    cn.Open();
-
-                    cmd.CommandType = CommandType.Text;
-                    cmd.CommandText = lessors_query;
-
-                    adapter = new OleDbDataAdapter(cmd);
-                    data_set = new DataSet();
-                    adapter.Fill(data_set);
-
-                }
-            }
-
-            int lessor_count_requested = lessor_ids.Count();
-
-            foreach (DataRow lessor_record in data_set.Tables[0].Rows)
-            {
-                lessors.Add(
-                    new Lessor
-                    {
-                        LessorId = lessor_record["Lessor_ID"].ToString(),
-                        Name = lessor_record["Lessor_Name"].ToString(),
-                        Address = new Address
-                                    {
-                                        StreetAddress = lessor_record["Street_Address"].ToString(),
-                                        City = lessor_record["City"].ToString(),
-                                        State = lessor_record["State"].ToString(),
-                                        ZipCode = lessor_record["Zip_Code"].ToString(),
-                                        Phone = lessor_record["Phone"].ToString()
-                                    }
-                    });
-            }
-            return lessors;
-        }
-
-        /// <summary>
-        /// Only standard exceptions
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<Lessor> GetAllLessors()
-        {
-            var lessors = new List<Lessor>();
-            var adapter = new OleDbDataAdapter();
-
-            var lessors_query = "SELECT L.cId AS Lessor_ID, L.cName AS Lessor_Name, L.cAddress AS Street_Address, L.cCity AS City, L.cState AS State, L.cZip AS Zip_Code, L.cPhone AS Phone FROM RsLessor AS L  ORDER BY L.cId ";
-            
-            var data_set = new DataSet();
-
-            using (var cn = this.Connection)
-            {
-                using (var cmd = cn.CreateCommand())
-                {
-                    cn.Open();
-
-                    cmd.CommandType = CommandType.Text;
-                    cmd.CommandText = lessors_query;
-
-                    adapter = new OleDbDataAdapter(cmd);
-                    data_set = new DataSet();
-                    adapter.Fill(data_set);
-
-                    if ((data_set.Tables.Count == 0) || (data_set.Tables[0].Rows.Count == 0))
-                    { return lessors; }
-                }
-            }
-
-            foreach (DataRow lessor_record in data_set.Tables[0].Rows)
-            {
-                lessors.Add(
-                    new Lessor
-                    {
-                        LessorId = lessor_record["Lessor_ID"].ToString(),
-                        Name = lessor_record["Lessor_Name"].ToString(),
-                        Address = new Address
-                        {
-                            StreetAddress = lessor_record["Street_Address"].ToString(),
-                            City = lessor_record["City"].ToString(),
-                            State = lessor_record["State"].ToString(),
-                            ZipCode = lessor_record["Zip_Code"].ToString(),
-                            Phone = lessor_record["Phone"].ToString()
-                        }
-                    });
-            }
-            return lessors;
-        
-        }
-
         /// <summary>
         /// UnpostedSettlementsPendingException
         /// NoSettlementsAvailableException
@@ -252,6 +127,7 @@ namespace Transport_Depot_WCF.Settlements
         /// <returns>null if no data found</returns>
         public PaidLessorSettlement GetPaidLessorSettlement(int scheduled_payment_id, bool include_scheduled_payments)
         {
+          throw new NotImplementedException();
             var lessor_settlement = new PaidLessorSettlement() { ScheduledPaymentID = scheduled_payment_id };
             var paid_trips_stored_procedure = "sp_RS_Get_Paid_Trips_For_Payment_ID";
             var is_payment_posted = false;
@@ -314,6 +190,7 @@ namespace Transport_Depot_WCF.Settlements
 
         public IEnumerable<PaidLessorSettlementListItem> GetPaidLessorSettlements(string lessor_id)
         {
+          throw new NotImplementedException();
             var paid_settlements = new LinkedList<PaidLessorSettlementListItem>();
             var stored_procedure = "sp_Rs_Get_Paid_Lessor_Settlements";
             var adapter = new OleDbDataAdapter();
@@ -356,8 +233,6 @@ namespace Transport_Depot_WCF.Settlements
 
         private const string SETTLEMENT_CONNECTION_STRING_KEY = "SettlementsConnectionString";
         private const string DECIMAL_ZERO_STRING = "0.00";
-
-
 
         /// <summary>
         /// 

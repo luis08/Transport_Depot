@@ -8,12 +8,14 @@ using System.Configuration;
 using System.Data;
 using Transport_Depot_WCF.Settlements;
 using System.Collections.Specialized;
+using TransportDepot.Data.DB;
 
 namespace Transport_Depot_WCF
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
     public class SettlementService : ISettlementService
     {
+      private DBDataSource _dataSource = new DBDataSource();
         /// <summary>
         /// Throws FaultException<InvalidLessorId>
         /// </summary>
@@ -21,22 +23,9 @@ namespace Transport_Depot_WCF
         /// <returns></returns>
         public Lessor GetLessor(string lessor_id)
         {
-            Lessor lessor = null;
-            try
-            {
-                SettlementDAL dal = new SettlementDAL();
-                lessor = dal.GetLessor(lessor_id);
-            }
-            catch (InvalidLessorIDException)
-            {
-                throw new FaultException<InvalidLessorId>(
-                    new InvalidLessorId
-                    {
-                        Problem = string.Format("Lessor not found: '{0}'", lessor_id)
-                    });
-            }
-            return lessor;
+          return this.GetLessors(new string[] { lessor_id }).First();
         }
+
 
         /// <summary>
         /// Throws FaultException<InvalidLessorId>
@@ -45,18 +34,8 @@ namespace Transport_Depot_WCF
         /// <returns></returns>
         public IEnumerable<Lessor> GetLessors(string [] lessor_ids)
         {
-            IEnumerable<Lessor> lessors = null;
-            try 
-            {
-                var dal = new SettlementDAL();
-                lessors = dal.GetLessors(lessor_ids);
-            }
-            catch (InvalidLessorIDException)
-            {
-                throw new FaultException<InvalidLessorId>( new InvalidLessorId()); 
-            }
-
-            return lessors;
+          var lessors = this._dataSource.GetLessors(lessor_ids);
+          return this.Map(lessors);
         }
 
         /// <summary>
@@ -99,8 +78,7 @@ namespace Transport_Depot_WCF
 
         public IEnumerable<Lessor> GetAllLessors()
         {
-            var dal = new SettlementDAL();
-            return dal.GetAllLessors();
+          return this.GetLessors(null);
         }
 
         /// <summary>
@@ -187,5 +165,23 @@ namespace Transport_Depot_WCF
             }
             return paid_settlements;
         }
+
+        private IEnumerable<Lessor> Map(IEnumerable<TransportDepot.Models.Business.Lessor> lessors)
+        {
+          return lessors.Select(l => new Lessor
+          {
+            Name = l.Name,
+            Address = new Address
+            {
+              StreetAddress = l.Address.StreetAddress,
+              City = l.Address.City,
+              State = l.Address.State,
+              ZipCode = l.Address.ZipCode,
+              Phone = l.Address.Phone
+            },
+            LessorId = l.LessorId
+          });
+        }
+
     }
 }

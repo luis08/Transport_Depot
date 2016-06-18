@@ -48,8 +48,10 @@
     <Compile Include="AR\CollectionsReportInvoice.cs" />
     <Compile Include="AR\CustomerAgingSummary.cs" />
     <Compile Include="AR\AgingInvoice.cs" />
+    <Compile Include="Business\Address.cs" />
     <Compile Include="Business\Company.cs" />
     <Compile Include="Business\CustomerMenuItem.cs" />
+    <Compile Include="Business\Lessor.cs" />
     <Compile Include="Business\MenuLink.cs" />
     <Compile Include="DataValidation\ValidationRequest.cs" />
     <Compile Include="DataValidation\ValidationResponse.cs" />

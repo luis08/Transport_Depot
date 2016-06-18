@@ -436,7 +436,7 @@ namespace Transport_Depot_AutomaticDeductions
                  , [RT].[Gl_Department] AS [cGlDept]
                  , [RT].[Gl_Account] AS [cGlAcct]
               FROM [Deductions] [D]
-              INNER JOIN [Settlements].[dbo].[Automatic_Deduction_Type] [RT]
+              INNER JOIN [dbo].[Automatic_Deduction_Type] [RT]
                 ON [D].[Deduction_Type_ID] = [RT].[ID]
               INNER JOIN [Trips] [T] 
                 ON [T].[Trip_Number] = [D].[Trip_Number]
@@ -466,7 +466,7 @@ namespace Transport_Depot_AutomaticDeductions
 
                    , [ADR].[ID] AS [New_Rate_ID]
                    , [ADR].[Type_ID]
-              FROM [Settlements].[dbo].[Automatic_Deduction_Rate] [ADR]
+              FROM [dbo].[Automatic_Deduction_Rate] [ADR]
               INNER JOIN [DefaultsToUpdate] [DU]
                 ON ( [DU].[Deduction_Type_ID] = [ADR].[Type_ID] )
                 AND ( [DU].[Rate] = [ADR].[Rate] )
@@ -475,17 +475,17 @@ namespace Transport_Depot_AutomaticDeductions
               SELECT [OLD].[Lessor_ID]
                    , [OLD].[Deduction_Rate_ID] AS [Old_Deduction_Rate_ID]
                    , [NEW].[New_Rate_ID]
-              FROM [Settlements].[dbo].[Lessor_Deduction_Rate] [OLD]
-                INNER JOIN [Settlements].[dbo].[Automatic_Deduction_Rate] [ADR]
+              FROM [dbo].[Lessor_Deduction_Rate] [OLD]
+                INNER JOIN [dbo].[Automatic_Deduction_Rate] [ADR]
                   ON ( [ADR].[ID] = [OLD].[Deduction_Rate_ID] )
                 INNER JOIN [AffectedRates] [NEW]
                   ON  ( [NEW].[Lessor_ID] = [OLD].[Lessor_ID] )
                   AND ( [NEW].[Type_ID] = [ADR].[Type_ID] )
              )
 
-            UPDATE [Settlements].[dbo].[Lessor_Deduction_Rate] 
+            UPDATE [dbo].[Lessor_Deduction_Rate] 
               SET [Deduction_Rate_ID] = [C].[New_Rate_ID]
-            FROM [Settlements].[dbo].[Lessor_Deduction_Rate] [R]
+            FROM [dbo].[Lessor_Deduction_Rate] [R]
              INNER JOIN [Changes] [C]
                ON  ( [C].[Lessor_ID] = [R].[Lessor_ID] )
                AND ( [C].[Old_Deduction_Rate_ID] = [R].[Deduction_Rate_ID] )

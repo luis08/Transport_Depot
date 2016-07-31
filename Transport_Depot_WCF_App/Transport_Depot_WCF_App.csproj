@@ -78,6 +78,7 @@
     <Content Include="Posting.svc" />
     <Content Include="Safety.svc" />
     <Content Include="SafetyReports.svc" />
+    <Content Include="Workarounds.svc" />
     <Content Include="Settlements.svc" />
     <Content Include="Templates\company_setup_email_template.html" />
     <Content Include="Utilities.svc" />

@@ -60,6 +60,8 @@
     <Compile Include="Dispatch\QueuingDataSource.cs" />
     <Compile Include="Factoring\ApexDataSource.cs" />
     <Compile Include="Factoring\FactoringDataSource.cs" />
+    <Compile Include="Misc\DataSource.cs" />
+    <Compile Include="Misc\WorkaroundsQueries.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reports\JsonReportDataSource.cs" />
     <Compile Include="Safety\SafetyDataSource.cs" />

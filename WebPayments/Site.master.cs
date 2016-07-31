@@ -30,9 +30,14 @@ public partial class SiteMaster : System.Web.UI.MasterPage
       });
     }
     public String WebsitePath {
-      get { return Request.ApplicationPath + "/" + System.Configuration.ConfigurationManager.AppSettings["TransportDepot.Paths.Website"]; } 
+      get { return System.Configuration.ConfigurationManager.AppSettings["TransportDepot.Paths.Website"]; } 
     }
     public String ServicePath {
-      get { return Request.ApplicationPath + "/" + System.Configuration.ConfigurationManager.AppSettings["TransportDepot.Paths.Service"]; } 
+      get { return this.ServerName + "/" + System.Configuration.ConfigurationManager.AppSettings["TransportDepot.Paths.Service"]; } 
+    }
+
+    public string ServerName
+    {
+      get { return Request.ServerVariables["server_name"]; }
     }
 }

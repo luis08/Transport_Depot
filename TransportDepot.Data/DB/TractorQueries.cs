@@ -70,8 +70,25 @@ namespace TransportDepot.Data.DB
     ";
 
     public static string TractorSanityQuery = @"
-      INSERT INTO [dbo].[Tractor_Qualification] ( [ID] )
+      INSERT INTO [dbo].[Tractor_Qualification] 
+      ( 
+          [ID] 
+        , [Self_Insured] 
+        , [Has_W9]
+        , [Lease_Agreement_Due]
+        , [Registration_Expiration]
+        , [Insurance_Policy_Expiration]
+        , [DOT_Inspection_Expiration]
+        , [Active]
+      )
       SELECT [cTractorID] AS [ID]
+           , 0 AS [Self_Insured]
+           , 0 AS [Has_W9]
+           , dbo.DefaultDate() AS [Lease_Agreement_Due]
+           , dbo.DefaultDate() AS [Registration_Expiration]
+           , dbo.DefaultDate() AS [Insurance_Policy_Expiration]
+           , dbo.DefaultDate() AS [DOT_Inspection_Expiration]
+           , 0 AS [Active]
       FROM [dbo].[Tractor] AS [T]
       WHERE NOT EXISTS
       (

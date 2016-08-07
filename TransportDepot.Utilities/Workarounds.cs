@@ -6,6 +6,7 @@ namespace TransportDepot.Utilities
   public class Workarounds : TransportDepot.Utilities.IWorkarounds
   {
     private DataSource dataSource = new DataSource();
+    private const string BlankSpace = " ";
     public void PrepareToOpen()
     {
       if (IsReadyToWork())
@@ -54,6 +55,7 @@ namespace TransportDepot.Utilities
       {
         throw new ArgumentException("Id cannot be more than 15 characters");
       }
+      ValidateIdNoSpaces(id);
       dataSource.AppendDriver(id, firstName);
     }
 
@@ -67,7 +69,15 @@ namespace TransportDepot.Utilities
       {
         throw new ArgumentException("Id cannot be more than 15 characters");
       }
+      ValidateIdNoSpaces(id);
       dataSource.AppendTractor(id);
+    }
+    private void ValidateIdNoSpaces(string id)
+    {
+      if(id.Contains(BlankSpace))
+      {
+        throw new ArgumentException("Ids canot contain spaces");
+      }
     }
   }
 }

@@ -63,7 +63,7 @@ namespace TransportDepot.Data.Misc
           AppendDriver(driverId, cn, transaction);
           transaction.Commit();
         }
-        catch (Exception e)
+        catch (Exception)
         {
           transaction.Rollback();
           throw;

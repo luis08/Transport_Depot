@@ -5,16 +5,20 @@ namespace TransportDepot.Utilities
 {
   public class Workarounds : TransportDepot.Utilities.IWorkarounds
   {
-    private DataSource dataSource = new DataSource();
+    private DataSource _dataSource = new DataSource();
     private const string BlankSpace = " ";
     public void PrepareToOpen()
     {
       if (IsReadyToWork())
       {
-        dataSource.CopyEmployeeTable();
-        dataSource.CopyTractorTable();
-        dataSource.DeleteEmployees();
-        dataSource.DeleteTractors();
+        _dataSource.CopyEmployeeTable();
+        _dataSource.CopyTractorTable();
+        _dataSource.CopyBillingHistoryTable();
+        _dataSource.CopyArEntryTable();
+        _dataSource.DeleteEmployees();
+        _dataSource.DeleteTractors();
+        _dataSource.DeleteBillingHistory();
+        _dataSource.DeleteArEntry();
       }
     }
 
@@ -22,27 +26,41 @@ namespace TransportDepot.Utilities
     {
       if (IsReadyToOpen())
       {
-        dataSource.RestoreEmployeesFromTempFile();
-        dataSource.RestoreTractosFromTempFile();
+        _dataSource.RestoreEmployeesFromTempFile();
+        _dataSource.RestoreTractorsFromTempFile();
+        _dataSource.RestoreBillingHistoryFromTempFile();
+        _dataSource.RestoreArEntryFromTempFile();
       }
     }
 
     public bool IsReadyToOpen()
     {
       var employeeThreshold = Utilities.GetIntSetting("TransportDepot.Utilities.Employees.ReadyToOpenCountThreshold");
-      var employeeCount = dataSource.GetEmployeeCount();
+      var employeeCount = _dataSource.GetEmployeeCount();
       var truckThreshold = Utilities.GetIntSetting("TransportDepot.Utilities.Trucks.ReadyToOpenCountThreshold");
-      var truckCount = dataSource.GetTractorCount();
-      return (truckCount <= truckThreshold) && (employeeCount <= employeeThreshold);
+      var truckCount = _dataSource.GetTractorCount();
+      var billingHistoryThreshold = Utilities.GetIntSetting("TransportDepot.Utilities.BillingHistory.ReadyToOpenCountThreshold");
+      var billingHistoryCount = _dataSource.GetArEntryCount();
+      var arEntryThreshold = Utilities.GetIntSetting("TransportDepot.Utilities.ArEntry.ReadyToOpenCountThreshold");
+      var arEntryCount = _dataSource.GetBillingHistoryCount();
+      var returnVal = (truckCount <= truckThreshold) && (employeeCount <= employeeThreshold) && (billingHistoryCount <= billingHistoryThreshold) && (arEntryCount <= arEntryThreshold);
+      
+      return returnVal;
     }
 
     public bool IsReadyToWork()
     {
       var employeeThreshold = Utilities.GetIntSetting("TransportDepot.Utilities.Employees.ReadyToWorkCountThreshold");
-      var employeeCount = dataSource.GetEmployeeCount();
+      var employeeCount = _dataSource.GetEmployeeCount();
       var truckThreshold = Utilities.GetIntSetting("TransportDepot.Utilities.Employees.ReadyToWorkCountThreshold");
-      var truckCount = dataSource.GetTractorCount();
-      return (truckCount > truckThreshold) && (employeeCount > employeeThreshold);
+      var truckCount = _dataSource.GetTractorCount();
+      var billingHistoryThreshold = Utilities.GetIntSetting("TransportDepot.Utilities.BillingHistory.ReadyToWorkCountThreshold");
+      var billingHistoryCount = _dataSource.GetBillingHistoryCount();
+      var arEntryThreshold = Utilities.GetIntSetting("TransportDepot.Utilities.ArEntry.ReadyToWorkCountThreshold");
+      var arEntryCount = _dataSource.GetBillingHistoryCount();
+      var returnVal = (truckCount > truckThreshold) && (employeeCount > employeeThreshold) && (billingHistoryCount > billingHistoryThreshold) && (arEntryCount > arEntryThreshold);
+      
+      return returnVal;
     }
 
     public void AppendDriver(string id, string firstName)
@@ -56,7 +74,7 @@ namespace TransportDepot.Utilities
         throw new ArgumentException("Id cannot be more than 15 characters");
       }
       ValidateIdNoSpaces(id);
-      dataSource.AppendDriver(id, firstName);
+      _dataSource.AppendDriver(id, firstName);
     }
 
     public void AppendTractor(string id)
@@ -70,7 +88,7 @@ namespace TransportDepot.Utilities
         throw new ArgumentException("Id cannot be more than 15 characters");
       }
       ValidateIdNoSpaces(id);
-      dataSource.AppendTractor(id);
+      _dataSource.AppendTractor(id);
     }
     private void ValidateIdNoSpaces(string id)
     {

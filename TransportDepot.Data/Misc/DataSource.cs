@@ -16,9 +16,14 @@ namespace TransportDepot.Data.Misc
       Save("Tractor");
     }
 
-    public void RestoreTractosFromTempFile()
+    public void RestoreTractorsFromTempFile()
     {
       Execute(WorkaroundsQueries.InsertTractors);
+    }
+
+    public void DeleteTractors()
+    {
+      Execute("DELETE FROM [dbo].[Tractor]");
     }
 
     public void CopyEmployeeTable()
@@ -36,9 +41,34 @@ namespace TransportDepot.Data.Misc
       Execute("DELETE FROM [dbo].[PrEmployee]");
     }
 
-    public void DeleteTractors()
+    public void CopyBillingHistoryTable()
     {
-      Execute("DELETE FROM [dbo].[Tractor]");
+      Save("BillingHistory");
+    }
+
+    public void RestoreBillingHistoryFromTempFile()
+    {
+      Execute(WorkaroundsQueries.InsertBillingHistory);
+    }
+
+    public void DeleteBillingHistory()
+    {
+      Execute("DELETE FROM [dbo].[BillingHistory]");
+    }
+
+    public void CopyArEntryTable()
+    {
+      Save("ArEntry");
+    }
+
+    public void RestoreArEntryFromTempFile()
+    {
+      Execute(WorkaroundsQueries.InsertArEntry);
+    }
+
+    public void DeleteArEntry()
+    {
+      Execute("DELETE FROM [dbo].[ArEntry]");
     }
 
     public void AppendTractor(string id)
@@ -76,9 +106,20 @@ namespace TransportDepot.Data.Misc
     {
       return this.GetCount("Tractor");
     }
+
     public int GetEmployeeCount()
     {
       return this.GetCount("PrEmployee");
+    }
+
+    public int GetBillingHistoryCount()
+    {
+      return this.GetCount("BillingHistory");
+    }
+
+    public int GetArEntryCount()
+    {
+      return this.GetCount("BillingHistory");
     }
 
     private void AppendDriver(string driverId, SqlConnection cn, SqlTransaction transaction)

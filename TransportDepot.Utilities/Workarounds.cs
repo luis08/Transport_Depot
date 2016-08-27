@@ -15,10 +15,14 @@ namespace TransportDepot.Utilities
         _dataSource.CopyTractorTable();
         _dataSource.CopyBillingHistoryTable();
         _dataSource.CopyArEntryTable();
+        _dataSource.CopyRsPayableTable();
+        _dataSource.CopyRsPayableHistoryTable();
         _dataSource.DeleteEmployees();
         _dataSource.DeleteTractors();
         _dataSource.DeleteBillingHistory();
         _dataSource.DeleteArEntry();
+        _dataSource.DeleteRsPayable();
+        _dataSource.DeleteRsPayableHistory();
       }
     }
 
@@ -30,6 +34,8 @@ namespace TransportDepot.Utilities
         _dataSource.RestoreTractorsFromTempFile();
         _dataSource.RestoreBillingHistoryFromTempFile();
         _dataSource.RestoreArEntryFromTempFile();
+        _dataSource.RestoreRsPayableFromTempFile();
+        _dataSource.RestoreRsPayableHistoryFromTempFile();
       }
     }
 
@@ -43,7 +49,16 @@ namespace TransportDepot.Utilities
       var billingHistoryCount = _dataSource.GetArEntryCount();
       var arEntryThreshold = Utilities.GetIntSetting("TransportDepot.Utilities.ArEntry.ReadyToOpenCountThreshold");
       var arEntryCount = _dataSource.GetBillingHistoryCount();
-      var returnVal = (truckCount <= truckThreshold) && (employeeCount <= employeeThreshold) && (billingHistoryCount <= billingHistoryThreshold) && (arEntryCount <= arEntryThreshold);
+      var rsPayableThreshold = Utilities.GetIntSetting("TransportDepot.Utilities.RsPayable.ReadyToOpenCountThreshold");
+      var rsPayableCount = _dataSource.GetRsPayableCount();
+      var rsPayableHistoryThreshold = Utilities.GetIntSetting("TransportDepot.Utilities.RsPayableHistory.ReadyToOpenCountThreshold");
+      var rsPayableHistoryCount = _dataSource.GetRsPayableHistoryCount();
+      var returnVal = (truckCount <= truckThreshold)
+        && (employeeCount <= employeeThreshold)
+        && (billingHistoryCount <= billingHistoryThreshold)
+        && (arEntryCount <= arEntryThreshold)
+        && (rsPayableCount <= rsPayableThreshold)
+        && (rsPayableHistoryCount <= rsPayableHistoryThreshold);
       
       return returnVal;
     }
@@ -58,8 +73,17 @@ namespace TransportDepot.Utilities
       var billingHistoryCount = _dataSource.GetBillingHistoryCount();
       var arEntryThreshold = Utilities.GetIntSetting("TransportDepot.Utilities.ArEntry.ReadyToWorkCountThreshold");
       var arEntryCount = _dataSource.GetBillingHistoryCount();
-      var returnVal = (truckCount > truckThreshold) && (employeeCount > employeeThreshold) && (billingHistoryCount > billingHistoryThreshold) && (arEntryCount > arEntryThreshold);
-      
+      var rsPayableThreshold = Utilities.GetIntSetting("TransportDepot.Utilities.RsPayable.ReadyToOpenCountThreshold");
+      var rsPayableCount = _dataSource.GetRsPayableCount();
+      var rsPayableHistoryThreshold = Utilities.GetIntSetting("TransportDepot.Utilities.RsPayableHistory.ReadyToOpenCountThreshold");
+      var rsPayableHistoryCount = _dataSource.GetRsPayableHistoryCount();
+      var returnVal = (truckCount > truckThreshold) 
+        && (employeeCount > employeeThreshold) 
+        && (billingHistoryCount > billingHistoryThreshold) 
+        && (arEntryCount > arEntryThreshold)
+        && (rsPayableCount > rsPayableThreshold) 
+        && (rsPayableHistoryCount > rsPayableHistoryThreshold);
+
       return returnVal;
     }
 

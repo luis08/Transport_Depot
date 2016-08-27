@@ -71,6 +71,36 @@ namespace TransportDepot.Data.Misc
       Execute("DELETE FROM [dbo].[ArEntry]");
     }
 
+    public void CopyRsPayableTable()
+    {
+      Save("RsPayable");
+    }
+
+    public void RestoreRsPayableFromTempFile()
+    {
+      Execute(WorkaroundsQueries.InsertRsPayable);
+    }
+
+    public void DeleteRsPayable()
+    {
+      Execute("DELETE FROM [dbo].[RsPayable]");
+    }
+
+    public void CopyRsPayableHistoryTable()
+    {
+      Save("RsPayableHistory");
+    }
+
+    public void RestoreRsPayableHistoryFromTempFile()
+    {
+      Execute(WorkaroundsQueries.InsertRsPayableHistory);
+    }
+
+    public void DeleteRsPayableHistory()
+    {
+      Execute("DELETE FROM [dbo].[RsPayableHistory]");
+    }
+
     public void AppendTractor(string id)
     {
       var query = "INSERT INTO [dbo].[Tractor] (cTractorId) VALUES (@TractorId)";
@@ -120,6 +150,16 @@ namespace TransportDepot.Data.Misc
     public int GetArEntryCount()
     {
       return this.GetCount("BillingHistory");
+    }
+
+    public int GetRsPayableCount()
+    {
+      return this.GetCount("RsPayable");
+    }
+
+    public int GetRsPayableHistoryCount()
+    {
+      return this.GetCount("RsPayableHistory");
     }
 
     private void AppendDriver(string driverId, SqlConnection cn, SqlTransaction transaction)

@@ -338,5 +338,130 @@ namespace TransportDepot.Data.Misc
         DROP TABLE [dbo].[{0}Backup]; 
       SELECT * INTO [dbo].[{0}Backup] FROM [dbo].[{0}]
   ";
+
+    public static string InsertRsPayable = @"
+        SET IDENTITY_INSERT [dbo].[RsPayable] ON; 
+        INSERT INTO [dbo].[RsPayable]
+        (
+              [cTripnumber]
+            , [cProNumber]
+            , [cLessorId]
+            , [cTractor]
+            , [dInvoiceDate]
+            , [cGlRsAcct]
+            , [cInvoiceDesc]
+            , [dActivityDate]
+            , [cu1099Amt]
+            , [cuSettlement]
+            , [cStatus]
+            , [bPosted]
+            , [bPrinted]
+            , [bReverse]
+            , [dDueDate]
+            , [cCrntCheckNo]
+            , [dCrntPymtDate]
+            , [bCarrier]
+            , [cCarrierInvoiceNo]
+            , [bClaimsPending]
+            , [cuBalanceDue]
+            , [cuAmountToPay]
+            , [bReadyToPay]
+            , [cTransactionID]
+            , [bPaperworkReceived]
+            , [dPaperworkDate]
+            , [COUNTER]
+        )
+
+        SELECT
+              [P].[cTripnumber]
+            , [P].[cProNumber]
+            , [P].[cLessorId]
+            , [P].[cTractor]
+            , [P].[dInvoiceDate]
+            , [P].[cGlRsAcct]
+            , [P].[cInvoiceDesc]
+            , [P].[dActivityDate]
+            , [P].[cu1099Amt]
+            , [P].[cuSettlement]
+            , [P].[cStatus]
+            , [P].[bPosted]
+            , [P].[bPrinted]
+            , [P].[bReverse]
+            , [P].[dDueDate]
+            , [P].[cCrntCheckNo]
+            , [P].[dCrntPymtDate]
+            , [P].[bCarrier]
+            , [P].[cCarrierInvoiceNo]
+            , [P].[bClaimsPending]
+            , [P].[cuBalanceDue]
+            , [P].[cuAmountToPay]
+            , [P].[bReadyToPay]
+            , [P].[cTransactionID]
+            , [P].[bPaperworkReceived]
+            , [P].[dPaperworkDate]
+            , [P].[COUNTER]
+        FROM [dbo].[RsPayableBackup] [P]
+
+        SET IDENTITY_INSERT [dbo].[RsPayable] OFF;  
+
+    ";
+
+    public static string InsertRsPayableHistory = @"
+ 
+        SET IDENTITY_INSERT [dbo].[RsPayableHistory] ON;  
+        INSERT INTO [dbo].[RsPayableHistory]
+        (
+              [cTripnumber]
+            , [cProNumber]
+            , [cLessorId]
+            , [cTractor]
+            , [dInvoiceDate]
+            , [cGlRsAcct]
+            , [cInvoiceDesc]
+            , [dActivityDate]
+            , [cu1099Amt]
+            , [cuSettlement]
+            , [cStatus]
+            , [bPrinted]
+            , [bReverse]
+            , [dDueDate]
+            , [cCrntCheckNo]
+            , [dCrntPymtDate]
+            , [bCarrier]
+            , [cCarrierInvoiceNo]
+            , [bClaimsPending]
+            , [cTransactionID]
+            , [bPaperworkReceived]
+            , [dPaperworkDate]
+            , [COUNTER]
+        )
+        SELECT 
+              [H].[cTripnumber]
+            , [H].[cProNumber]
+            , [H].[cLessorId]
+            , [H].[cTractor]
+            , [H].[dInvoiceDate]
+            , [H].[cGlRsAcct]
+            , [H].[cInvoiceDesc]
+            , [H].[dActivityDate]
+            , [H].[cu1099Amt]
+            , [H].[cuSettlement]
+            , [H].[cStatus]
+            , [H].[bPrinted]
+            , [H].[bReverse]
+            , [H].[dDueDate]
+            , [H].[cCrntCheckNo]
+            , [H].[dCrntPymtDate]
+            , [H].[bCarrier]
+            , [H].[cCarrierInvoiceNo]
+            , [H].[bClaimsPending]
+            , [H].[cTransactionID]
+            , [H].[bPaperworkReceived]
+            , [H].[dPaperworkDate]
+            , [H].[COUNTER]
+        FROM [dbo].[RsPayableHistoryBackup] [H]
+        SET IDENTITY_INSERT [dbo].[RsPayableHistory] OFF;     
+
+    ";
   }
 }

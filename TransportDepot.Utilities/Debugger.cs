@@ -4,7 +4,7 @@ namespace TransportDepot.Utilities
 {
   public static class Debugger
   {
-    private const string path = @"C:\Sites\debug_wcf.txt";
+    private const string path = @"f:\Sites\debug_svc.txt";
     private const int DebugDelimiterTextWidth = 100;
     public static void WriteDebugHeader(string headerText)
     {

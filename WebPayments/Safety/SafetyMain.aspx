@@ -1,5 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.master" AutoEventWireup="true"
-  CodeFile="SafetyMain.aspx.cs" Inherits="Safety_SafetyMain" %>
+﻿<%@ page title="" language="C#" masterpagefile="~/Site.master" autoeventwireup="true" inherits="Safety_SafetyMain" CodeFile="SafetyMain.aspx.cs"%>
 
 <asp:Content ID="SafetyHeaderContent" ContentPlaceHolderID="HeadContent" runat="Server">
   <link href="../Styles/SafetyMain.aspx.css" rel="stylesheet" type="text/css" />
@@ -98,6 +97,9 @@
           <label>Maintenance</label>
           <span class='maintenance-due'>{{LastMaintenance}}</span>
           <br/>
+          <label>Ins Name</label>
+          <input type='text' class='insurance-name' value='{{InsuranceName}}' />
+          <br/>
           <label>Ins Exp</label>
           <input type='text' class='insurance-expiration' value='{{InsuranceExpiration}}' />
           <br/>
@@ -125,7 +127,7 @@
         </fieldset>
       </td>
       <td>
-        <textarea cols='24' rows='7' class='tractor-comments'>{{Comments}}</textarea>
+        <textarea cols='24' rows='8' class='tractor-comments'>{{Comments}}</textarea>
       </td>
     </tr>   
     {{/Tractors}}

@@ -122,6 +122,11 @@ namespace TransportDepot.Data
       return Convert.ToDateTime(row[fieldName]);
     }
 
+    public void WriteAppend(string[] input)
+    {
+      WriteAppend(Utilities._debugPath, input);
+    }
+
     private string CleanString(string input)
     {
       if (input == null) return string.Empty;
@@ -161,7 +166,7 @@ namespace TransportDepot.Data
       }
     }
 
-    public static void WriteAppend( string data)
+    public static void WriteAppend(string data)
     {
       using (var writer = new System.IO.StreamWriter(_debugPath, true))
       {

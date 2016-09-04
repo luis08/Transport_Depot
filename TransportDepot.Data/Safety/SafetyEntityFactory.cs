@@ -17,6 +17,7 @@ namespace TransportDepot.Data.Safety
         LessorOwnerName = t.LessorOwnerName,
         Comments = t.Comments,
         InspectionDue = t.InspectionDue,
+        InsuranceName = t.InsuranceName,
         LeaseAgreementDue = t.LeaseAgreementDue,
         LastMaintenance = t.LastMaintenance,
         RegistrationExpiration = t.RegistrationExpiration,

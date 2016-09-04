@@ -18,6 +18,7 @@ namespace TransportDepot.Models.DB
     public string Make { get; set; }
     public string Model { get; set; }
     public DateTime RegistrationExpiration { get; set; }
+    public string InsuranceName { get; set; }
     public DateTime InsuranceExpiration { get; set; }
     public string Type { get; set; }
     public string Unit { get; set; }

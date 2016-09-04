@@ -17,6 +17,7 @@ namespace TransportDepot.Data.DB
          , [bLessorTruck] = @IsLessorTruck
          , [cLessorOwner] = @LessorOwnerName
          , [cLicensePlate] = @LicensePlate
+         , [cInsuranceName] = @InsuranceName
          , [cMake] = @Make
          , [cModel] = @Model
          , [cType] = @Type
@@ -51,6 +52,7 @@ namespace TransportDepot.Data.DB
          , [T].[cModel] AS [Model]
          , [Q].[Registration_Expiration] AS [RegistrationExpiration]
          , [Q].[Insurance_Policy_Expiration] AS [InsuranceExpiration]
+         , [T].[cInsuranceName] AS [InsuranceName]
          , [T].[cType] AS [Type]
          , [T].[cTitle] AS [Unit]
          , [T].[cSerial] AS [VIN]

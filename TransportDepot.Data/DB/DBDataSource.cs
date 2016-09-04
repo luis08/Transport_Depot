@@ -162,6 +162,10 @@ namespace TransportDepot.Data.DB
 
     public void UpdateTractor(Tractor tractor)
     {
+      _utilities.WriteAppend(new string[] 
+      {
+        "Tractor Ins Name: " + tractor.InsuranceName
+      });
       using(var cn = new SqlConnection(this.ConnectionString))
       using (var cmd = new SqlCommand(TractorQueries.UpdateTractors, cn))
       {
@@ -177,6 +181,7 @@ namespace TransportDepot.Data.DB
         cmd.Parameters.AddWithValue("@LastMaintenance", tractor.LastMaintenance);
         cmd.Parameters.AddWithValue("@Make", tractor.Make);
         cmd.Parameters.AddWithValue("@Model", tractor.Model);
+        cmd.Parameters.AddWithValue("@InsuranceName", tractor.InsuranceName);
         cmd.Parameters.AddWithValue("@InsuranceExpiration", tractor.InsuranceExpiration);
         cmd.Parameters.AddWithValue("@RegistrationExpiration", tractor.RegistrationExpiration);
         cmd.Parameters.AddWithValue("@Type", tractor.Type);
@@ -207,6 +212,7 @@ namespace TransportDepot.Data.DB
         tractor.LessorOwnerName = this._utilities.CoalesceString(t, "LessorOwnerName");
         tractor.LicensePlate = this._utilities.CoalesceString(t, "LicensePlate");
         tractor.LastMaintenance = t.Field<DateTime>("LastMaintenance");
+        tractor.InsuranceName = t.Field<string>("InsuranceName");
         tractor.InsuranceExpiration = t.Field<DateTime>("InsuranceExpiration");
         tractor.Make = this._utilities.CoalesceString(t, "Make");
         tractor.Model = this._utilities.CoalesceString(t, "Model");

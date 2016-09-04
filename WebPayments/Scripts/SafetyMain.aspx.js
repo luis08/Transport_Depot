@@ -302,6 +302,7 @@ SafetyMain.getTractor = function (tr) {
     LastMaintenance: new Date($(tr).find('.maintenance-due').text()),
     RegistrationExpiration: $(tr).find('.registration-expiration').datepicker('getDate'),
     InsuranceExpiration: $(tr).find('.insurance-expiration').datepicker('getDate'),
+    InsuranceName: $(tr).find('.insurance-name').text(),
     LessorOwnerName: $(tr).find('.lessor-owner').val(),
     Unit: $(tr).find('.tractor-unit').text(),
     Comments: $(tr).find('.tractor-comments').text()

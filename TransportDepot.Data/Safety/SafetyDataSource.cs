@@ -146,6 +146,7 @@ namespace TransportDepot.Data.Safety
       tractorToUpdate.Comments = tractor.Comments;
       tractorToUpdate.InspectionDue = tractor.InspectionDue;
       tractorToUpdate.InsuranceExpiration = tractor.InsuranceExpiration;
+      tractorToUpdate.InsuranceName = tractor.InsuranceName;
       tractorToUpdate.LeaseAgreementDue = tractor.LeaseAgreementDue;
       tractorToUpdate.RegistrationExpiration = tractor.RegistrationExpiration;
       tractorToUpdate.Unit = tractor.Unit;

@@ -26,12 +26,12 @@
     <fieldset>
       <div ng-show="isReadyToWork">
         <span>You can work normally.</span><br /><br />
-        <button type="button" ng-click="prepareToOpen()">
+        <button type="button" ng-disabled="inAjaxCall" ng-click="prepareToOpen()">
           Prepare to Open</button><br />
       </div>
       <div ng-show="isReadyToOpen">
          <span>You can open the application.</span><br /><br />
-         <button type="button" ng-click="prepareToWork()">
+         <button type="button" ng-disabled="inAjaxCall" ng-click="prepareToWork()">
            Prepare to Work</button>
       </div>
     </fieldset>
@@ -39,7 +39,7 @@
       <fieldset>
         <legend>New Tractor</legend>
         <label>Id:</label>
-          <input type="text" name="tractorId" ng-model="tractorId" required ng-minlength="4" ng-maxlength="8" ng-pattern="/^[A-Za-z\.]+$/"/>          
+          <input type="text" name="tractorId" ng-model="tractorId" required ng-minlength="4" ng-maxlength="8" ng-pattern="/^[A-Za-z0-9\.]+$/"/> 
           <button ng-disabled="tractorForm.tractorId.$invalid" type="button" ng-click="appendTractor()">
           Save</button>
           &nbsp;&nbsp;
@@ -50,7 +50,7 @@
       <fieldset>
         <legend>New Driver</legend>
         <label for="driverId">Id:</label>
-        <input id="driverId" name="driverId" type="text" ng-model="driverId" ng-minlength="4" ng-maxlength="12" required ng-pattern="/^[A-Za-z\.]+$/"/>
+        <input id="driverId" name="driverId" type="text" ng-model="driverId" ng-minlength="4" ng-maxlength="12" required ng-pattern="/^[A-Za-z0-9\.]+$/"/>
           &nbsp;&nbsp;
           <span class="invalid" ng-show="driverForm.driverId.$invalid">* Required and only letters and '.'  Min 4 characters, Max 12.</span>
           <br /><br />
@@ -80,17 +80,20 @@
         });
       };
       setStatus();
+      $scope.inAjaxCall = false;
 
       $scope.prepareToOpen = function () {
         var req = {
           method: 'POST',
           url: url + 'prepareToOpen'
         };
-
+        $scope.inAjaxCall = true;
         $http(req).then(function () {
           setStatus();
+          $scope.inAjaxCall = false;
         }, function () {
           alert("There was an error");
+          $scope.inAjaxCall = false;
         });
       };
       $scope.prepareToWork = function () {
@@ -98,10 +101,13 @@
           method: 'POST',
           url: url + 'prepareToWork'
         };
+        $scope.inAjaxCall = true;
         $http(req).then(function () {
           setStatus();
+          $scope.inAjaxCall = false;
         }, function () {
           alert("There was an error");
+          $scope.inAjaxCall = false;
         });
       };
 
@@ -136,6 +142,6 @@
           alert("There was an error");
         });
       };
-    }]);
+    } ]);
   </script>
 </asp:Content>

@@ -101,6 +101,21 @@ namespace TransportDepot.Data.Misc
       Execute("DELETE FROM [dbo].[RsPayableHistory]");
     }
 
+    public void CopyGlEntryTable()
+    {
+      Save("GlEntry");
+    }
+
+    public void RestoreGlEntryFromTempFile()
+    {
+      Execute(WorkaroundsQueries.InsertGlEntry);
+    }
+
+    public void DeleteGlEntry()
+    {
+      Execute("DELETE FROM [dbo].[GlEntry]");
+    }
+
     public void AppendTractor(string id)
     {
       var query = "INSERT INTO [dbo].[Tractor] (cTractorId) VALUES (@TractorId)";
@@ -160,6 +175,11 @@ namespace TransportDepot.Data.Misc
     public int GetRsPayableHistoryCount()
     {
       return this.GetCount("RsPayableHistory");
+    }
+
+    public int GetGlEntryCount()
+    {
+      return this.GetCount("GlEntry");
     }
 
     private void AppendDriver(string driverId, SqlConnection cn, SqlTransaction transaction)

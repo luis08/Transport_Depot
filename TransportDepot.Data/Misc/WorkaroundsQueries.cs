@@ -463,5 +463,41 @@ namespace TransportDepot.Data.Misc
         SET IDENTITY_INSERT [dbo].[RsPayableHistory] OFF;     
 
     ";
+    public static string InsertGlEntry = @"
+
+      INSERT INTO [Trans].[dbo].[GlEntry]
+      (
+            [cReferenceNumber]
+          , [cModule]
+          , [cDept]
+          , [cAcct]
+          , [cuDR]
+          , [cuCR]
+          , [dGLDate]
+          , [bYearClosed]
+          , [bMonthClosed]
+          , [cTransactionID]
+          , [cDescription]
+          , [bCleared]
+          , [dModuleDate]
+          , [bAccountantsCopy]
+      )
+      SELECT
+            [GLE].[cReferenceNumber]
+          , [GLE].[cModule]
+          , [GLE].[cDept]
+          , [GLE].[cAcct]
+          , [GLE].[cuDR]
+          , [GLE].[cuCR]
+          , [GLE].[dGLDate]
+          , [GLE].[bYearClosed]
+          , [GLE].[bMonthClosed]
+          , [GLE].[cTransactionID]
+          , [GLE].[cDescription]
+          , [GLE].[bCleared]
+          , [GLE].[dModuleDate]
+          , [GLE].[bAccountantsCopy]
+      FROM [dbo].[GlEntryBackup] [GLE]
+    ";
   }
 }

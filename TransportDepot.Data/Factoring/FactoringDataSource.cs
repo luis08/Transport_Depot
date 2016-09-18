@@ -458,9 +458,24 @@ namespace TransportDepot.Data.Factoring
       ";
 
       public static string CreateSchedule = @"
-	        INSERT INTO [dbo].[Factoring_Schedule]( [Date], [Done_By] )
-	                                       VALUES ( @Date,  @DoneBy )
-          SELECT SCOPE_IDENTITY()
+        DECLARE @LastScheduleId INT
+        BEGIN TRANSACTION
+	        SELECT @LastScheduleId = MAX(ID) + 1 
+	        FROM [dbo].[Factoring_Schedule] [S]
+	        WITH (TABLOCK)
+
+          INSERT INTO [dbo].[Factoring_Schedule] WITH (TABLOCK)
+          (
+	            [ID]
+	          , [Date]
+	          , [Done_By]
+          )
+          SELECT @LastScheduleId AS [ID]
+               , @Date AS [Date]
+	             , @DoneBy AS [Done_By]
+
+        COMMIT TRANSACTION
+        SELECT @LastScheduleId
       ";
       public static string DeleteSchedule = @"
           DELETE FROM [dbo].[Factoring_Schedule]

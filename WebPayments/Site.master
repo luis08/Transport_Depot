@@ -5,15 +5,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head runat="server">
   <title></title>
-  <script src="Scripts/jquery-1.10.2.js" type="text/javascript"></script>
-  <script type="text/javascript">
-    var TransportApp = {
-      appPath: '<%= Request.ApplicationPath %>',
-      svcPath: '<%= ServicePath %>',
-      websitePath: '<%= WebsitePath %>'
-    };
-  </script>
 
+
+  <script src='<%= Page.ResolveUrl("~/Scripts/jquery-1.10.2.js") %>' type="text/javascript"></script>
   <link href="~/Styles/Site.css" rel="stylesheet" type="text/css" />
   <asp:ContentPlaceHolder ID="HeadContent" runat="server">
   </asp:ContentPlaceHolder>
@@ -25,7 +19,8 @@
     <div class="header">
       <div class="title">
         <h1>
-          Transport Depot Produce &amp; Dry
+
+          Fast Transport
         </h1>
       </div>
       <div class="loginDisplay">
@@ -71,8 +66,15 @@
   <div class="footer">
   </div>
   </form>
-  
+  <script type="text/javascript">
+    var TransportApp = {
+      appPath: '<%= Request.ApplicationPath %>',
+      svcPath: '<%= ServicePath %>',
+      websitePath: '<%= WebsitePath %>'
+    };
+  </script>  
   <asp:ContentPlaceHolder ID="JavaScriptPlaceHolder" runat="server">
   </asp:ContentPlaceHolder>
+
 </body>
 </html>

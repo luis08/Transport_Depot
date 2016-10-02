@@ -116,6 +116,36 @@ namespace TransportDepot.Data.Misc
       Execute("DELETE FROM [dbo].[GlEntry]");
     }
 
+    public void CopyApPayableHistoryTable()
+    {
+      Save("ApPayableHistory");
+    }
+
+    public void RestoreApPayableHistoryFromTempFile()
+    {
+      Execute(WorkaroundsQueries.InsertApPayableHistory);
+    }
+
+    public void DeleteApPayableHistory()
+    {
+      Execute("DELETE FROM [dbo].[ApPayableHistory]");
+    }
+
+    public void CopyTripNumberTable()
+    {
+      Save("TripNumber"); ;
+    }
+
+    public void RestoreTripNumberFromTempFile()
+    {
+      Execute(WorkaroundsQueries.InsertTripNumber);
+    }
+
+    public void DeleteTripNumber()
+    {
+      Execute("DELETE FROM [dbo].[TripNumber]");
+    }
+    
     public void AppendTractor(string id)
     {
       var query = "INSERT INTO [dbo].[Tractor] (cTractorId) VALUES (@TractorId)";
@@ -144,7 +174,6 @@ namespace TransportDepot.Data.Misc
           throw;
         }
       }
-
     }
 
     public int GetTractorCount()
@@ -182,6 +211,16 @@ namespace TransportDepot.Data.Misc
       return this.GetCount("GlEntry");
     }
 
+    public int GetApPayableHistoryCount()
+    {
+      return this.GetCount("ApPayableHistory");
+    }
+
+    public int GetTripNumberCount()
+    {
+      return this.GetCount("TripNumber");
+    }
+    
     private void AppendDriver(string driverId, SqlConnection cn, SqlTransaction transaction)
     {
       var driverQuery = "INSERT INTO [dbo].[DriverInfo] (cDriverId) VALUES (@DriverId)";

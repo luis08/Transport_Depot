@@ -70,7 +70,7 @@
   <script>
     var app = angular.module("Workarounds", []);
     app.controller("wkAController", ['$scope', '$http', function ($scope, $http) {
-      var url = TransportApp.svcPath + "/workarounds.svc/ajax/";
+      var url = 'http://' + TransportApp.svcPath + "/workarounds.svc/ajax/";
       var setStatus = function () {
         $http.get(url + "isReadyToOpen").then(function (resp) {
           $scope.isReadyToOpen = resp.data.IsReadyToOpenResult;

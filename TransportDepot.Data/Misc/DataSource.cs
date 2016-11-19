@@ -10,7 +10,7 @@ namespace TransportDepot.Data.Misc
   {
     Data.DataSource _dataSource = new Data.DataSource();
     Utilities _utilities = new Utilities();
-
+    
     public void CopyTractorTable()
     {
       Save("Tractor");
@@ -220,7 +220,36 @@ namespace TransportDepot.Data.Misc
     {
       return this.GetCount("TripNumber");
     }
-    
+
+
+    public void PointToEmpty(string tableName)
+    {
+      var query = string.Format(@"
+        DROP VIEW [dbo].[{0}]
+      ", tableName);
+      this.Execute(query);
+      query = string.Format(@"
+        CREATE VIEW [dbo].[{0}]
+        AS
+        SELECT * FROM [dbo].[{0}_Empty]
+      ", tableName);
+      this.Execute(query);
+    }
+
+    public void PointToData(string tableName)
+    {
+      var query = string.Format(@"
+        DROP VIEW [dbo].[{0}]
+      ", tableName);
+      this.Execute(query);
+      query = string.Format(@"
+        CREATE VIEW [dbo].[{0}]
+        AS
+        SELECT * FROM [dbo].[{0}_Data]
+      ", tableName);
+      this.Execute(query);
+    }
+
     private void AppendDriver(string driverId, SqlConnection cn, SqlTransaction transaction)
     {
       var driverQuery = "INSERT INTO [dbo].[DriverInfo] (cDriverId) VALUES (@DriverId)";

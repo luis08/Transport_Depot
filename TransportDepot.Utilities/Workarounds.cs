@@ -25,50 +25,9 @@ namespace TransportDepot.Utilities
       GoOpen();
     }
 
-    private void OldPrepareToOpen()
-    {
-      if (IsReadyToWork())
-      {
-        _dataSource.CopyEmployeeTable();
-        _dataSource.CopyTractorTable();
-        _dataSource.CopyBillingHistoryTable();
-        _dataSource.CopyArEntryTable();
-        _dataSource.CopyRsPayableTable();
-        _dataSource.CopyRsPayableHistoryTable();
-        _dataSource.CopyGlEntryTable();
-        _dataSource.CopyApPayableHistoryTable();
-        _dataSource.CopyTripNumberTable();
-        _dataSource.DeleteEmployees();
-        _dataSource.DeleteTractors();
-        _dataSource.DeleteBillingHistory();
-        _dataSource.DeleteArEntry();
-        _dataSource.DeleteRsPayable();
-        _dataSource.DeleteRsPayableHistory();
-        _dataSource.DeleteGlEntry();
-        _dataSource.DeleteApPayableHistory();
-        _dataSource.DeleteTripNumber();
-      }
-    }
-
     public void PrepareToWork()
     {
       GoWork();
-    }
-
-    private void OldPrepareToWork()
-    {
-      if (IsReadyToOpen())
-      {
-        _dataSource.RestoreEmployeesFromTempFile();
-        _dataSource.RestoreTractorsFromTempFile();
-        _dataSource.RestoreBillingHistoryFromTempFile();
-        _dataSource.RestoreArEntryFromTempFile();
-        _dataSource.RestoreRsPayableFromTempFile();
-        _dataSource.RestoreRsPayableHistoryFromTempFile();
-        _dataSource.RestoreGlEntryFromTempFile();
-        _dataSource.RestoreApPayableHistoryFromTempFile();
-        _dataSource.RestoreTripNumberFromTempFile();
-      }
     }
 
     public bool IsReadyToOpen()

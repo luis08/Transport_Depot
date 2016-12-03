@@ -61,8 +61,8 @@ namespace TransportDepot.Data.DB
 
 
     public static string TrailerSanityQuery = @"
-      INSERT INTO [dbo].[Trailer_Qualification] ( [ID] )
-      SELECT [cTrailerID] AS [ID]
+      INSERT INTO [dbo].[Trailer_Qualification] ( [ID], [Registration_Expiration] )
+      SELECT [cTrailerID] AS [ID], [dbo].[DefaultDate]() AS [Registration_Expiration]
       FROM [dbo].[Trailer] AS [T]
       WHERE NOT EXISTS
       (

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Data.SqlClient;
 using System.Data;
 using TransportDepot.Data.DB;
+using TransportDepot.Models.Business;
 
 namespace TransportDepot.Data.Safety
 {
@@ -206,6 +207,45 @@ namespace TransportDepot.Data.Safety
       trailerToUpdate.Unit = trailer.Unit;
       trailerToUpdate.LessorOwnerName = trailer.LessorOwnerName;
       generalDataSource.UpdateTrailer(trailerToUpdate); 
+    }
+
+    public bool Append(TractorMaintenancePerformed maintenance)
+    {
+      var recordsAffected = 0;
+      using (var cn = new SqlConnection(this.ConnectionString))
+      using (var cmd = new SqlCommand(Queries.TractorMaintenanceInsert, cn))
+      {
+        cmd.Parameters.AddWithValue("@TractorId", maintenance.TractorId);
+        cmd.Parameters.AddWithValue("@DateDone", maintenance.Date);
+        cmd.Parameters.AddWithValue("@Type", maintenance.Type);
+        cmd.Parameters.AddWithValue("@Description", maintenance.Description);
+        cmd.Parameters.AddWithValue("@Comment", maintenance.Description);
+        
+        if (cn.State == ConnectionState.Closed)
+        {
+          cn.Open();
+        }
+        recordsAffected = cmd.ExecuteNonQuery();
+        return recordsAffected > 0;
+      }
+      throw new NotImplementedException();
+    }
+
+    public List<SimpleItem> GetMaintenanceTypes()
+    {
+      var query = "SELECT * FROM [dbo].[MaintenanceTractorCode]";
+      var tractorMaintenanceTypes = new List<SimpleItem>();
+      var dataTable = new DataTable();
+      using(var cmd = new SqlCommand(query))
+      {
+        var db = new TransportDepot.Data.DB.DataSource();
+        dataTable = db.FetchCommand(cmd);
+      }
+      tractorMaintenanceTypes = dataTable.AsEnumerable().Select(p=> new SimpleItem {
+        Id = p.Field<string>("cCode"), 
+        Name = p.Field<string>("cDescription")
+      }).ToList();
+      return tractorMaintenanceTypes;
     }
 
     private List<Driver> GetDrivers(SqlConnection cn, string driversXml)
@@ -494,6 +534,73 @@ namespace TransportDepot.Data.Safety
           INNER JOIN [Drivers] [SD]
             ON ( [Q].[ID] = [SD].[ID] )
       ";
+      public static string TractorMaintenanceInsert = @"
+      INSERT INTO [dbo].[MaintenanceTractorLog]
+      (
+          cTractorID
+        , dPlannedDate
+        , nlPlannedMiles
+        , nlActualMiles
+        , cType
+        , cDescription
+        , dDateStart
+        , bDone
+        , dDateDone
+        , cuCost
+        , cInvoice
+        , cShopId
+        , cShopName
+        , cShopAddress
+        , cShopCity
+        , cShopState
+        , cShopPhone
+        , cShopPerson
+        , cComment
+        , cuLabor
+        , cuParts
+        , bReoccurMaint
+        , nlReoccurMiles
+        , nlReoccurDays
+        , bLessorEquip
+        , bPostedToRS
+        , nsLaborHrs
+        , nsLaborRate
+        , bWarranty
+        , dWarrantyDate
+      )
+      SELECT
+            @TractorID AS [cTractorID]
+          , @DateDone AS [dPlannedDate]
+          , 0 AS [nlPlannedMiles]
+          , 0 AS [nlActualMiles]
+          , @Type AS [cType]
+          , @Description AS [cDescription]
+          , @DateDone AS [dDateStart]
+          , 1 AS [bDone]
+          , @DateDone AS [dDateDone]
+          , 0 AS [cuCost]
+          , '' AS [cInvoice]
+          , '' AS [cShopId]
+          , '' AS [cShopName]
+          , '' AS [cShopAddress]
+          , '' AS [cShopCity]
+          , '' AS [cShopState]
+          , '' AS [cShopPhone]
+          , '' AS [cShopPerson]
+          , @Comment AS [cComment]
+          , 0 AS [cuLabor]
+          , 0 AS [cuParts]
+          , 0 AS [bReoccurMaint]
+          , 0 AS [nlReoccurMiles]
+          , 0 AS [nlReoccurDays]
+          , 1 AS [bLessorEquip]
+          , 0 AS [bPostedToRS]
+          , 0 AS [nsLaborHrs]
+          , 0 AS [nsLaborRate]
+          , 0 AS [bWarranty]
+          , NULL AS [dWarrantyDate]
+
+    ";
     }
   }
 }

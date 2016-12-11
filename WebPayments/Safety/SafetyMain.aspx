@@ -4,6 +4,11 @@
   <link href="../Styles/SafetyMain.aspx.css" rel="stylesheet" type="text/css" />
   <link href="../Styles/jQueryUI/smoothness/jquery-ui-1.10.4.custom.min.css" rel="stylesheet"
     type="text/css" />
+  <style type="text/css">
+      .ui-front{
+          z-index: 5010;
+      }
+  </style>
   <script src="../Scripts/jquery-1.10.2.js" type="text/javascript"></script>
   <script src="../Scripts/jquery-ui-1.10.4.custom.js" type="text/javascript"></script>
   <script type="text/javascript" src="../Scripts/json.js"></script>
@@ -79,7 +84,7 @@
     {{#Tractors}}
     <tr class='tractor-row'>
       <td class='tractor-identification'>
-        
+        <input class="tractorId" type="hidden" value="{{Id}}" />
         <span id='tractor-{{Id}}' class='tractor-id'>{{Id}}</span>
         (<span class='tractor-unit'>{{Unit}}</span>)<br/>
         <span class='vin-number'>{{VIN}}</span>
@@ -88,6 +93,8 @@
         <br/>
         <br/>
         <span class='last-saved-message'>&nbsp;</span>
+        <br />
+        <a href="javascript:void(0)" class="open-maintenance-dialog">Maintenance</a>
       </td>
       <td>
         <fieldset>
@@ -193,7 +200,6 @@
   </script>
 </asp:Content>
 <asp:Content ID="SafetyBodyContent" ContentPlaceHolderID="MainContent" runat="Server">
-
   <div id='safety-main-container'>
     <div id='safety-menu-container'>
       <input type="radio" id="driver-safety-menu-option" name="radio" checked="checked" /><label for="driver-safety-menu-option">Driver</label>
@@ -247,5 +253,32 @@
       </div>
     </div>
   </div>
-  
+  <div class="dialog-overlay"></div>
+  <div id="maintenance-dialog" class="overlaid-dialog tractor-maintenance-dialog">
+    <!--Header-->
+    <div></div>
+    <!--Body-->
+    <div>
+        <fieldset>
+            <legend>Tractor Maintenance</legend>
+            <label>Tractor Id</label>
+            <input name="tractorId" type="text" />
+            <br/>
+            <label>Performed Date</label>
+            <input name="performedDate" type="text" />
+            <br />
+            <label>Type</label>
+            <input name="maintenanceTypeText" type="text"/>
+            <input name="maintenanceType" type="hidden"/>
+            <br />
+            <label>Description</label>
+            
+            <textarea name="maintenanceDescription" cols='26' rows='8' class='driver-comments'></textarea>
+        </fieldset>
+        <div class="menu">
+        <a href="javascript:void(0)" name="save-maintenance">Save</a>
+        <a href="javascript:void(0)" name="cancel-maintenance">Cancel</a>
+        </div>
+    </div>
+  </div>
 </asp:Content>

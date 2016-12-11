@@ -2,18 +2,17 @@
 /// <reference path="mustache.js" />
 /// <reference path="json.js" />
 /// <reference path="Utilities.js" />
-
 /// <reference path="JSON.NET.js" />
 
 function SafetyConstants() { }
 
 SafetyConstants.getUri = function (method) {
-  var uri = 'http://' + window.location.host + '/Settlements/Safety.svc/ajax/' + method;
+  var uri = 'http://' + window.location.host + '/trans-svc/Safety.svc/ajax/' + method;
   return uri;
 };
 
 SafetyConstants.getSettlementsUri = function (method) {
-  var uri = 'http://' + window.location.host + '/Settlements/Settlements.svc/ajax/' + method;
+  var uri = 'http://' + window.location.host + '/trans-svc/Settlements.svc/ajax/' + method;
   return uri;
 };
 
@@ -441,7 +440,7 @@ SafetyMain.populateDrivers = function () {
     SafetyMain.populateDriverTracking();  
   }
   $('#open-safety-report').text('Driver Safety Report')
-    .attr('href', 'http://netgateway/Settlements/SafetyReports.svc/ajax/DriverSafetyReport');
+    .attr('href', 'http://transportserver/trans-svc/SafetyReports.svc/ajax/DriverSafetyReport');
   $('#tractor-safety-container').hide();
   $('#trailer-safety-container').hide();
   $('#driver-safety-container').show();
@@ -527,10 +526,15 @@ SafetyMain.populateTractors = function () {
         populateSingleTractor(tractors[0], tr);
       });
     });
+    $('a.open-maintenance-dialog').on('click', function (e) {
+        
+        e.preventDefault();
+        SafetyMain.openMaintenance(this);
+    });
     $('#tractor-safety-container').show();
   }
   $('#open-safety-report').text('Tractor Safety Report')
-    .attr('href', 'http://netgateway/Settlements/SafetyReports.svc/ajax/TractorSafetyReport');
+    .attr('href', 'http://transportserver/trans-svc/SafetyReports.svc/ajax/TractorSafetyReport');
 
   SafetyData.getAllTractors(function (tractors) {
     SafetyData.getLessors(function (lessors) {
@@ -631,9 +635,9 @@ SafetyMain.populateTrailers = function () {
     $('#trailer-safety-container').show();
   }
   $('#open-safety-report').text('Trailer Safety Report')
-    .attr('href', 'http://netgateway/Settlements/SafetyReports.svc/ajax/TrailerSafetyReport');
+    .attr('href', 'http://transportserver/trans-svc/SafetyReports.svc/ajax/TrailerSafetyReport');
 
-  SafetyData.getAllTrailers(function (trailers) {
+SafetyData.getAllTrailers(function (trailers) {
     SafetyData.getLessors(function (lessors) {
       lessors.sort(function (lhs, rhs) {
         return (lhs.Name > rhs.Name) ? 1 : -1;
@@ -656,6 +660,89 @@ SafetyMain.populateTrailers = function () {
   $('#trailer-safety-container').show();
 };
 
+SafetyData.getTractorMaintenanceTypes = function(callback) {
+  var uri = SafetyConstants.getUri('tractor-maintenance/types');
+  $.get(uri, function(data) {
+	  callback(data.GetMaintenanceTypesResult);
+  });	
+};
+
+SafetyData.appendMaintenance = function (successCallback) {
+    var getFieldValue = function(fieldName){
+        var ele = $('#maintenance-dialog').find('[name="' + fieldName + '"]');
+        return (ele.length === 0) ? '' : $(ele).val();
+    };
+
+	var save = function(model) {
+		var wcfModel = JSON.stringifyWcf({ maintenance: model });
+		var uri = SafetyConstants.getUri('tractor-maintenance');
+		var request = $.ajax({
+			type: 'POST',
+			contentType: 'application/json',
+			data: wcfModel,
+			url: uri,
+			dataType: 'json'
+		});
+		request.done(function () {
+			successCallback();
+		});
+
+		request.fail(function (jqXHR, textStatus) {
+			alert('Request failed: ' + textStatus);
+		});
+	};
+	
+	var performedDateEle = $('#maintenance-dialog').find('[name="performedDate"]');
+    var model = {
+        TractorId: getFieldValue('tractorId'),
+        "Date": performedDateEle.datepicker('getDate'),
+        "Type": getFieldValue('maintenanceType'),
+        "Description": getFieldValue('maintenanceDescription'),
+        "Amount": 0.00
+    };
+    
+	if(!model.Type || !model.Description || !model.Date){
+		alert("Please complete the form and try again");
+		$(performedDateEle).focus();
+	} else {
+		save(model);
+	}
+};
+
+SafetyMain.clearMaintenanceDialog = function () {
+    $('#maintenance-dialog').find('input').val('');
+	$('#maintenance-dialog').find('textarea').val('');
+    var now = new Date();
+    
+    var day = ("0" + now.getDate()).slice(-2);
+    var month = ("0" + (now.getMonth() + 1)).slice(-2);
+
+    var today = now.getFullYear() + "-" + (month) + "-" + (day);
+    $("input[name='performedDate']").datepicker('setDate', 'today');
+};
+
+
+SafetyMain.openMaintenance = function (ele) {
+    SafetyMain.clearMaintenanceDialog();
+    $('.dialog-overlay').show();
+    $('#maintenance-dialog').show();
+    var tractorId = $(ele).closest('.tractor-identification')
+        .find('.tractorId').val();
+    $('input[name="tractorId"]')
+        .val(tractorId)
+        .prop('readonly', true);
+};
+
+SafetyMain.closeMaintenance = function () {
+    $('.dialog-overlay').hide();
+    $('#maintenance-dialog').hide();
+    SafetyMain.clearMaintenanceDialog();
+};
+
+
+
+
+
 SafetyMain.initialize = function () {
   $(function () {
     $("#safety-menu-container").buttonset()
@@ -670,5 +757,60 @@ SafetyMain.initialize = function () {
         }
       });
     SafetyMain.populateDrivers();
+    
+
+    $('a[name="cancel-maintenance"]').on('click', function (e) {
+        e.preventDefault();
+        SafetyMain.closeMaintenance();
+    });
+
+    $('a[name=save-maintenance]').on('click', function (e) {
+        e.preventDefault();
+        var tractorId = $('#maintenance-dialog').find('[name="tractorId"]').val();
+        var tr = $('#tractor-list-container').find('span[class="tractor-id"]:contains("' + tractorId + '")').closest('tr');
+        SafetyData.appendMaintenance(function () {
+            SafetyData.getTractors([tractorId], function (tractors) {
+                var lastMaintenance = Utilities.formatDate(JSON.parseDateOnly(tractors[0].LastMaintenance));
+                $(tr).find('.maintenance-due').text(lastMaintenance);
+                SafetyMain.closeMaintenance();
+            });
+        });
+    });
+
+    $('input[name="performedDate"').datepicker();
+    SafetyData.getTractorMaintenanceTypes(function (data) {
+        var byName = function (a, b) {
+            var aName = a.Name.toLowerCase();
+            var bName = b.Name.toLowerCase();
+            return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+        }
+
+        data.sort(byName);
+        SafetyData.types = $.map(data, function(i){
+            return {
+                label: i.Name,
+                'id': i.Id
+            };
+        });
+        var labels = $.map(data, function (i) {
+            return i.Name;
+        });
+        
+        $('input[name="maintenanceTypeText"]').autocomplete({
+            source: SafetyData.types,
+            select: function (e, ui) {
+                $('input[name="maintenanceType"]').val(ui.item.id);
+            },
+            change: function (event, ui) {
+                if (!ui.item) {
+                    $(event.target).val("");
+                }
+            },
+            focus: function (event, ui) {
+                return false;
+            }
+        });
+    });
   });
 };
+

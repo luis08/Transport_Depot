@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using TransportDepot.Data.Safety;
 using System.Linq;
+using TransportDepot.Models.Safety;
+using TransportDepot.Models.Business;
 
 namespace TransportDepot.Safety
 {
@@ -72,6 +74,16 @@ namespace TransportDepot.Safety
     public void UdpateTrailer(Models.Safety.Trailer trailer)
     {
       this._dataSource.UpdateTrailer(trailer);
+    }
+
+    public void Append(TractorMaintenancePerformed maintenance)
+    {
+      this._dataSource.Append(maintenance);
+    }
+
+    public List<SimpleItem> GetMaintenanceTypes()
+    {
+      return this._dataSource.GetMaintenanceTypes();
     }
   }
 }

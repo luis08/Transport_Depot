@@ -53,6 +53,7 @@
     <Compile Include="Business\CustomerMenuItem.cs" />
     <Compile Include="Business\Lessor.cs" />
     <Compile Include="Business\MenuLink.cs" />
+    <Compile Include="Business\SimpleItem.cs" />
     <Compile Include="DataValidation\ValidationRequest.cs" />
     <Compile Include="DataValidation\ValidationResponse.cs" />
     <Compile Include="DB\Customer.cs">
@@ -92,6 +93,7 @@
     <Compile Include="Reports\JsonReportData.cs" />
     <Compile Include="Reports\JsonReportRequest.cs" />
     <Compile Include="Reports\JsonReportSpecs.cs" />
+    <Compile Include="Safety\TractorMaintenancePerformed.cs" />
     <Compile Include="Safety\Trailer.cs" />
     <Compile Include="UI\OptionModel.cs" />
     <Compile Include="Factoring\InvoiceFilter.cs" />

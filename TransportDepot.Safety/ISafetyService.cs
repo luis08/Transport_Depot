@@ -1,9 +1,9 @@
-﻿
-using System.ServiceModel;
+﻿using System.ServiceModel;
 using System.ServiceModel.Web;
 using TransportDepot.Models.Safety;
 using System.Collections.Generic;
 using TransportDepot.Models.UI;
+using TransportDepot.Models.Business;
 namespace TransportDepot.Safety
 {
 
@@ -58,5 +58,12 @@ namespace TransportDepot.Safety
     [WebInvoke(Method = "POST")]
     void UdpateTrailer(Trailer trailer);
 
+    [OperationContract]
+    [WebInvoke(UriTemplate = "/tractor-maintenance", Method = "POST")]
+    void Append(TractorMaintenancePerformed maintenance);
+
+    [OperationContract]
+    [WebGet(UriTemplate = "/tractor-maintenance/types")]
+    List<SimpleItem> GetMaintenanceTypes();
   }
 }

@@ -52,7 +52,7 @@ namespace TransportDepot.Data.DB
       using (var cmd = new SqlCommand(qry))
       {
         cmd.Parameters.AddWithValue("@IdsXmlString", xml);
-        var db = new DataSource();
+        var db = new TransportDepot.Data.DB.DataSource();
         dataTable = db.FetchCommand(cmd);
       }
       return this.GetLessors(dataTable);

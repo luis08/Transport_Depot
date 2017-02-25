@@ -8,7 +8,12 @@ namespace TransportDepot.Reports.Safety
     
     public System.IO.Stream GetDriverSafety()
     {
-      var tractorReportGenerator = new DriverySafetyReport();
+      var ds = new TransportDepot.Data.DB.BusinessDataSource();
+      var companyName = ds.GetCompany().Name;
+      var tractorReportGenerator = new DriverySafetyReport 
+      { 
+        CompanyName = companyName
+      };
       var report = tractorReportGenerator.GetDriverSafety();
       this.SetReturnTypePdf();
       return report;
@@ -16,7 +21,12 @@ namespace TransportDepot.Reports.Safety
 
     public System.IO.Stream GetTractorSafety()
     {
-      var tractorReportGenerator = new TractorSafetyReport();
+      var ds = new TransportDepot.Data.DB.BusinessDataSource();
+      var companyName = ds.GetCompany().Name;
+      var tractorReportGenerator = new TractorSafetyReport 
+      { 
+        CompanyName = companyName
+      };
       System.IO.Stream report = tractorReportGenerator.GetTractorSafety();
       this.SetReturnTypePdf();
       return report;
@@ -29,7 +39,12 @@ namespace TransportDepot.Reports.Safety
 
     public System.IO.Stream GetTrailerSafety()
     {
-      var trailerReportGenerator = new TrailerSafetyReport();
+      var ds = new TransportDepot.Data.DB.BusinessDataSource();
+      var companyName = ds.GetCompany().Name;
+      var trailerReportGenerator = new TrailerSafetyReport 
+      { 
+        CompanyName = companyName
+      };
       System.IO.Stream report = trailerReportGenerator.GetTrailerSafety();
       this.SetReturnTypePdf();
       return report;

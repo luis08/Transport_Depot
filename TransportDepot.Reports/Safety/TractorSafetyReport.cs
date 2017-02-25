@@ -12,6 +12,7 @@ namespace TransportDepot.Reports.Safety
     private string[,] _reportData = null;
     private bool[,] _hightlightFields = null;
 
+    public string CompanyName { get; set; }
 
     internal System.IO.Stream GetTractorSafety()
     {
@@ -20,7 +21,7 @@ namespace TransportDepot.Reports.Safety
       var vAl = GetVerticalAlignment();
       var rpt = new GenericReport
       {
-        ReportTitle = "Transport Depot Produce & Dry" + Environment.NewLine + "Tractor Safety",
+        ReportTitle = this.CompanyName + Environment.NewLine + "Tractor Safety",
         ColumnWidths = new double[] { 8.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 1.3 },
         HeaderRight = new string[] { "", "" },
         FooterCenter = this.GetFooterText(),

@@ -3,6 +3,8 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Data;
 using System;
+using Microsoft.SqlServer.Management.Smo;
+using Microsoft.SqlServer.Management.Common;
 
 namespace TransportDepot.Data.Misc
 {
@@ -222,32 +224,23 @@ namespace TransportDepot.Data.Misc
     }
 
 
-    public void PointToEmpty(string tableName)
+    public void PointToEmpty()
     {
-      var query = string.Format(@"
-        DROP VIEW [dbo].[{0}]
-      ", tableName);
-      this.Execute(query);
-      query = string.Format(@"
-        CREATE VIEW [dbo].[{0}]
-        AS
-        SELECT * FROM [dbo].[{0}_Empty]
-      ", tableName);
-      this.Execute(query);
+      this.ExecuteSmo(WorkaroundQueries.PointToEmpty);
     }
 
-    public void PointToData(string tableName)
+    public void PointToData()
     {
-      var query = string.Format(@"
-        DROP VIEW [dbo].[{0}]
-      ", tableName);
-      this.Execute(query);
-      query = string.Format(@"
-        CREATE VIEW [dbo].[{0}]
-        AS
-        SELECT * FROM [dbo].[{0}_Data]
-      ", tableName);
-      this.Execute(query);
+      this.ExecuteSmo(WorkaroundQueries.PointToData);
+    }
+
+    private void ExecuteSmo(string query)
+    { 
+      using(var cn = new SqlConnection(this._dataSource.ConnectionString))
+      {
+        var server = new Server(new ServerConnection(cn));
+        server.ConnectionContext.ExecuteNonQuery(query);
+      }
     }
 
     private void AppendDriver(string driverId, SqlConnection cn, SqlTransaction transaction)

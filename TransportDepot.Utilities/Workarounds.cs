@@ -8,17 +8,7 @@ namespace TransportDepot.Utilities
   public class Workarounds : TransportDepot.Utilities.IWorkarounds
   {
     private DataSource _dataSource = new DataSource();
-    private string[] _tables = new string[] {
-      "ApPayableHistory",
-      "ArEntry",
-      "BillingHistory",
-      "GlEntry",
-      "PrEmployee",
-      "RsPayable",
-      "RsPayableHistory",
-      "Tractor",
-      "TripNumber"
-    };
+    
     private const string BlankSpace = " ";
     public void PrepareToOpen()
     {
@@ -131,14 +121,12 @@ namespace TransportDepot.Utilities
 
     private void GoWork()
     {
-      this._tables.ToList().ForEach(t =>
-        _dataSource.PointToData(t));
+      this._dataSource.PointToData();
     }
 
     private void GoOpen()
     {
-      this._tables.ToList().ForEach(t =>
-        _dataSource.PointToEmpty(t));
+      this._dataSource.PointToEmpty();
     }
   }
 }

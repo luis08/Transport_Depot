@@ -110,11 +110,6 @@ namespace TransportDepot.Data.Misc
       
 			PRINT 'Starting Point to Data';
 
-
-			GO 
-
-			PRINT 'Single User Done';
-
 			GO
 
 			ALTER VIEW [dbo].[ApPayableHistory]
@@ -204,10 +199,6 @@ namespace TransportDepot.Data.Misc
 			GO
 
 			PRINT '[TripNumber] Done';
-
-			GO
-       
-			PRINT 'Back to MULTI_USER';
 
 			GO
 	

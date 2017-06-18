@@ -15,7 +15,7 @@ namespace TransportDepot.Data.DB
             , [cPronumber]  AS [Invoice_Number]
             , [dDateOfInvoice]  AS [Invoice_Date]
             , [ctripnumber]  AS [Trip_Number]
-            , [cCustomerRef]  AS [Customer_Reference]
+            , COALESCE([cCustomerRef], '')  AS [Customer_Reference]
             , [cuBalanceDue]  AS [Balance_Due]
         FROM [dbo].[ArAging] [A]
       )

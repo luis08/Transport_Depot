@@ -398,7 +398,7 @@ namespace TransportDepot.Data.Factoring
         AND ( [BH].[dBillDate] >= @FromDate )
         AND ( [BH].[dBillDate] <= @ToDate )
         AND ( 
-              ( ( @OnlyWithoutSchedule = 1 ) AND ( [BH].[nlSNImportOrder] = 0 ) )  
+              ( ( @OnlyWithoutSchedule = 1 ) AND ( ( [BH].[nlSNImportOrder] = 0  ) OR ( [BH].[nlSNImportOrder] IS NULL ) ) )  
               OR ( COALESCE( @OnlyWithoutSchedule, 0 ) = 0  ) 
             ) 
     ), [InvoicesPaid] AS 

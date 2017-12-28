@@ -179,7 +179,6 @@ namespace TransportDepot.Data.DB
       
       var glDepartment = this.GetSetting("TransportDepot.Payables.Commissions.NewCommission.GLDepartment");
       var glAccount = this.GetSetting("TransportDepot.Payables.Commissions.NewCommission.GLAccount");
-      
       var reference = "Dispatch Com";//varchar 12
       var invoiceDate = DateTime.Today.ToShortDateString();
       var xml = new XDocument(new XElement("commissions",
@@ -424,7 +423,7 @@ namespace TransportDepot.Data.DB
                  , 0.0 AS [cuGSTAmt]
                  , 0.0 AS [cuPSTAmt]
                  , [T].[c].value('../@glDepartment', 'varchar(30)') AS [cGlDept]
-                 , [T].[c].value('../@glAccount', 'varchar(30)') AS [cGlAcct]
+                 , [T].[c].value('../@glAccount', 'varchar(30)') AS [cGlApAcct]
                  , 0 AS [bSelected]
             FROM @commissions.nodes('//commission') AS T(c)
           )
@@ -433,7 +432,8 @@ namespace TransportDepot.Data.DB
           (
                 [cInvoiceNo] 
               , [cVendorId] 
-              , [dInvoiceDate] 
+              , [dInvoiceDate]
+              , [cGlApAcct] 
               , [cuInvoiceTotal] 
               , [cuBalanceDue] 
               , [mInvoiceDesc] 
@@ -450,6 +450,7 @@ namespace TransportDepot.Data.DB
                 [cInvoiceNo] 
               , [cVendorId] 
               , [dInvoiceDate] 
+              , [cGlApAcct]
               , [cuInvoiceTotal] 
               , [cuBalanceDue] 
               , [mInvoiceDesc] 

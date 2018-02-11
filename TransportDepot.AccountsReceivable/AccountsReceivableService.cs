@@ -114,8 +114,8 @@ namespace TransportDepot.AccountsReceivable
       {
         return this._customersDictionary;
       }
-
-      var customers = this._customerData.GetCustomers(customerIds);
+      var upperDistinctCustomerIds = customerIds.Select(c => c.ToUpper()).Distinct();
+      var customers = this._customerData.GetCustomers(upperDistinctCustomerIds);
       this._customersDictionary = customers.ToDictionary(c => c.ID, c => c);
 
       return this._customersDictionary;

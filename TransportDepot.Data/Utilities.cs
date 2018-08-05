@@ -2,6 +2,8 @@
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
+using System.Collections.Generic;
 
 namespace TransportDepot.Data
 {
@@ -75,6 +77,15 @@ namespace TransportDepot.Data
         new string('*', 100),
         "Error in: " + (o == null ? "NULL" : o.GetType().ToString())}).ToArray();
       WriteAppend(this._errorPath, data);
+    }
+    
+    public int CoalesceInt(DataRow row, string fieldName)
+    {
+      if (row == null) return 0;
+      if (row[fieldName] == null) return 0;
+      int i = 0;
+      if (!int.TryParse(row[fieldName].ToString(), out i)) return 0;
+      return i;
     }
 
     public string CoalesceString(DataRow row, string fieldName)
@@ -184,6 +195,16 @@ namespace TransportDepot.Data
       { return true; }
       return false;
     }
+    
+    internal int CoalesceInt(string integer)
+    {
+      int i = 0;
+      if (!int.TryParse(integer, out i))
+      {
+        return i;
+      }
+      return 0;
+    }
 
     internal DateTime Coalesce(DateTime dateTime)
     {
@@ -253,6 +274,22 @@ namespace TransportDepot.Data
     {
       if (ids == null) return true;
       return ids.Count() > 0;
+    }
+
+    internal void AddAttributeIfExists(XElement element, string name, string value)
+    {
+      if (element != null && value != null && name != null)
+      { 
+        element.Add(new XAttribute(name, value));
+      }
+    }
+
+    internal void AddElementsIfExist(XElement element, string name, IEnumerable<string> values)
+    {
+      if (element != null && values != null)
+      {
+        values.ToList().ForEach(v => element.Add(new XElement(name, v)));
+      }
     }
   }
 }

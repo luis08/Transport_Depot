@@ -167,6 +167,8 @@
         <br/>
         <br/>
         <span class='last-saved-message'>&nbsp;</span>
+        <br/>
+        <a href="javascript:void(0)" class="open-maintenance-dialog">Maintenance</a>
       </td>
       <td>
         <fieldset>
@@ -209,6 +211,8 @@
     <div id='safety-report-menu'>
       <a href="#" 
           id='open-safety-report' target="_blank">Driver Safety Report</a>
+          &nbsp;&nbsp;|&nbsp;&nbsp;
+          <a href="http://transportserver/trans/Safety/SafetyMain.aspx" target="_blank" id="pending-maintenance-report">Maintenance</a>
     </div>
     <div id='driver-track-menu'>
       
@@ -260,20 +264,22 @@
     <!--Body-->
     <div>
         <fieldset>
-            <legend>Tractor Maintenance</legend>
-            <label>Tractor Id</label>
-            <input name="tractorId" type="text" />
+            <legend id="dialog-title"></legend>
+            <label id="dialog-id-label"></label>
+            <input name="vehicleId" type="text" />
             <br/>
             <label>Performed Date</label>
             <input name="performedDate" type="text" />
             <br />
-            <label>Type</label>
-            <input name="maintenanceTypeText" type="text"/>
-            <input name="maintenanceType" type="hidden"/>
+            <label>Mileage</label>
+            <input name="mileage" type="number" />
+            <input name="maintenanceType" type="hidden" value="MAINT"/>
             <br />
-            <label>Description</label>
-            
-            <textarea name="maintenanceDescription" cols='26' rows='8' class='driver-comments'></textarea>
+            <div>
+              <label style="width:auto">
+                Description</label><br />
+              <textarea name="maintenanceDescription" cols='35' rows='8' class='driver-comments'></textarea>
+            </div>
         </fieldset>
         <div class="menu">
         <a href="javascript:void(0)" name="save-maintenance">Save</a>
@@ -282,3 +288,4 @@
     </div>
   </div>
 </asp:Content>
+

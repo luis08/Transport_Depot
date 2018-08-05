@@ -1,4 +1,4 @@
-﻿/// <reference path="jquery-1.10.2.js" />
+/// <reference path="jquery-1.10.2.js" />
 /// <reference path="mustache.js" />
 /// <reference path="json.js" />
 /// <reference path="Utilities.js" />
@@ -17,7 +17,11 @@ SafetyConstants.getSettlementsUri = function (method) {
 };
 
 function SafetyData() { }
-
+SafetyData.getUriDate = function (date) {
+  return date.getFullYear() + '-' + 
+    (date.getMonth() + 1) + '-' +
+    date.getDate();
+};
 SafetyData.updateDriver = function (driver, successCallback) {
   var model = {
     drivers: [driver]
@@ -442,11 +446,18 @@ SafetyMain.populateDrivers = function () {
   $('#open-safety-report').text('Driver Safety Report')
     .attr('href', 'http://transportserver/trans-svc/SafetyReports.svc/ajax/DriverSafetyReport');
   $('#tractor-safety-container').hide();
+  $('#maintenance-reports-menu').hide();
   $('#trailer-safety-container').hide();
   $('#driver-safety-container').show();
+
   
   SafetyData.getAllDrivers(populate);
 };
+
+function populateDialog(dialogTitle, idLabel) {
+  $('#dialog-title').text(dialogTitle);
+  $('#dialog-id-label').text(idLabel);
+}
 
 SafetyMain.populateTractors = function () {
   function cleanupTractor(tractor) {
@@ -527,21 +538,30 @@ SafetyMain.populateTractors = function () {
       });
     });
     $('a.open-maintenance-dialog').on('click', function (e) {
-        
-        e.preventDefault();
-        SafetyMain.openMaintenance(this);
+      e.preventDefault();
+      var tractorId = $(e.target).closest('.tractor-identification')
+        .find('.tractorId').val();
+      SafetyMain.openMaintenance(this, tractorId);
     });
     $('#tractor-safety-container').show();
   }
+
   $('#open-safety-report').text('Tractor Safety Report')
     .attr('href', 'http://transportserver/trans-svc/SafetyReports.svc/ajax/TractorSafetyReport');
+  $('#pending-maintenance-report').show();
 
+  var to = new Date();
+  var from = new Date(to.getFullYear() - 1, to.getMonth(), to.getDate());
+  var datesUri = 'from=' + SafetyData.getUriDate(from) + '&to=' + SafetyData.getUriDate(to);
+  var fullUri = 'http://transportserver/trans-svc/SafetyReports.svc/ajax/TractorMaintenance/pending?vehicleIds?' + datesUri;
+
+  $('#pending-maintenance-report').prop('href', fullUri);
   SafetyData.getAllTractors(function (tractors) {
     SafetyData.getLessors(function (lessors) {
       lessors.sort(function (lhs, rhs) {
         return (lhs.Name > rhs.Name) ? 1 : -1;
       });
-      
+
       $.each(tractors, function (idx, tractor) {
         tractor.Lessors = [];
         $.each(lessors, function (idx, lessor) {
@@ -553,6 +573,7 @@ SafetyMain.populateTractors = function () {
       populate(tractors);
     });
   });
+  populateDialog("Tractor Maintenance", "Tractor Id");
   $('#driver-safety-container').hide();
   $('#trailer-safety-container').hide();
   $('#driver-track-menu').hide();
@@ -652,10 +673,21 @@ SafetyData.getAllTrailers(function (trailers) {
         });
       });
       populate(trailers);
+      $('a.open-maintenance-dialog').on('click', function (e) {
+        e.preventDefault();
+        let trailerId = $(e.target).closest('.trailer-identification')
+          .find('.trailer-id').text();
+        SafetyMain.openMaintenance(this, trailerId);
+      });
     });
   });
+  
+  populateDialog("Trailer Maintenance", "TrailerId");
+  
+  
   $('#driver-safety-container').hide();
   $('#tractor-safety-container').hide();
+  $('#maintenance-reports-menu').hide();
   $('#driver-track-menu').hide();
   $('#trailer-safety-container').show();
 };
@@ -672,11 +704,13 @@ SafetyData.appendMaintenance = function (successCallback) {
         var ele = $('#maintenance-dialog').find('[name="' + fieldName + '"]');
         return (ele.length === 0) ? '' : $(ele).val();
     };
-
-	var save = function(model) {
+    let idField = '';
+    let uri = '';
+    
+    var save = function(model) {
 		var wcfModel = JSON.stringifyWcf({ maintenance: model });
-		var uri = SafetyConstants.getUri('tractor-maintenance');
-		var request = $.ajax({
+  
+  		var request = $.ajax({
 			type: 'POST',
 			contentType: 'application/json',
 			data: wcfModel,
@@ -694,13 +728,24 @@ SafetyData.appendMaintenance = function (successCallback) {
 	
 	var performedDateEle = $('#maintenance-dialog').find('[name="performedDate"]');
     var model = {
-        TractorId: getFieldValue('tractorId'),
         "Date": performedDateEle.datepicker('getDate'),
-        "Type": getFieldValue('maintenanceType'),
+        "Type": 'MAINT',
+        "Mileage": getFieldValue('mileage') || 0,
         "Description": getFieldValue('maintenanceDescription'),
         "Amount": 0.00
     };
     
+    var labelText = $('#dialog-id-label').text();
+  
+    if(labelText.includes('Tractor')) {
+      uri = SafetyConstants.getUri('tractor-maintenance') + '/add';  
+      idField = 'TractorId';
+    } else if (labelText.includes('TrailerId')) {
+      uri = SafetyConstants.getUri('trailer-maintenance') + '/add';  
+      idField = 'TrailerId';
+    }
+  
+    model[idField] = getFieldValue('vehicleId');
 	if(!model.Type || !model.Description || !model.Date){
 		alert("Please complete the form and try again");
 		$(performedDateEle).focus();
@@ -722,14 +767,14 @@ SafetyMain.clearMaintenanceDialog = function () {
 };
 
 
-SafetyMain.openMaintenance = function (ele) {
+SafetyMain.openMaintenance = function (ele, vehicleId) {
     SafetyMain.clearMaintenanceDialog();
+    $('#vehicleId').val(vehicleId);
     $('.dialog-overlay').show();
     $('#maintenance-dialog').show();
-    var tractorId = $(ele).closest('.tractor-identification')
-        .find('.tractorId').val();
-    $('input[name="tractorId"]')
-        .val(tractorId)
+    
+    $('input[name="vehicleId"]')
+        .val(vehicleId)
         .prop('readonly', true);
 };
 
@@ -766,14 +811,33 @@ SafetyMain.initialize = function () {
 
     $('a[name=save-maintenance]').on('click', function (e) {
         e.preventDefault();
-        var tractorId = $('#maintenance-dialog').find('[name="tractorId"]').val();
-        var tr = $('#tractor-list-container').find('span[class="tractor-id"]:contains("' + tractorId + '")').closest('tr');
+        
+        let vehicleId = $('#maintenance-dialog').find('[name="vehicleId"]').val();
+        let labelText = $('#dialog-id-label').text();
+        
+        let tr = null;
+        if(labelText.includes('Tractor')) {
+          tr = $('#tractor-list-container').find('span[class="tractor-id"]:contains("' + vehicleId + '")')
+            .closest('tr');
+        } else if(labelText.includes('Trailer')) {
+          tr = $('#trailer-list-container').find('span[class="trailer-id"]:contains("' + vehicleId + '")')
+            .closest('tr');
+        }
+        
         SafetyData.appendMaintenance(function () {
-            SafetyData.getTractors([tractorId], function (tractors) {
+            if(labelText.includes('Tractor')) {
+              SafetyData.getTractors([vehicleId], function (tractors) {
                 var lastMaintenance = Utilities.formatDate(JSON.parseDateOnly(tractors[0].LastMaintenance));
                 $(tr).find('.maintenance-due').text(lastMaintenance);
                 SafetyMain.closeMaintenance();
-            });
+              });
+            } else if(labelText.includes('Trailer')) {
+              SafetyData.getTrailers([vehicleId], function (trailers) {
+                var lastMaintenance = Utilities.formatDate(JSON.parseDateOnly(trailers[0].LastMaintenance));
+                $(tr).find('.maintenance-due').text(lastMaintenance);
+                SafetyMain.closeMaintenance();
+              });
+            }
         });
     });
 
@@ -794,21 +858,6 @@ SafetyMain.initialize = function () {
         });
         var labels = $.map(data, function (i) {
             return i.Name;
-        });
-        
-        $('input[name="maintenanceTypeText"]').autocomplete({
-            source: SafetyData.types,
-            select: function (e, ui) {
-                $('input[name="maintenanceType"]').val(ui.item.id);
-            },
-            change: function (event, ui) {
-                if (!ui.item) {
-                    $(event.target).val("");
-                }
-            },
-            focus: function (event, ui) {
-                return false;
-            }
         });
     });
   });

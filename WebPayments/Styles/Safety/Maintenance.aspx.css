@@ -1,0 +1,12 @@
+label {
+  width: 5em;
+  margin-bottom: 0.5em;
+}
+div.vehicle-list { 
+  width: 48%; float: left; border-color: red; 
+  max-height: 20em;
+  overflow-y: scroll;
+  margin-bottom: 1.5em;
+}
+ul { list-style-type: none;}
+

@@ -4,6 +4,8 @@ using TransportDepot.Models.Safety;
 using System.Collections.Generic;
 using TransportDepot.Models.UI;
 using TransportDepot.Models.Business;
+using TransportDepot.Models.Reports;
+using System;
 namespace TransportDepot.Safety
 {
 
@@ -59,11 +61,23 @@ namespace TransportDepot.Safety
     void UdpateTrailer(Trailer trailer);
 
     [OperationContract]
-    [WebInvoke(UriTemplate = "/tractor-maintenance", Method = "POST")]
+    [WebInvoke(UriTemplate = "/tractor-maintenance/add", Method = "POST")]
     void Append(TractorMaintenancePerformed maintenance);
+
+    [OperationContract]
+    [WebInvoke(UriTemplate = "/trailer-maintenance/add", Method = "POST")]
+    void AppendTrailer(TrailerMaintenancePerformed maintenance);
 
     [OperationContract]
     [WebGet(UriTemplate = "/tractor-maintenance/types")]
     List<SimpleItem> GetMaintenanceTypes();
+
+    [OperationContract]
+    [WebInvoke(Method = "POST", UriTemplate = "/tractor-maintenance/report")]
+    IEnumerable<TractorMaintenance> GetTractorMaintenance(MaintenanceFilter filter);
+
+    [OperationContract]
+    [WebInvoke(Method = "POST", UriTemplate = "/trailer-maintenance/report")]
+    IEnumerable<TrailerMaintenance> GetTrailerMaintenance(MaintenanceFilter filter);
   }
 }

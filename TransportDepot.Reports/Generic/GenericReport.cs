@@ -4,6 +4,7 @@ using System.Linq;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
 using MigraDoc.Rendering;
+using PdfSharp.Pdf;
 
 namespace TransportDepot.Reports.Generic
 {
@@ -41,6 +42,7 @@ namespace TransportDepot.Reports.Generic
     public string ReportTitle { get; set; }
     public string FooterLeft { get; set; }
     public string FooterCenter { get; set; }
+    public string HeaderLeft { get; set; }
     public string[] HeaderRight { get; set; }
     public double[] ColumnWidths { get; set; }
 
@@ -85,6 +87,15 @@ namespace TransportDepot.Reports.Generic
 
     public Stream GetDocumentStream()
     {
+      var pdf = GetPdf();
+      var stream = new MemoryStream();
+      pdf.Save(stream, false);
+      stream.Position = 0;
+      return stream;
+    }
+
+    public PdfDocument GetPdf()
+    {
       this.ValidateArrays();
       var document = this.GetMigraDoc();
       var renderer = new PdfDocumentRenderer(true, PdfSharp.Pdf.PdfFontEmbedding.Always);
@@ -92,10 +103,7 @@ namespace TransportDepot.Reports.Generic
       renderer.RenderDocument();
 
       var pdf = renderer.PdfDocument;
-      var stream = new MemoryStream();
-      pdf.Save(stream, false);
-      stream.Position = 0;
-      return stream;
+      return pdf;
     }
 
     private void ValidateArrays()
@@ -267,7 +275,7 @@ namespace TransportDepot.Reports.Generic
       for (int i = 0; i < this.ReportData.GetLength(1); i++)
       {
         var str = this.ReportData[0, i];
-        rw.Cells[i].AddParagraph(str);
+        rw.Cells[i].AddParagraph(str ?? string.Empty);
         rw.Cells[i].Format.Alignment = this.GetHorizontalAlignment(i);
         rw.Cells[i].VerticalAlignment = this.GetVerticalAlignment(i);
       }
@@ -310,9 +318,9 @@ namespace TransportDepot.Reports.Generic
       var tbl = currentSection.Headers.Primary.AddTable();
       tbl.Style = "Table";
 
-      var leftCol = tbl.AddColumn(Formats.Landscape.HeaderLeftWidth);
-      var centerCol = tbl.AddColumn(Formats.Landscape.HeaderCenterWidth);
-      var rightCol = tbl.AddColumn(Formats.Landscape.HeaderRightWidth);
+      var leftCol = tbl.AddColumn( Formats.GetHeaderLeftWidth(this.Orientation));
+      var centerCol = tbl.AddColumn(Formats.GetHeaderCenterWidth(this.Orientation));
+      var rightCol = tbl.AddColumn(Formats.GetHeaderRightWidth(this.Orientation));
 
       var rw = tbl.AddRow();
       rw.Cells[0].AddParagraph(string.Empty);
@@ -320,7 +328,8 @@ namespace TransportDepot.Reports.Generic
       rw.Cells[0].VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
       rw.Cells[0].Format.Font.Size = 14;
       rw.Cells[0].Format.Font.Bold = true;
-      rw.Cells[1].AddParagraph(this.ReportTitle);
+      rw.Cells[0].AddParagraph(this.HeaderLeft ?? string.Empty);
+      rw.Cells[1].AddParagraph(this.ReportTitle ?? string.Empty);
       rw.Cells[1].VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
       rw.Cells[1].Format.Alignment = ParagraphAlignment.Center;
       rw.Cells[1].Format.Font.Size = 14;

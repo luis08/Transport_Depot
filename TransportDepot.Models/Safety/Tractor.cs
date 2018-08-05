@@ -7,6 +7,7 @@ namespace TransportDepot.Models.Safety
     public string Id { get; set; }
     public string Unit { get; set; }
     public string VIN { get; set; }
+    public string Name { get; set; }
     public string LessorOwnerName { get; set; }
     public DateTime LeaseAgreementDue { get; set; }
     public DateTime LastMaintenance { get; set; }

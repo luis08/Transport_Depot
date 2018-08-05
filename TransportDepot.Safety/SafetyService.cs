@@ -4,12 +4,16 @@ using TransportDepot.Data.Safety;
 using System.Linq;
 using TransportDepot.Models.Safety;
 using TransportDepot.Models.Business;
+using TransportDepot.Models.Reports;
+using TransportDepot.Data;
 
 namespace TransportDepot.Safety
 {
   public class SafetyService:ISafetyService
   {
     private SafetyDataSource _dataSource = new SafetyDataSource();
+    private ArgumentUtils _argumentUtils = new ArgumentUtils();
+    private Utilities _utilities = new Utilities();
 
     public IEnumerable<Models.Safety.Driver> GetDrivers(string[] ids)
     {
@@ -81,9 +85,34 @@ namespace TransportDepot.Safety
       this._dataSource.Append(maintenance);
     }
 
+    public void AppendTrailer(TrailerMaintenancePerformed maintenance)
+    {
+      this._dataSource.Append(maintenance);
+    }
+
+
     public List<SimpleItem> GetMaintenanceTypes()
     {
       return this._dataSource.GetMaintenanceTypes();
+    }
+
+    public IEnumerable<TractorMaintenance> GetTractorMaintenance(MaintenanceFilter filter)
+    {
+      CheckFilter(filter);
+      return this._dataSource.GetTractorMaintenance(filter);
+    }
+
+    public IEnumerable<TrailerMaintenance> GetTrailerMaintenance(MaintenanceFilter filter)
+    {
+      CheckFilter(filter);
+      return this._dataSource.GetTrailerMaintenance(filter);
+    }
+
+    private void CheckFilter(MaintenanceFilter filter)
+    {
+      this._argumentUtils.CheckNotNull(filter);
+      this._argumentUtils.AssertTrue(!(this._argumentUtils.IsDefault(filter.From)
+        && this._argumentUtils.IsDefault(filter.From)), "Cannot take arguments 'To' and 'From' be the default value.");
     }
   }
 }

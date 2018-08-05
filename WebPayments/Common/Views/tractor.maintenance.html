@@ -11,8 +11,13 @@
             <label>Performed Date</label>
             <input ng-model="date" type="date" />
             <br />
-            <label>Type</label>
-            <input ng-model="type" type="text"/>
+            <div class="hidden">
+              <label>
+                Type</label>
+              <input ng-model="type" type="text" value="MAINT" />
+            </div>
+            <label>Mileage</label>
+            <input ng-model="mileage" type="text" value="MAINT" />
             <br />
             <label>Description</label>
             <input ng-model="description" type="text"/>

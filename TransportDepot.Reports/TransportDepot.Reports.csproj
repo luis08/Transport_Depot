@@ -76,6 +76,12 @@
     <Compile Include="Json\JsonReportService.cs" />
     <Compile Include="PdfReportUtilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Safety\Maintenance\TrailerMaintenancePendingReport.cs" />
+    <Compile Include="Safety\Maintenance\TrailerMaintenancePendingService.cs" />
+    <Compile Include="Safety\Maintenance\TrailerMaintenanceSummary.cs" />
+    <Compile Include="Safety\Maintenance\VehicleMaintenancePendingReport.cs" />
+    <Compile Include="Safety\Maintenance\TractorMaintenancePendingService.cs" />
+    <Compile Include="Safety\Maintenance\TractorMaintenanceSummaryReport.cs" />
     <Compile Include="Safety\TrailerSafetyReport.cs" />
     <Compile Include="Safety\DriverySafetyReport.cs" />
     <Compile Include="Safety\ISafetyService.cs" />

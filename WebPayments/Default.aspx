@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Home Page" Language="C#" MasterPageFile="~/Site.master" AutoEventWireup="true"
+<%@ Page Title="Home Page" Language="C#" MasterPageFile="~/Site.master" AutoEventWireup="true"
     CodeFile="Default.aspx.cs" Inherits="_Default" %>
 
 <asp:Content ID="HeaderContent" runat="server" ContentPlaceHolderID="HeadContent">
@@ -19,6 +19,8 @@
 <div class="links-container">
   <ul class="links" >
     <li><a target="_blank" href="http://transportserver/json-reports/">Custom Reports</a>
+      http://192.168.1.242/trans/Safety/Maintenance.aspx
+    <li><a target="_blank" href="http://transportserver/trans/Safety/Maintenance.aspx">Maintenance</a></li>
   </ul>
   <br/>
   <p><strong>J on Server</strong></p>

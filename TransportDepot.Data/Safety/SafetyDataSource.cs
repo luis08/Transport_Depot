@@ -8,12 +8,15 @@ using System.Data.SqlClient;
 using System.Data;
 using TransportDepot.Data.DB;
 using TransportDepot.Models.Business;
+using TransportDepot.Models.Reports;
 
 namespace TransportDepot.Data.Safety
 {
   public class SafetyDataSource : IDataSource
   {
     private SafetyEntityFactory _factory = new SafetyEntityFactory();
+    private Utilities _utilities = new Utilities();
+    private VehicleSafetyUtils _vehicleSafetyUtils = new VehicleSafetyUtils();
     public string ConnectionString
     {
       get
@@ -209,6 +212,27 @@ namespace TransportDepot.Data.Safety
       generalDataSource.UpdateTrailer(trailerToUpdate); 
     }
 
+    public bool Append(TrailerMaintenancePerformed maintenance)
+    {
+      var recordsAffected = 0;
+      using (var cn = new SqlConnection(this.ConnectionString))
+      using (var cmd = new SqlCommand(Queries.TrailerMaintenanceInsert, cn))
+      {
+        cmd.Parameters.AddWithValue("@TrailerId", maintenance.TrailerId);
+        cmd.Parameters.AddWithValue("@DateDone", maintenance.Date);
+        cmd.Parameters.AddWithValue("@Type", maintenance.Type);
+        cmd.Parameters.AddWithValue("@Mileage", maintenance.Mileage);
+        cmd.Parameters.AddWithValue("@Description", maintenance.Description);
+
+        if (cn.State == ConnectionState.Closed)
+        {
+          cn.Open();
+        }
+        recordsAffected = cmd.ExecuteNonQuery();
+        return recordsAffected > 0;
+      }
+    }
+
     public bool Append(TractorMaintenancePerformed maintenance)
     {
       var recordsAffected = 0;
@@ -218,8 +242,8 @@ namespace TransportDepot.Data.Safety
         cmd.Parameters.AddWithValue("@TractorId", maintenance.TractorId);
         cmd.Parameters.AddWithValue("@DateDone", maintenance.Date);
         cmd.Parameters.AddWithValue("@Type", maintenance.Type);
+        cmd.Parameters.AddWithValue("@Mileage", maintenance.Mileage);
         cmd.Parameters.AddWithValue("@Description", maintenance.Description);
-        cmd.Parameters.AddWithValue("@Comment", maintenance.Description);
         
         if (cn.State == ConnectionState.Closed)
         {
@@ -228,7 +252,6 @@ namespace TransportDepot.Data.Safety
         recordsAffected = cmd.ExecuteNonQuery();
         return recordsAffected > 0;
       }
-      throw new NotImplementedException();
     }
 
     public List<SimpleItem> GetMaintenanceTypes()
@@ -248,6 +271,49 @@ namespace TransportDepot.Data.Safety
       return tractorMaintenanceTypes;
     }
 
+
+    public IEnumerable<TractorMaintenance> GetTractorMaintenance(MaintenanceFilter filter)
+    {
+      XDocument xDocument = this._vehicleSafetyUtils.GetTractorFilterXml(filter);
+      DataTable dataTable = new DataTable();
+      using (var cmd = new SqlCommand(TractorQueries.TractorMaintenance))
+      {
+        cmd.Parameters.AddWithValue("@FilterString", xDocument.ToString());
+        var db = new TransportDepot.Data.DB.DataSource();
+        dataTable = db.FetchCommand(cmd);
+      }
+      return dataTable.AsEnumerable().Select(m => new TractorMaintenance
+      {
+        Tractor = this._factory.MakeTractor(m),
+        Date = this._utilities.CoalesceDateTime(m, "PerformedDate"),
+        Type = this._utilities.CoalesceString(m, "Type"),
+        TypeId = this._utilities.CoalesceString(m, "Type"),
+        Mileage = this._utilities.CoalesceInt(m, "Mileage"),
+        Description = this._utilities.CoalesceString(m, "Description")
+      });
+    }
+
+    public IEnumerable<TrailerMaintenance> GetTrailerMaintenance(MaintenanceFilter filter)
+    {
+      var xDocument = this._vehicleSafetyUtils.GetTrailerFilterXml(filter);
+      DataTable dataTable = new DataTable();
+      using (var cmd = new SqlCommand(TrailerQueries.TrailerMaintenance))
+      {
+        cmd.Parameters.AddWithValue("@FilterString", xDocument.ToString());
+        var db = new TransportDepot.Data.DB.DataSource();
+        dataTable = db.FetchCommand(cmd);
+      }
+
+      return dataTable.AsEnumerable().Select(m => new TrailerMaintenance
+      {
+        Trailer = this._factory.MakeTrailer(m),
+        Date = this._utilities.CoalesceDateTime(m, "PerformedDate"),
+        Type = this._utilities.CoalesceString(m, "Type"),
+        TypeId = this._utilities.CoalesceString(m, "Type"),
+        Description = this._utilities.CoalesceString(m, "Description") 
+      });
+    }
+      
     private List<Driver> GetDrivers(SqlConnection cn, string driversXml)
     {
       var driversTable = new DataTable();
@@ -535,71 +601,13 @@ namespace TransportDepot.Data.Safety
             ON ( [Q].[ID] = [SD].[ID] )
       ";
       public static string TractorMaintenanceInsert = @"
-      INSERT INTO [dbo].[MaintenanceTractorLog]
-      (
-          cTractorID
-        , dPlannedDate
-        , nlPlannedMiles
-        , nlActualMiles
-        , cType
-        , cDescription
-        , dDateStart
-        , bDone
-        , dDateDone
-        , cuCost
-        , cInvoice
-        , cShopId
-        , cShopName
-        , cShopAddress
-        , cShopCity
-        , cShopState
-        , cShopPhone
-        , cShopPerson
-        , cComment
-        , cuLabor
-        , cuParts
-        , bReoccurMaint
-        , nlReoccurMiles
-        , nlReoccurDays
-        , bLessorEquip
-        , bPostedToRS
-        , nsLaborHrs
-        , nsLaborRate
-        , bWarranty
-        , dWarrantyDate
-      )
-      SELECT
-            @TractorID AS [cTractorID]
-          , @DateDone AS [dPlannedDate]
-          , 0 AS [nlPlannedMiles]
-          , 0 AS [nlActualMiles]
-          , @Type AS [cType]
-          , @Description AS [cDescription]
-          , @DateDone AS [dDateStart]
-          , 1 AS [bDone]
-          , @DateDone AS [dDateDone]
-          , 0 AS [cuCost]
-          , '' AS [cInvoice]
-          , '' AS [cShopId]
-          , '' AS [cShopName]
-          , '' AS [cShopAddress]
-          , '' AS [cShopCity]
-          , '' AS [cShopState]
-          , '' AS [cShopPhone]
-          , '' AS [cShopPerson]
-          , @Comment AS [cComment]
-          , 0 AS [cuLabor]
-          , 0 AS [cuParts]
-          , 0 AS [bReoccurMaint]
-          , 0 AS [nlReoccurMiles]
-          , 0 AS [nlReoccurDays]
-          , 1 AS [bLessorEquip]
-          , 0 AS [bPostedToRS]
-          , 0 AS [nsLaborHrs]
-          , 0 AS [nsLaborRate]
-          , 0 AS [bWarranty]
-          , NULL AS [dWarrantyDate]
+      INSERT INTO [dbo].[TractorMaintenance] ( [TractorId], [Type], [PerformedDate], [Mileage], [Description]) 
+                                      VALUES ( @TractorId, @Type, @DateDone, @Mileage, @Description )
+    ";
 
+      public static string TrailerMaintenanceInsert = @"
+      INSERT INTO [dbo].[TrailerMaintenance] ( [TrailerId], [Type], [PerformedDate], [Mileage], [Description]) 
+                                      VALUES ( @TrailerId, @Type, @DateDone, @Mileage, @Description )
     ";
     }
   }

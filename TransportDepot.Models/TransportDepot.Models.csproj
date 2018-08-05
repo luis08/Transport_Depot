@@ -93,8 +93,13 @@
     <Compile Include="Reports\JsonReportData.cs" />
     <Compile Include="Reports\JsonReportRequest.cs" />
     <Compile Include="Reports\JsonReportSpecs.cs" />
+    <Compile Include="Reports\MaintenanceFilter.cs" />
     <Compile Include="Safety\TractorMaintenancePerformed.cs" />
     <Compile Include="Safety\Trailer.cs" />
+    <Compile Include="Safety\TractorMaintenance.cs" />
+    <Compile Include="Safety\TrailerMaintenance.cs" />
+    <Compile Include="Safety\TrailerMaintenancePerformed.cs" />
+    <Compile Include="Safety\VehicleMaintenanceRequest.cs" />
     <Compile Include="UI\OptionModel.cs" />
     <Compile Include="Factoring\InvoiceFilter.cs" />
     <Compile Include="Factoring\InvoiceSet.cs" />

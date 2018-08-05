@@ -5,7 +5,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head runat="server">
   <title></title>
-
   <script type="text/javascript">
     var TransportApp = {
       appPath: '<%= Request.ApplicationPath %>',
@@ -25,7 +24,7 @@
     <div class="header">
       <div class="title">
         <h1>
-          Road Max
+          
         </h1>
       </div>
       <div class="loginDisplay">
@@ -80,6 +79,5 @@
   </script>  
   <asp:ContentPlaceHolder ID="JavaScriptPlaceHolder" runat="server">
   </asp:ContentPlaceHolder>
-
 </body>
 </html>

@@ -31,9 +31,24 @@ namespace TransportDepot.Reports
         });
       return mergedDoc;
     }
+
+    public Stream ToStream(PdfDocument pdf)
+    {
+      var stream = new MemoryStream();
+      pdf.Save(stream, false);
+      stream.Position = 0;
+      return stream;
+    }
+
     public void SetResponseToPdf()
     {
       WebOperationContext.Current.OutgoingResponse.ContentType = "application/pdf";
+    }
+    
+    public void SetResponseToPdf(string fileName)
+    {
+      WebOperationContext.Current.OutgoingResponse.ContentType = "application/pdf";
+      WebOperationContext.Current.OutgoingResponse.Headers.Add("Content-disposition", "inline; filename=" + fileName);
     }
   }
 }

@@ -99,5 +99,41 @@ namespace TransportDepot.Data.DB
         WHERE [T1].[ID] = [T].[cTractorID]
       )
     ";
+
+    public static string TractorMaintenance = @"
+      DECLARE @filter XML
+      SET @filter = CAST(@FilterString AS XML)
+
+      ;WITH [Tractors] AS (
+          SELECT [T].[C].value('.', 'varchar(8)') AS [TractorId]
+          FROM @filter.nodes('//tractorId') AS T(c)
+      ), [filter] AS 
+      (
+	      SELECT [T].[c].value('./@type', 'varchar(5)') AS [type],
+		         [T].[c].value('./@from', 'datetime') AS [from],
+		         [T].[c].value('./@to', 'datetime') AS [to],
+		         [T].[c].value('./@description', 'varchar(300)') AS [description]
+	      FROM @filter.nodes('//filter') AS T(c)
+      )
+
+      SELECT [M].[Id]
+         , [M].[TractorId]
+         , [T].[cSerial] AS [VIN]
+         , [T].[cTitle] AS [Unit]
+         , [M].[Type]
+         , [C].[cDescription] AS [StandardDescription]
+	       , [M].[PerformedDate]
+	       , [M].[Mileage]
+         , [M].[Description]
+      FROM [dbo].[TractorMaintenance] [M]
+          INNER JOIN [dbo].[MaintenanceTractorCode] [C] ON [M].[Type] = [C].[cCode]
+          INNER JOIN [dbo].[Tractor] [T] ON [M].[TractorId] = [T].[cTractorId]
+          CROSS JOIN [filter] [F]
+      WHERE ([f].[type] IS NULL OR ([M].[Type] = [F].[type]))
+        AND ([f].[from] IS NULL OR ([M].[PerformedDate] >= [f].[from]))
+        AND ([f].[to] IS NULL OR ([M].[PerformedDate] < [f].[to]))
+        AND (NOT EXISTS(SELECT * FROM [Tractors]) OR ([M].[TractorId] IN (SELECT [tractorId] FROM [tractors])))
+        AND ([f].[description] IS NULL OR ([M].[Description] LIKE '%' + [f].[description] + '%'))
+    ";
   }
 }

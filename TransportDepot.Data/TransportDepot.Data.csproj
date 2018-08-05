@@ -71,6 +71,7 @@
     <Compile Include="DB\DataSource.cs" />
     <Compile Include="DB\DBDataSource.cs" />
     <Compile Include="DB\TractorQueries.cs" />
+    <Compile Include="DB\TractorDataUtils.cs" />
     <Compile Include="DB\TrailerQueries.cs" />
     <Compile Include="Debugger.cs" />
     <Compile Include="Dispatch\DispatchDataSource.cs" />
@@ -85,8 +86,10 @@
     <Compile Include="Misc\WorkaroundsQueries.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reports\JsonReportDataSource.cs" />
+    <Compile Include="Safety\ArgumentUtils.cs" />
     <Compile Include="Safety\SafetyDataSource.cs" />
     <Compile Include="Safety\SafetyEntityFactory.cs" />
+    <Compile Include="Safety\VehicleSafetyUtils.cs" />
     <Compile Include="SqlPage.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>

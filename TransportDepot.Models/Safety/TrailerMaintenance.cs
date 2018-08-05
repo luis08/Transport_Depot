@@ -2,13 +2,12 @@
 
 namespace TransportDepot.Models.Safety
 {
-  public class TractorMaintenancePerformed
+  public class TrailerMaintenance
   {
-    public string TractorId { get; set; }
+    public Trailer Trailer { get; set; }
     public DateTime Date { get; set; }
     public string Type { get; set; }
+    public string TypeId { get; set; }
     public string Description { get; set; }
-    public decimal Amount { get; set; }
-    public int Mileage { get; set; }
   }
 }

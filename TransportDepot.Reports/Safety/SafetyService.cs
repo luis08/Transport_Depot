@@ -85,11 +85,7 @@ namespace TransportDepot.Reports.Safety
           data.Add(tractor, pendingDates);
         }
       }
-      this._utilities.WriteAppend(new string[] 
-      { 
-        "Tractors Count in service: ", data.Keys.Count().ToString(),
-        "Maintenance Count in service: " , data.Values.Count().ToString()
-      });
+      
       if (data.Count() > 0)
       {
         var report = new VehicleMaintenancePendingReport(data, filter.From, filter.To);

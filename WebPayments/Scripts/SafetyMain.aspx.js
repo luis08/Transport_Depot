@@ -553,7 +553,7 @@ SafetyMain.populateTractors = function () {
   var to = new Date();
   var from = new Date(to.getFullYear() - 1, to.getMonth(), to.getDate());
   var datesUri = 'from=' + SafetyData.getUriDate(from) + '&to=' + SafetyData.getUriDate(to);
-  var fullUri = 'http://transportserver/trans-svc/SafetyReports.svc/ajax/TractorMaintenance/pending?vehicleIds?' + datesUri;
+  var fullUri = 'http://transportserver/trans-svc/SafetyReports.svc/ajax/TractorMaintenance/pending?' + datesUri;
 
   $('#pending-maintenance-report').prop('href', fullUri);
   SafetyData.getAllTractors(function (tractors) {

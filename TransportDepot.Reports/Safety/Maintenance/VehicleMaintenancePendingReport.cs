@@ -74,11 +74,6 @@ namespace TransportDepot.Reports.Safety.Maintenance
           rowNumber += 2;
         }
       }
-      this._utilities.WriteAppend(new string[] 
-      { 
-        "Total rows used:", rowNumber.ToString()
-      });
-      
       return report.GetDocumentStream();
     }
 

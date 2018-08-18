@@ -89,6 +89,8 @@
     <Compile Include="Safety\ArgumentUtils.cs" />
     <Compile Include="Safety\SafetyDataSource.cs" />
     <Compile Include="Safety\SafetyEntityFactory.cs" />
+    <Compile Include="Safety\SafetyQueries.cs" />
+    <Compile Include="Safety\TrailerQueries.cs" />
     <Compile Include="Safety\VehicleSafetyUtils.cs" />
     <Compile Include="SqlPage.cs" />
     <Compile Include="Utilities.cs" />

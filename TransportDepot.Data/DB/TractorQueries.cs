@@ -13,11 +13,9 @@ namespace TransportDepot.Data.DB
            [bActive] = @Active
          , [cComment] = @Comments
          , [bTractorAssigned] = @HasTripAssigned
-         , [dInspectionDate] = @InspectionDue
          , [bLessorTruck] = @IsLessorTruck
          , [cLessorOwner] = @LessorOwnerName
          , [cLicensePlate] = @LicensePlate
-         , [cInsuranceName] = @InsuranceName
          , [cMake] = @Make
          , [cModel] = @Model
          , [cType] = @Type
@@ -30,8 +28,10 @@ namespace TransportDepot.Data.DB
         SET 
            [Has_W9] = @HasW9
          , [Lease_Agreement_Due] = @LeaseAgreementDue
-         , [Registration_Expiration]= @RegistrationExpiration
+         , [Insurance_Company] = @InsuranceName
          , [Insurance_Policy_Expiration] = @InsuranceExpiration
+         , [Registration_Expiration]= @RegistrationExpiration
+         , [DOT_Inspection_Expiration] = @InspectionDue
       WHERE ( [ID] = @Id )
          
     ";
@@ -42,7 +42,7 @@ namespace TransportDepot.Data.DB
          , [T].[bTractorAssigned] AS [HasTripAssigned]
          , [Q].[Has_W9] AS [HasW9]
          , [T].[cTractorId] AS [Id]
-         , [T].[dInspectionDate] AS [InspectionDue]
+         , [Q].[DOT_Inspection_Expiration] AS [InspectionDue]
          , [T].[bLessorTruck] AS [IsLessorTruck]
          , [Q].[Lease_Agreement_Due] AS [LeaseAgreementDue]
          , COALESCE( [L].[cName], '' ) AS [LessorOwnerName]
@@ -52,7 +52,7 @@ namespace TransportDepot.Data.DB
          , [T].[cModel] AS [Model]
          , [Q].[Registration_Expiration] AS [RegistrationExpiration]
          , [Q].[Insurance_Policy_Expiration] AS [InsuranceExpiration]
-         , [T].[cInsuranceName] AS [InsuranceName]
+         , [Q].[Insurance_Company]  AS [InsuranceName]
          , [T].[cType] AS [Type]
          , [T].[cTitle] AS [Unit]
          , [T].[cSerial] AS [VIN]
@@ -64,11 +64,11 @@ namespace TransportDepot.Data.DB
          ON ( [T].[cLessorOwner] = [L].[cName] )
        LEFT JOIN 
        ( 
-          SELECT [cTractorID] AS [ID]
-               , MAX( COALESCE( [dDateDone], '20010101' ) )AS [Last_Maintenance]
-          FROM [dbo].[MaintenanceTractorLog] 
-          GROUP BY [cTractorID] 
-       ) AS [M] ON ( [M].[ID] = [T].[cTractorID] )
+          SELECT [TractorId]
+               , MAX( COALESCE( [PerformedDate], '20010101' ) )AS [Last_Maintenance]
+          FROM [dbo].[TractorMaintenance] 
+          GROUP BY [TractorId] 
+       ) AS [M] ON ( [M].[TractorId] = [T].[cTractorID] )
     ";
 
     public static string TractorSanityQuery = @"

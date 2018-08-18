@@ -10,7 +10,7 @@ namespace TransportDepot.Payables.Commissions
   public class CommissionService : ICommissionService
   {
     private AgentCommissionDataSource _dataSource = new AgentCommissionDataSource();
-
+    private TransportDepot.Data.Utilities _utilities = new Data.Utilities();
     private const string CycleStartDayKey = "TransportDepot.Payables.Commissions.NewCommission.CycleStartDay";
 
     public IEnumerable<InvoiceCommission> GetCommissions(IEnumerable<CommissionRequest> requests)
@@ -216,7 +216,7 @@ namespace TransportDepot.Payables.Commissions
       }
       catch (Exception e)
       {
-        TransportDepot.Data.Utilities.WriteAppend("Error in CommissionService \n-------------------------------\n" + 
+        this._utilities.WriteAppend("Error in CommissionService \n-------------------------------\n" + 
           e.Message + "\n---------------------\n" + e.StackTrace);
       }
     }

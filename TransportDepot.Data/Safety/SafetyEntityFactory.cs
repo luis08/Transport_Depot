@@ -30,8 +30,8 @@ namespace TransportDepot.Data.Safety
       };
     }
 
-
-    internal Trailer MakeTrailer(Models.DB.Trailer t)
+    
+    internal Trailer MakeTrailer(DataRow row, Models.DB.Trailer t)
     {
       return new Trailer
       {
@@ -40,8 +40,8 @@ namespace TransportDepot.Data.Safety
         VIN = t.VIN,
         LessorOwnerName = t.LessorOwnerName,
         LastMaintenance = t.LastMaintenance,
-        RegistrationExpiration = t.RegistrationExpiration,
-        InspectionDue = t.InspectionDue,
+        RegistrationExpiration = this._utilities.CoalesceDateTime(row, "Registration_Expiration"),
+        InspectionDue = this._utilities.CoalesceDateTime(row, "DOT_Inspection_Expiration"),
         Comments = t.Comments
       };
     }

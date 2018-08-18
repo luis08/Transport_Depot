@@ -20,6 +20,8 @@ namespace TransportDepot.Data
       _errorPath =  string.IsNullOrEmpty(appSetting) ? string.Empty : appSetting;
     }
     public static int DefaultCommandTimeout = 240;
+    public static DateTime DBMinDate = new DateTime(2001, 1, 1);
+    public static DateTime DBMaxDate = new DateTime(2050, 1, 1);
     public string ConnectionString
     {
       get
@@ -125,6 +127,14 @@ namespace TransportDepot.Data
       return input.Length > 0;
     }
 
+    public DateTime CoalesceToMin(DataRow row, string fieldName)
+    {
+      if (row == null) return DBMinDate;
+      if (row[fieldName] == DBNull.Value) return DBMinDate;
+      if (row[fieldName] == null) return DBMinDate;
+      return Convert.ToDateTime(row[fieldName]);
+    }
+
     public DateTime CoalesceDateTime(DataRow row, string fieldName)
     {
       if (row == null) return DefaultDate;
@@ -177,7 +187,7 @@ namespace TransportDepot.Data
       }
     }
 
-    public static void WriteAppend(string data)
+    public void WriteAppend(string data)
     {
       using (var writer = new System.IO.StreamWriter(_debugPath, true))
       {
@@ -268,6 +278,19 @@ namespace TransportDepot.Data
       if (!int.TryParse(locationString, out geoLocationId)) return NullGeoLocationId;
       if (geoLocationId < 1) return NullGeoLocationId;
       return geoLocationId;
+    }
+
+    public string FormatName(string last, string first)
+    {
+      if ((last = last.Trim()).Equals(string.Empty))
+      {
+        last = "[Empty Last Name]";
+      }
+      if (((first = first.Trim()).Equals(string.Empty)))
+      {
+        first = "[Empty First Name]";
+      }
+      return string.Format("{0}, {1}", last, first);
     }
 
     internal static bool IsEmpty(System.Collections.Generic.IEnumerable<string> ids)

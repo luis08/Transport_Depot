@@ -119,36 +119,6 @@ namespace TransportDepot.Data.DB
       return tractors;
     }
 
-    internal void UpdateTrailer(Trailer trailer)
-    {
-      using (var cn = new SqlConnection(this.ConnectionString))
-      using (var cmd = new SqlCommand(TrailerQueries.UpdateTrailers, cn))
-      {
-        cmd.Parameters.AddWithValue("@Active", trailer.Active);
-        cmd.Parameters.AddWithValue("@Comments", trailer.Comments);
-        cmd.Parameters.AddWithValue("@HasTripAssigned", trailer.HasTripAssigned);
-        cmd.Parameters.AddWithValue("@InspectionDue", trailer.InspectionDue);
-        cmd.Parameters.AddWithValue("@IsLessorTrailer", trailer.IsLessorTrailer);
-        cmd.Parameters.AddWithValue("@LessorOwnerName", trailer.LessorOwnerName);
-        cmd.Parameters.AddWithValue("@LicensePlate", trailer.LicensePlate);
-        cmd.Parameters.AddWithValue("@LastMaintenance", trailer.LastMaintenance);
-        cmd.Parameters.AddWithValue("@Make", trailer.Make);
-        cmd.Parameters.AddWithValue("@Model", trailer.Model);
-        cmd.Parameters.AddWithValue("@RegistrationExpiration", trailer.RegistrationExpiration);
-        cmd.Parameters.AddWithValue("@Type", trailer.Type);
-        cmd.Parameters.AddWithValue("@Unit", trailer.Unit);
-        cmd.Parameters.AddWithValue("@VIN", trailer.VIN);
-        cmd.Parameters.AddWithValue("@Year", trailer.Year);
-        cmd.Parameters.AddWithValue("@Id", trailer.Id);
-
-        if (cn.State == ConnectionState.Closed)
-        {
-          cn.Open();
-        }
-        cmd.ExecuteNonQuery();
-      }
-    }
-
     private void RunTractorSanityChecks(SqlConnection cn)
     {
       using (var cmd = new SqlCommand(TractorQueries.TractorSanityQuery, cn))
@@ -163,10 +133,6 @@ namespace TransportDepot.Data.DB
 
     public void UpdateTractor(Tractor tractor)
     {
-      _utilities.WriteAppend(new string[] 
-      {
-        "Tractor Ins Name: " + tractor.InsuranceName
-      });
       using(var cn = new SqlConnection(this.ConnectionString))
       using (var cmd = new SqlCommand(TractorQueries.UpdateTractors, cn))
       {

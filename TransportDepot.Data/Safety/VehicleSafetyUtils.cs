@@ -1,6 +1,7 @@
 ﻿using System.Xml.Linq;
 using System.Linq;
 using TransportDepot.Models.Reports;
+using System.Collections.Generic;
 
 namespace TransportDepot.Data.Safety
 {
@@ -29,7 +30,7 @@ namespace TransportDepot.Data.Safety
       return new XDocument(element);
     }
 
-    private XElement GetVehicleFilterElement(MaintenanceFilter filter)
+        private XElement GetVehicleFilterElement(MaintenanceFilter filter)
     {
       XElement element = new XElement("filter");
       this._utilities.AddAttributeIfExists(element, "type", filter.Type);

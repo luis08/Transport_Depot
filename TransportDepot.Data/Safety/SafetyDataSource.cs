@@ -17,6 +17,8 @@ namespace TransportDepot.Data.Safety
     private SafetyEntityFactory _factory = new SafetyEntityFactory();
     private Utilities _utilities = new Utilities();
     private VehicleSafetyUtils _vehicleSafetyUtils = new VehicleSafetyUtils();
+    private TransportDepot.Data.DB.DataSource _db = new TransportDepot.Data.DB.DataSource();
+
     public string ConnectionString
     {
       get
@@ -32,7 +34,7 @@ namespace TransportDepot.Data.Safety
       using (var cn = new SqlConnection(this.ConnectionString))
       {
         var driverIdsXml = this.GetAllDriverIdsXml(cn);
-        var cmd = new SqlCommand(Queries.DriverSafety, cn);
+        var cmd = new SqlCommand(SafetyQueries.DriverSafety, cn);
         var drivers = this.GetDrivers(cn, driverIdsXml.ToString());
         return drivers;  
       }
@@ -74,7 +76,7 @@ namespace TransportDepot.Data.Safety
               new XAttribute("comments", d.Comments ?? string.Empty)))));
       
       using(var cn = new SqlConnection(this.ConnectionString))
-      using (var cmd = new SqlCommand(Queries.UpdateDriverSafety, cn))
+      using (var cmd = new SqlCommand(SafetyQueries.UpdateDriverSafety, cn))
       {
         cmd.Parameters.AddWithValue("@DriverSafetyXmlString", xml.ToString());
         this.SaveTrackedDrivers(safetyDrivers.Select(d => d.Id), cn);
@@ -98,7 +100,7 @@ namespace TransportDepot.Data.Safety
     {
       var xml = this.GetDriverIdsXml(ids);
       using(var cn = new SqlConnection(this.ConnectionString))
-      using (var cmd = new SqlCommand(Queries.DriversUntrack, cn))
+      using (var cmd = new SqlCommand(SafetyQueries.DriversUntrack, cn))
       {
         cmd.Parameters.AddWithValue("@UnTrackedDriversXmlString", xml.ToString());
         if (cn.State == System.Data.ConnectionState.Closed)
@@ -113,7 +115,7 @@ namespace TransportDepot.Data.Safety
     {
       var xml = this.GetDriverIdsXml(ids);
 
-      using (var cmd = new SqlCommand(Queries.ConfirmDriverExistence, cn))
+      using (var cmd = new SqlCommand(SafetyQueries.ConfirmDriverExistence, cn))
       {
         cmd.Parameters.AddWithValue("@TrackedDriversXmlString", xml.ToString());
         if (cn.State == System.Data.ConnectionState.Closed)
@@ -162,12 +164,41 @@ namespace TransportDepot.Data.Safety
     public IEnumerable<Trailer> GetTrailers(bool activeOnly)
     {
       var generalDataSource = new DBDataSource();
+      
       IEnumerable<Models.DB.Trailer> trailers = generalDataSource.GetTrailers();
       if (activeOnly)
       {
         trailers = trailers.Where(t => t.Active);
       }
-      IEnumerable<Trailer> safetyTrailers = trailers.Select(t => this._factory.MakeTrailer(t));
+      var trailerIds = trailers.Select(t => t.Id);
+      var safetyTrailerDataRows = this.GetSafetyTrailers(trailerIds);
+      
+      var filter = new MaintenanceFilter
+      {
+        From = Utilities.DBMinDate,
+        To = Utilities.DBMaxDate,
+        VehicleIds = trailerIds
+      };
+      var trailerMaintenance = this.GetTrailerMaintenance(filter).GroupBy(t => t.Trailer.Id.ToUpper());
+      var maxMaint = trailerMaintenance.ToDictionary(t => t.Key, t => t.Max(l => l.Date));
+
+      var safetyTrailers = trailers.Select(t => 
+      { 
+        var trailer = this._factory.MakeTrailer(safetyTrailerDataRows[t.Id.ToUpper()], t);
+        if (maxMaint.ContainsKey(trailer.Id))
+        {
+          trailer.LastMaintenance = maxMaint[trailer.Id];
+          this._utilities.WriteAppend("Assigned to " + trailer.Id + " " + maxMaint[trailer.Id].ToShortDateString());
+          this._utilities.WriteAppend("In fact, look: " + trailer.Id + "  Maint: " + trailer.LastMaintenance);
+        }
+        else
+        {
+          trailer.LastMaintenance = Utilities.DBMinDate;
+          this._utilities.WriteAppend("This was assigned: " + trailer.Id + "  Maint: " + trailer.LastMaintenance);
+        }
+        return trailer;
+      });
+
       return safetyTrailers;
     }
 
@@ -175,7 +206,7 @@ namespace TransportDepot.Data.Safety
     {
       var untrackedTable = new DataTable();
       using(var cn = new SqlConnection(this.ConnectionString))
-      using(var cmd = new SqlCommand(Queries.DriversUntracked, cn))
+      using (var cmd = new SqlCommand(SafetyQueries.DriversUntracked, cn))
       using (var adapter = new SqlDataAdapter(cmd))
       {
         adapter.Fill(untrackedTable);
@@ -188,7 +219,7 @@ namespace TransportDepot.Data.Safety
         .Select(d => new Models.UI.OptionModel
         {
           Id = d.Field<string>("ID"),
-          Name = this.FormatName(d.Field<string>("Last_Name"), d.Field<string>("First_Name"))
+          Name = this._utilities.FormatName(d.Field<string>("Last_Name"), d.Field<string>("First_Name"))
         });
       return untrackedDrivers;
     }
@@ -200,23 +231,64 @@ namespace TransportDepot.Data.Safety
           .Where(t => t.Id.Equals(trailer.Id, StringComparison.OrdinalIgnoreCase));
       if (existingTrailers.Count().Equals(0))
       {
-        throw new InvalidOperationException(string.Format("Invalid Truck ID: {0}", trailer.Id));
+        throw new InvalidOperationException(string.Format("Invalid Trailer ID: {0}", trailer.Id));
       }
-
+      var trailerIds = new string[] { trailer.Id };
+      var safetyTrailerRow = this.GetSafetyTrailers(trailerIds)[trailer.Id.ToUpper()];            
+      
       var trailerToUpdate = existingTrailers.First();
-      trailerToUpdate.Comments = trailer.Comments;
-      trailerToUpdate.InspectionDue = trailer.InspectionDue;
-      trailerToUpdate.RegistrationExpiration = trailer.RegistrationExpiration;
+      var filter = new MaintenanceFilter
+      {
+        From = Utilities.DBMinDate,
+        To = Utilities.DBMaxDate,
+        VehicleIds = new string[] { trailerToUpdate.Id }
+      };
+      var safetyTrailer = this._factory.MakeTrailer(safetyTrailerRow, trailerToUpdate);
+
       trailerToUpdate.Unit = trailer.Unit;
       trailerToUpdate.LessorOwnerName = trailer.LessorOwnerName;
-      generalDataSource.UpdateTrailer(trailerToUpdate); 
+      trailerToUpdate.LastMaintenance = this.GetLastTrailerMaintenance(new string[] {trailerToUpdate.Id});
+      trailerToUpdate.RegistrationExpiration = trailer.RegistrationExpiration;
+      trailerToUpdate.Comments = trailer.Comments;
+      trailerToUpdate.InspectionDue = trailer.InspectionDue;
+      UpdateTrailer(trailerToUpdate); 
+    }
+
+    internal void UpdateTrailer(Models.DB.Trailer trailer)
+    {
+      using (var cn = new SqlConnection(this.ConnectionString))
+      using (var cmd = new SqlCommand(TrailerQueries.UpdateTrailers, cn))
+      {
+        cmd.Parameters.AddWithValue("@Active", trailer.Active);
+        cmd.Parameters.AddWithValue("@Comments", trailer.Comments);
+        cmd.Parameters.AddWithValue("@HasTripAssigned", trailer.HasTripAssigned);
+        cmd.Parameters.AddWithValue("@InspectionDue", trailer.InspectionDue);
+        cmd.Parameters.AddWithValue("@IsLessorTrailer", trailer.IsLessorTrailer);
+        cmd.Parameters.AddWithValue("@LessorOwnerName", trailer.LessorOwnerName);
+        cmd.Parameters.AddWithValue("@LicensePlate", trailer.LicensePlate);
+        cmd.Parameters.AddWithValue("@LastMaintenance", trailer.LastMaintenance);
+        cmd.Parameters.AddWithValue("@Make", trailer.Make);
+        cmd.Parameters.AddWithValue("@Model", trailer.Model);
+        cmd.Parameters.AddWithValue("@RegistrationExpiration", trailer.RegistrationExpiration);
+        cmd.Parameters.AddWithValue("@Type", trailer.Type);
+        cmd.Parameters.AddWithValue("@Unit", trailer.Unit);
+        cmd.Parameters.AddWithValue("@VIN", trailer.VIN);
+        cmd.Parameters.AddWithValue("@Year", trailer.Year);
+        cmd.Parameters.AddWithValue("@Id", trailer.Id);
+
+        if (cn.State == ConnectionState.Closed)
+        {
+          cn.Open();
+        }
+        cmd.ExecuteNonQuery();
+      }
     }
 
     public bool Append(TrailerMaintenancePerformed maintenance)
     {
       var recordsAffected = 0;
       using (var cn = new SqlConnection(this.ConnectionString))
-      using (var cmd = new SqlCommand(Queries.TrailerMaintenanceInsert, cn))
+      using (var cmd = new SqlCommand(SafetyQueries.TrailerMaintenanceInsert, cn))
       {
         cmd.Parameters.AddWithValue("@TrailerId", maintenance.TrailerId);
         cmd.Parameters.AddWithValue("@DateDone", maintenance.Date);
@@ -237,7 +309,7 @@ namespace TransportDepot.Data.Safety
     {
       var recordsAffected = 0;
       using (var cn = new SqlConnection(this.ConnectionString))
-      using (var cmd = new SqlCommand(Queries.TractorMaintenanceInsert, cn))
+      using (var cmd = new SqlCommand(SafetyQueries.TractorMaintenanceInsert, cn))
       {
         cmd.Parameters.AddWithValue("@TractorId", maintenance.TractorId);
         cmd.Parameters.AddWithValue("@DateDone", maintenance.Date);
@@ -276,7 +348,7 @@ namespace TransportDepot.Data.Safety
     {
       XDocument xDocument = this._vehicleSafetyUtils.GetTractorFilterXml(filter);
       DataTable dataTable = new DataTable();
-      using (var cmd = new SqlCommand(TractorQueries.TractorMaintenance))
+      using (var cmd = new SqlCommand(TransportDepot.Data.DB.TractorQueries.TractorMaintenance))
       {
         cmd.Parameters.AddWithValue("@FilterString", xDocument.ToString());
         var db = new TransportDepot.Data.DB.DataSource();
@@ -317,7 +389,7 @@ namespace TransportDepot.Data.Safety
     private List<Driver> GetDrivers(SqlConnection cn, string driversXml)
     {
       var driversTable = new DataTable();
-      using (var cmd = new SqlCommand(Queries.DriverSafety, cn))
+      using (var cmd = new SqlCommand(SafetyQueries.DriverSafety, cn))
       {
         cmd.Parameters.AddWithValue("@DriverSafetyXmlString", driversXml);
         var adapter = new SqlDataAdapter(cmd);
@@ -326,40 +398,45 @@ namespace TransportDepot.Data.Safety
       var drivers = driversTable.AsEnumerable().Select(d => new Driver
       {
         Id = d.Field<string>("ID"),
-        Name = this.FormatName(d.Field<string>("Last_Name") ?? string.Empty, d.Field<string>("First_Name") ?? string.Empty),
+        Name = this._utilities.FormatName(d.Field<string>("Last_Name") ?? string.Empty, d.Field<string>("First_Name") ?? string.Empty),
         Active = d.Field<bool>("Active"),
-        AnnualCertificationOfViolations = d.IsNull("Annual_Violations_Cert_Expiration") ? DateTime.Today : d.Field<DateTime>("Annual_Violations_Cert_Expiration") ,
+        AnnualCertificationOfViolations = this._utilities.CoalesceToMin(d, "Annual_Violations_Cert_Expiration"),
         TrackDriver = true,
         Application = d.Field<bool>("Has_Application"),
         OnDutyHours = d.Field<bool>("Has_SODH"),
         DrugTest = d.Field<bool>("Has_Drug_Test"),
-        MVRExpiration = d.IsNull("MVR_Expiration") ? DateTime.Today : d.Field<DateTime>("MVR_Expiration"),
+        MVRExpiration = this._utilities.CoalesceToMin(d, "MVR_Expiration"),
         PoliceReport = d.Field<bool>("Has_Police_Record_Report"),
         PreviousEmployerForm = d.Field<bool>("Has_Previous_Employer_Form"),
         SocialSecurity = d.Field<bool>("Has_Social_Security_Card"),
         Agreement = d.Field<bool>("Has_Driver_Agreements"),
         W9 = d.Field<bool>("Has_W9"),
-        PhysicalExamExpiration = d.IsNull("Physical_Expiration") ? DateTime.Today : d.Field<DateTime>("Physical_Expiration"),
-        LastValidLogDate = d.IsNull("Last_Valid_Log_Date") ? DateTime.Today : d.Field<DateTime>("Last_Valid_Log_Date"),
-        DriversLicenseExpiration = d.IsNull("Drivers_License_Expiration") ? DateTime.Today : d.Field<DateTime>("Drivers_License_Expiration"),
-        Comments = d.IsNull("Comments") ? string.Empty : d.Field<string>("Comments")
+        PhysicalExamExpiration = this._utilities.CoalesceToMin(d, "Physical_Expiration"),
+        LastValidLogDate = this._utilities.CoalesceToMin(d, "Last_Valid_Log_Date"),
+        DriversLicenseExpiration = this._utilities.CoalesceToMin(d, "Drivers_License_Expiration"),
+        Comments = this._utilities.CoalesceString(d, "Comments")
       }).ToList();
       return drivers;
     }
 
-    private string FormatName(string last, string first)
+    private DateTime GetLastTrailerMaintenance(string [] trailerIds)
     {
-      if ((last = last.Trim()).Equals(string.Empty))
+      MaintenanceFilter filter = new MaintenanceFilter 
+      { 
+        From = Utilities.DBMinDate,
+        To = Utilities.DBMaxDate,
+        VehicleIds = trailerIds
+      };
+
+      var trailerMaintenance = this.GetTrailerMaintenance(filter) ;
+      if (trailerMaintenance.Count().Equals(0))
       {
-        last = "[Empty Last Name]";
+        return Utilities.DBMinDate;
       }
-      if (((first = first.Trim()).Equals(string.Empty)))
-      {
-        first = "[Empty First Name]";
-      }
-      return string.Format("{0}, {1}", last, first);
+
+      return trailerMaintenance.Max(f => f.Date);
     }
-    
+
     private XDocument GetAllDriverIdsXml(SqlConnection cn)
     {
       var allDriverIdsQuery = @"
@@ -378,7 +455,19 @@ namespace TransportDepot.Data.Safety
       return xml;
 
     }
+    private Dictionary<string, DataRow> GetSafetyTrailers(IEnumerable<string> ids)
+    {
+      var dataTable = new DataTable();
+      var xml = new XDocument(new XElement("trailers", ids.Select(id => new XElement("trailer", new XAttribute("id", id)))));
 
+      using (var cmd = new SqlCommand(TrailerQueries.TrailerSafety))
+      {
+        cmd.Parameters.AddWithValue("@TrailerSafetyXmlString", xml.ToString());
+        dataTable = this._db.FetchCommand(cmd);
+      }
+      return dataTable.AsEnumerable().ToDictionary(t => this._utilities.CoalesceString(t, "ID").ToUpper(), t => t);
+    }
+        
     private XDocument GetDriverIdsXml(List<string> driverIds)
     {
       var xml = new XDocument(new XElement("drivers",
@@ -402,213 +491,6 @@ namespace TransportDepot.Data.Safety
     private bool IntToBool(int i)
     {
       return i != 0;
-    }
-    
-    private static class Queries
-    {
-      public static string ConfirmDriverExistence = @"
-          DECLARE @TrackedDriversXml XML
-          SET @TrackedDriversXml = CAST( @TrackedDriversXmlString AS XML )
-
-          DECLARE @Drivers TABLE( [ID] VARCHAR(12) )
-
-          INSERT INTO @Drivers
-          SELECT Drvs.col.value('.', 'varchar(12)') AS [ID]
-          FROM @TrackedDriversXml.nodes('//driver') Drvs(col)
-          
-          INSERT INTO [dbo].[Driver_Trackable] ( [ID] )
-          SELECT [ID] FROM @Drivers [D]
-          WHERE NOT EXISTS
-          (
-            SELECT * 
-            FROM [dbo].[Driver_Trackable] [T]
-            WHERE ( [T].[ID] = [D].[ID] )
-          )
-
-          INSERT INTO [dbo].[Driver_Qualification] ( [ID] )
-          SELECT [ID] FROM @Drivers [D]
-          WHERE NOT EXISTS
-          (
-            SELECT * 
-            FROM [dbo].[Driver_Qualification] [Q]
-            WHERE ( [Q].[ID] = [D].[ID] )
-          )
-      ";
-
-      public static string DriversUntrack = @"
-          DECLARE @UnTrackedDriversXml XML
-          SET @UnTrackedDriversXml = CAST( @UnTrackedDriversXmlString AS XML )
-
-          ;WITH [DriversToUntrack] AS
-          (
-            SELECT Drvs.col.value('.', 'varchar(12)') AS [ID]
-            FROM @UnTrackedDriversXml.nodes('//driver') Drvs(col)
-          )
-          
-          DELETE 
-          FROM [dbo].[Driver_Trackable] 
-          WHERE [ID] IN ( SELECT [ID] FROM [DriversToUntrack] )
-      ";
-
-      public static string UpdateDriverSafety = @"
-
-        DECLARE @DriverSafetyXml XML
-        SET @DriverSafetyXml = CAST( @DriverSafetyXmlString AS XML ) 
-
-        DECLARE @DriverSafety TABLE
-        (
-           [ID] VARCHAR(12)
-          ,[Active] BIT 
-          ,[TrackDriver] BIT 
-          ,[Has_Application] BIT 
-          ,[Has_SODH] BIT 
-          ,[Has_Drug_Test] BIT 
-          ,[MVR_Expiration] DATETIME 
-          ,[Has_Police_Record_Report] BIT 
-          ,[Has_Previous_Employer_Form] BIT 
-          ,[Has_Social_Security_Card] BIT 
-          ,[Has_Driver_Agreements] BIT 
-          ,[Has_W9] BIT 
-          ,[Physical_Expiration] DATETIME 
-          ,[Last_Valid_Log_Date] DATETIME 
-          ,[Drivers_License_Expiration] DATETIME 
-          ,[Annual_Violations_Cert_Expiration] DATETIME 
-          ,[Comments] VARCHAR(MAX)
-        )
-
-        INSERT INTO @DriverSafety
-        (
-           [ID] 
-          ,[Active] 
-          ,[TrackDriver]  
-          ,[Has_Application]  
-          ,[Has_SODH]  
-          ,[Has_Drug_Test]  
-          ,[MVR_Expiration]  
-          ,[Has_Police_Record_Report]  
-          ,[Has_Previous_Employer_Form]  
-          ,[Has_Social_Security_Card]  
-          ,[Has_Driver_Agreements]  
-          ,[Has_W9]  
-          ,[Physical_Expiration]  
-          ,[Last_Valid_Log_Date]  
-          ,[Drivers_License_Expiration]  
-          ,[Annual_Violations_Cert_Expiration]  
-          ,[Comments] 
-        )
-        SELECT
-              SD.col.value( './@id', 'VARCHAR(12)' ) AS [ID] 
-            , SD.col.value( './@active', 'BIT' ) AS [Active]
-            , SD.col.value( './@trackDriver', 'BIT' ) AS [TrackDriver]
-            , SD.col.value( './@application', 'BIT' ) AS [Has_Application]
-            , SD.col.value( './@onDutyHours', 'BIT' ) AS [Has_SODH]
-            , SD.col.value( './@drugTest', 'BIT' ) AS [Has_Drug_Test]
-            , SD.col.value( './@mVRExpiration', 'DATETIME' ) AS [MVR_Expiration]
-            , SD.col.value( './@policeReport', 'BIT' ) AS [Has_Police_Record_Report]
-            , SD.col.value( './@previousEmployerForm', 'BIT' ) AS [Has_Previous_Employer_Form]
-            , SD.col.value( './@socialSecurity', 'BIT' ) AS [Has_Social_Security_Card]
-            , SD.col.value( './@agreement', 'BIT' ) AS [Has_Driver_Agreements]
-            , SD.col.value( './@w9', 'BIT' ) AS  [Has_W9]
-            , SD.col.value( './@physicalExamExpiration', 'DATETIME' ) AS [Physical_Expiration]
-            , SD.col.value( './@lastValidLogDate', 'DATETIME' ) AS [Last_Valid_Log_Date]
-            , SD.col.value( './@driversLicenseExpiration', 'DATETIME' ) AS [Drivers_License_Expiration]
-            , SD.col.value( './@annualCertification', 'DATETIME' ) AS [Annual_Violations_Cert_Expiration]
-            , SD.col.value( './@comments', 'VARCHAR(MAX)' ) AS [Comments]
-        FROM @DriverSafetyXml.nodes('//driver') AS SD(col)
-
-        UPDATE [dbo].[DriverInfo]
-          SET [dLicenseExpDate] = [S].[Drivers_License_Expiration]
-            , [dPhysicalExpDate] = [S].[Physical_Expiration]
-        FROM [dbo].[DriverInfo] [D]
-          INNER JOIN @DriverSafety [S]
-            ON ( [S].[ID] = [D].[cDriverID] )
-
-        UPDATE [dbo].[PrEmployee]
-          SET [bActive] = [S].[Active]
-        FROM [dbo].[PrEmployee] [E]
-          INNER JOIN @DriverSafety [S]
-            ON ( [S].[ID] = [E].[cEmployeeId] )
-
-        UPDATE [dbo].[Driver_Qualification]
-            SET [Has_Application] = [S].[Has_Application]
-              ,[Has_SODH] = [S].[Has_SODH]
-              ,[Has_Drug_Test] = [S].[Has_Drug_Test]
-              ,[Has_Police_Record_Report] = [S].[Has_Police_Record_Report] 
-              ,[Has_Previous_Employer_Form] = [S].[Has_Previous_Employer_Form]
-              ,[Has_Social_Security_Card] = [S].[Has_Social_Security_Card]
-              ,[Has_Driver_Agreements] = [S].[Has_Driver_Agreements]
-              ,[Has_W9] = [S].[Has_W9] 
-              ,[MVR_Expiration] = [S].[MVR_Expiration]
-              ,[Annual_Violations_Cert_Expiration] = [S].[Annual_Violations_Cert_Expiration]
-              ,[Last_Valid_Log_Date] = [S].[Last_Valid_Log_Date]
-              ,[Comments] = [S].[Comments]
-        FROM [dbo].[Driver_Qualification] [Q]
-          INNER JOIN @DriverSafety [S]
-            ON ( [S].[ID] = [Q].[ID] )
-      ";
-
-      public static string DriversUntracked = @"
-        SELECT   [E].[cEmployeeID] AS [ID]
-                ,[E].[cLast] AS [Last_Name] 
-                ,[E].[cFirst] AS [First_Name]
-        FROM [dbo].[PrEmployee] [E]
-        WHERE NOT EXISTS
-        (
-          SELECT * 
-          FROM [dbo].[Driver_Trackable] [T]
-          WHERE ( [T].[ID] = [E].[cEmployeeID] )
-        ) AND ( COALESCE( [E].[bIncludeInDriverList], 0 ) != 0 )
-          AND ( COALESCE( [E].[bActive], 0 ) != 0 )
-        ";
-
-      public static string DriverSafety = @"
-        DECLARE @DriverSafetyXml XML
-        SET @DriverSafetyXml = CAST( @DriverSafetyXmlString AS XML )
-        
-        ;WITH [Drivers] AS
-        (
-          SELECT Drvs.col.value('.', 'varchar(12)') AS [ID]
-          FROM @DriverSafetyXml.nodes('//driver') Drvs(col)
-        )
-        
-        SELECT   [Q].[ID]
-                ,[E].[cLast] AS [Last_Name] 
-                ,[E].[cFirst] AS [First_Name]
-                ,[Q].[Has_Application]
-                ,[Q].[Has_SODH]
-                ,[Q].[Has_Drug_Test]
-                ,[Q].[Has_Police_Record_Report]
-                ,[Q].[Has_Previous_Employer_Form]
-                ,[Q].[Has_Social_Security_Card]
-                ,[Q].[Has_Driver_Agreements]
-                ,[Q].[Has_W9]
-                ,[Q].[MVR_Expiration]
-                ,[Q].[Annual_Violations_Cert_Expiration]
-                ,[Q].[Last_Valid_Log_Date]
-                ,[Q].[Comments]
-                ,[D].[dLicenseExpDate] AS [Drivers_License_Expiration]
-                ,[D].[dPhysicalExpDate] AS [Physical_Expiration]
-                ,[E].[bActive] AS [Active]
-         
-        FROM [dbo].[Driver_Qualification] [Q]
-          INNER JOIN [dbo].[Driver_Trackable] [T]
-            ON ( [Q].[ID] = [T].[ID] )
-          INNER JOIN [dbo].[DriverInfo] [D]
-            ON ( [Q].[ID] = [D].[cDriverID] )
-          INNER JOIN [dbo].[PrEmployee] [E]
-            ON ( [Q].[ID] = [E].[cEmployeeId] )
-          INNER JOIN [Drivers] [SD]
-            ON ( [Q].[ID] = [SD].[ID] )
-      ";
-      public static string TractorMaintenanceInsert = @"
-      INSERT INTO [dbo].[TractorMaintenance] ( [TractorId], [Type], [PerformedDate], [Mileage], [Description]) 
-                                      VALUES ( @TractorId, @Type, @DateDone, @Mileage, @Description )
-    ";
-
-      public static string TrailerMaintenanceInsert = @"
-      INSERT INTO [dbo].[TrailerMaintenance] ( [TrailerId], [Type], [PerformedDate], [Mileage], [Description]) 
-                                      VALUES ( @TrailerId, @Type, @DateDone, @Mileage, @Description )
-    ";
     }
   }
 }

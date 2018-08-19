@@ -449,7 +449,7 @@ SafetyMain.populateDrivers = function () {
   $('#maintenance-reports-menu').hide();
   $('#trailer-safety-container').hide();
   $('#driver-safety-container').show();
-
+  $('#pending-maintenance-report').hide();
   
   SafetyData.getAllDrivers(populate);
 };
@@ -548,14 +548,8 @@ SafetyMain.populateTractors = function () {
 
   $('#open-safety-report').text('Tractor Safety Report')
     .attr('href', 'http://transportserver/trans-svc/SafetyReports.svc/ajax/TractorSafetyReport');
-  $('#pending-maintenance-report').show();
+  
 
-  var to = new Date();
-  var from = new Date(to.getFullYear() - 1, to.getMonth(), to.getDate());
-  var datesUri = 'from=' + SafetyData.getUriDate(from) + '&to=' + SafetyData.getUriDate(to);
-  var fullUri = 'http://transportserver/trans-svc/SafetyReports.svc/ajax/TractorMaintenance/pending?' + datesUri;
-
-  $('#pending-maintenance-report').prop('href', fullUri);
   SafetyData.getAllTractors(function (tractors) {
     SafetyData.getLessors(function (lessors) {
       lessors.sort(function (lhs, rhs) {
@@ -574,6 +568,14 @@ SafetyMain.populateTractors = function () {
     });
   });
   populateDialog("Tractor Maintenance", "Tractor Id");
+
+  var to = new Date();
+  var from = new Date(to.getFullYear() - 1, to.getMonth(), to.getDate());
+  var datesUri = 'from=' + SafetyData.getUriDate(from) + '&to=' + SafetyData.getUriDate(to);
+  var fullUri = 'http://transportserver/trans-svc/SafetyReports.svc/ajax/TractorMaintenance/pending?' + datesUri;
+
+  $('#pending-maintenance-report').show();
+  $('#pending-maintenance-report').prop('href', fullUri);
   $('#driver-safety-container').hide();
   $('#trailer-safety-container').hide();
   $('#driver-track-menu').hide();
@@ -685,11 +687,18 @@ SafetyData.getAllTrailers(function (trailers) {
   populateDialog("Trailer Maintenance", "TrailerId");
   
   
+  var to = new Date();
+  var from = new Date(to.getFullYear() - 1, to.getMonth(), to.getDate());
+  var datesUri = 'from=' + SafetyData.getUriDate(from) + '&to=' + SafetyData.getUriDate(to);
+  var fullUri = 'http://transportserver/trans-svc/SafetyReports.svc/ajax/TrailerMaintenance/pending?' + datesUri;
+  $('#pending-maintenance-report').prop('href', fullUri);
+  
   $('#driver-safety-container').hide();
   $('#tractor-safety-container').hide();
   $('#maintenance-reports-menu').hide();
   $('#driver-track-menu').hide();
   $('#trailer-safety-container').show();
+  $('#pending-maintenance-report').show();
 };
 
 SafetyData.getTractorMaintenanceTypes = function(callback) {

@@ -755,7 +755,7 @@ SafetyData.appendMaintenance = function (successCallback) {
     }
   
     model[idField] = getFieldValue('vehicleId');
-	if(!model.Type || !model.Description || !model.Date){
+	if(!model.Type || !model.Date){
 		alert("Please complete the form and try again");
 		$(performedDateEle).focus();
 	} else {

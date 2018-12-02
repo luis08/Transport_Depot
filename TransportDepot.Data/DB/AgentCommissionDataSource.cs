@@ -55,10 +55,7 @@ namespace TransportDepot.Data.DB
       {
         throw new InvalidOperationException("The number of commissions is invalid");
       }
-      {
-        this.SaveApInvoice(xml, dataSource);
-      }
-      
+      this.SaveApInvoice(xml, dataSource);
     }
 
     public IEnumerable<LessorHome> GetLessorHomes(IEnumerable<string> tripIds)

@@ -288,7 +288,7 @@ namespace TransportDepot.Data.Safety
     {
       var recordsAffected = 0;
       using (var cn = new SqlConnection(this.ConnectionString))
-      using (var cmd = new SqlCommand(SafetyQueries.TrailerMaintenanceInsert, cn))
+      using (var cmd = new SqlCommand(SafetyQueries.TrailerMaintenanceCrud, cn))
       {
         cmd.Parameters.AddWithValue("@TrailerId", maintenance.TrailerId);
         cmd.Parameters.AddWithValue("@DateDone", maintenance.Date);
@@ -309,7 +309,7 @@ namespace TransportDepot.Data.Safety
     {
       var recordsAffected = 0;
       using (var cn = new SqlConnection(this.ConnectionString))
-      using (var cmd = new SqlCommand(SafetyQueries.TractorMaintenanceInsert, cn))
+      using (var cmd = new SqlCommand(SafetyQueries.TractorMaintenanceCrud, cn))
       {
         cmd.Parameters.AddWithValue("@TractorId", maintenance.TractorId);
         cmd.Parameters.AddWithValue("@DateDone", maintenance.Date);

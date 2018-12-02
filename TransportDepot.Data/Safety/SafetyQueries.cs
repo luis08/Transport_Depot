@@ -196,14 +196,51 @@ namespace TransportDepot.Data.Safety
           INNER JOIN [Drivers] [SD]
             ON ( [Q].[ID] = [SD].[ID] )
       ";
-    public static string TractorMaintenanceInsert = @"
-      INSERT INTO [dbo].[TractorMaintenance] ( [TractorId], [Type], [PerformedDate], [Mileage], [Description]) 
-                                      VALUES ( @TractorId, @Type, @DateDone, @Mileage, @Description )
+    public static string TractorMaintenanceCrud = @"
+      DECLARE @Id INT;
+
+      SELECT @Id = [Id] 
+      FROM [dbo].[TractorMaintenance] 
+      WHERE [Type] = @Type
+        AND CAST([PerformedDate] AS DATE) = CAST(@DateDone AS DATE)
+        AND [TractorId] = @TractorId
+
+      IF(@Id IS NULL) 
+        INSERT INTO [dbo].[TractorMaintenance] ( [TractorId], [Type], [PerformedDate], [Mileage], [Description]) 
+                                        VALUES ( @TractorId, @Type, @DateDone, @Mileage, @Description )
+      ELSE 
+	      IF(RTRIM(COALESCE(@Description, '')) = '')
+		      DELETE FROM [dbo].[TractorMaintenance] WHERE [Id] = @Id
+	      ELSE
+		      UPDATE [dbo].[TractorMaintenance] 
+			      SET [Type] = @Type,
+				      [Mileage] = @Mileage,
+				      [Description] = @Description
+		      WHERE [Id] = @Id
+
     ";
 
-    public static string TrailerMaintenanceInsert = @"
-      INSERT INTO [dbo].[TrailerMaintenance] ( [TrailerId], [Type], [PerformedDate], [Mileage], [Description]) 
-                                      VALUES ( @TrailerId, @Type, @DateDone, @Mileage, @Description )
+    public static string TrailerMaintenanceCrud = @"
+      DECLARE @Id INT;
+
+      SELECT @Id = [Id] 
+      FROM [dbo].[TrailerMaintenance] 
+      WHERE [Type] = @Type
+        AND CAST([PerformedDate] AS DATE) = CAST(@DateDone AS DATE)
+        AND [TrailerId] = @TrailerId
+
+      IF(@Id IS NULL) 
+        INSERT INTO [dbo].[TrailerMaintenance] ( [TrailerId], [Type], [PerformedDate], [Mileage], [Description]) 
+                                        VALUES ( @TrailerId, @Type, @DateDone, @Mileage, @Description )
+      ELSE 
+	      IF(RTRIM(COALESCE(@Description, '')) = '')
+		      DELETE FROM [dbo].[TrailerMaintenance] WHERE [Id] = @Id
+	      ELSE
+		      UPDATE [dbo].[TrailerMaintenance] 
+			      SET [Type] = @Type,
+				      [Mileage] = @Mileage,
+				      [Description] = @Description
+		      WHERE [Id] = @Id
     ";
   }
 }

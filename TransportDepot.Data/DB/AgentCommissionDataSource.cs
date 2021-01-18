@@ -260,6 +260,7 @@ namespace TransportDepot.Data.DB
               FROM [dbo].[BillingHistory] [BH]
                 INNER JOIN [dbo].[Paid_Invoice_Commission] [C]
                   ON ( [BH].[cProNumber] = [C].[ArInvoiceNumber] )
+
               SELECT         [ATH].[cLessorId1]     AS [LessorID]
                            , [BH].[dShipDate]       AS [StartDate]
                            , [BH].[dTripFinishDate] AS [EndDate]
@@ -277,15 +278,9 @@ namespace TransportDepot.Data.DB
                   ON ( [BH].[cTripNumber] = [ATH].[cTripNumber] )      
                 INNER JOIN [DispatcherAgent] [DA] 
                   ON ([DA].[Initials] = [BH].[cDispatcherInit] )
-              WHERE NOT EXISTS
-                (
-                  SELECT * 
-                  FROM [dbo].[Paid_Invoice_Commission] [C]
-                  WHERE ( [C].[ArInvoiceNumber] = [BH].[cProNumber] )
-                )
-                AND ( [dBillDate] > '5-27-2015'  )
-              --  AND ( [dBillDate] > COALESCE( @LastBillDate, '1-1-2001' ) )
-              
+              WHERE bh.cTripNumber in ('A00120873', 'A00120847', 'A00120849', 'A00120848', 'A00120827', 'A00120850', 'A00120851', 'A00120854', 'A00120855', 'A00120856', 'A00120857', 'A00120858', 'A00120859', 'A00120860', 'A00120861', 'A00120862', 'A00120863', 'A00120864', 'A00120865', 'A00120866', 'A00120868', 'A00120869', 'A00120871', 'A00120872', 'A00120874', 'A00120876', 'A00120877', 'A00120878', 'A00120880', 'A00120881', 'A00120882', 'A00120883', 'A00120884', 'A00120889', 'A00120886', 'A00120887')
+                    and bh.cTripNumber not in (select cInvoiceNo from ApInvoice)
+                    and bh.cTripNumber not in (select ApInvoiceNumber from paid_invoice_commission)
                 
           ";
         }
@@ -365,6 +360,7 @@ namespace TransportDepot.Data.DB
           /* Invoice Deetails */
           ;WITH [NewCommissions] AS
           (
+            SELECT * FROM (
             SELECT [T].[c].value('./@agent', 'varchar(30)') AS [cVendorId]
                  , [T].[c].value('./@apInvoiceNumber', 'varchar(30)') AS [cInvoiceNo]
                  , 1 AS [niDetailNumber] 
@@ -375,6 +371,7 @@ namespace TransportDepot.Data.DB
                  , [T].[c].value('./@percentCommission', 'smallmoney') AS [cuQuantity]
                  , [T].[c].value('./@arInvoiceAmount', 'smallmoney') AS [cuUnitCost]
             FROM @commissions.nodes('//commission') AS T(c)
+            ) AS T where T.cInvoiceNo NOT IN (SELECT cInvoiceNo FROM ApInvoice)
           )
 
           INSERT INTO [dbo].[ApInvoiceDetail]

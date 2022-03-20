@@ -164,9 +164,6 @@ namespace TransportDepot.Data.Dispatch
       get
       {
         throw new NotImplementedException();
-        return @"
-          
-        ";
       }
     }
   }

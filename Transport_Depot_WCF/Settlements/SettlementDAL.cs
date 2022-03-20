@@ -888,10 +888,8 @@ namespace Transport_Depot_WCF.Settlements
             { return true; }
             return false;
         }
-        
-        static int debug_num = 0;
 
-        
+       
 
         private OleDbConnection Connection
         {

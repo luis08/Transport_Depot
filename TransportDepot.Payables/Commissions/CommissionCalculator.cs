@@ -23,35 +23,37 @@ namespace TransportDepot.Payables.Commissions
       this.Spans = this.Spans.OrderBy(s => s.StartDate);
 
       var commissions = new List<InvoiceCommission>();
-      
-      foreach(var span in this.Spans)
+      var tripSpans = this.Spans.Select(s => GetTripSpan(s));
+      var duped = tripSpans.GroupBy(s => s.TripNumber).Select(ts => new { 
+        TripNumber = ts.Key,
+        Count = ts.Count()
+      }).Where(ts => ts.Count > 1).Select(ts => ts.TripNumber);
+      foreach(var span in tripSpans)
       {
         var commission = GetCommission(span);
-        if (span != null)
+        if (span != null && ! duped.Contains(span.TripNumber))
         {
           commissions.Add(commission);
         }
-
       }
       return commissions;
     }
 
-    private InvoiceCommission GetCommission(Span span)
+    private InvoiceCommission GetCommission(TripSpan tripSpan)
     {
-      var tripSpan = GetTripSpan(span);
-      var commission = CreateInvoiceCommission(tripSpan);
       
-      if (span.PreviousSpan == null)
+      var commission = CreateInvoiceCommission(tripSpan);
+      var timeSpan = tripSpan.StartDate - tripSpan.PreviousSpan.EndDate;
+      
+      if (tripSpan.PreviousSpan == null)
       {
-        commission = GetHomeCommission(commission);
+        commission.Percent = 0.5m;
         return commission;
       }
 
-      var timeSpan = span.StartDate - span.PreviousSpan.EndDate;
-
       if (TripStartsAtTractorHome(tripSpan))
       {
-        commission = GetHomeCommission(commission);
+        commission = GetHomeCommission(commission, timeSpan);
       }
       else if (timeSpan.TotalDays < 1)
       {
@@ -75,11 +77,7 @@ namespace TransportDepot.Payables.Commissions
     private bool TripStartsAtTractorHome(TripSpan tripSpan)
     {
       if (tripSpan.TractorHome == null) return false;
-      if (tripSpan.StartLocation.State.Equals(tripSpan.TractorHome.State))
-      {
-        return true;
-      }
-      return false;
+      return tripSpan.StartLocation.State.Equals(tripSpan.TractorHome.State);
     }
 
     private InvoiceCommission CreateInvoiceCommission(TripSpan tripSpan)
@@ -130,9 +128,16 @@ namespace TransportDepot.Payables.Commissions
       return tripSpan;
     }
 
-    private InvoiceCommission GetHomeCommission(InvoiceCommission commission)
+    private InvoiceCommission GetHomeCommission(InvoiceCommission commission, TimeSpan timeSpan)
     {
-      commission.Percent = 0.5m;
+      if (timeSpan.TotalDays < 2)
+      {
+        commission.Percent = 1.0m;
+      } 
+      else 
+      { 
+        commission.Percent = 0.5m;
+      }
       return commission;
     }
 
